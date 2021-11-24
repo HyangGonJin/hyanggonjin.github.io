@@ -97,7 +97,7 @@ analytics:
 # Site Author
 author:
   name             : "HyangGon Jin" # *name is a YAML reference pointing to the &anchor earlier
-  avatar           : 
+  avatar           : "/assets/images/blue_lego_ver.1.png"
   bio              : "#Statistics #ML #Python #R"
   location         : "Seoul"
   links:

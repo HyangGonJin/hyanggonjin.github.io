@@ -60,7 +60,7 @@ algolia:
   search_only_api_key    : # YOUR_SEARCH_ONLY_API_KEY
   powered_by             : # true (default), false
   files_to_exclude:
-    - _posts/2017-11-28-post-exclude-search.md
+    # - _posts/2017-11-28-post-exclude-search.md
 
 # SEO Related
 google_site_verification :  # Replace this with your ID, or delete
@@ -97,7 +97,7 @@ analytics:
 # Site Author
 author:
   name             : "HyangGon Jin" # *name is a YAML reference pointing to the &anchor earlier
-  avatar           : "/assets/images/IMG_5490.JPEG"
+  avatar           : 
   bio              : "#Statistics #ML #Python #R"
   location         : "Seoul"
   links:

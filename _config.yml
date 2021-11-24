@@ -5,8 +5,7 @@
 # For technical reasons, this file is *NOT* reloaded automatically when you use
 # `jekyll serve`. If you change this file, please restart the server process.
 
-remote_theme             : "mmistakes/minimal-mistakes@4.24.0"
-
+remote_theme             : "mmistakes/minimal-mistakes"
 minimal_mistakes_skin    : "air" # "air", "aqua", "contrast", "dark", "dirt", "neon", "mint", "plum", "sunrise"
 
 # Site Settings
@@ -98,7 +97,7 @@ analytics:
 # Site Author
 author:
   name             : "HyangGon Jin" # *name is a YAML reference pointing to the &anchor earlier
-  avatar           : "/assets/images/IMG5490.JPEG"
+  avatar           : "/assets/images/IMG_5490.JPEG"
   bio              : "#Statistics #ML #Python #R"
   location         : "Seoul"
   links:

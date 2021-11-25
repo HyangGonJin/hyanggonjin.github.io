@@ -1,0 +1,556 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.24.0 by Michael Rose
+  Copyright 2013-2020 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="en" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>결측값 다루기 - Lego</title>
+<meta name="description" content="데이터 분석을 하면서 필수적으로 하는 작업이 ‘결측값 확인 및 처리’이다.  파이썬에서 어떤 값을 결측으로 인식하는지 확인하고, 결측이 있는 경우 함수들이 어떻게 작용하는지 알아보자.">
+
+
+  <meta name="author" content="HyangGon Jin">
+  
+  <meta property="article:author" content="HyangGon Jin">
+  
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="en_US">
+<meta property="og:site_name" content="Lego">
+<meta property="og:title" content="결측값 다루기">
+<meta property="og:url" content="http://localhost:4000/da/Dealing_to_missing_data/">
+
+
+  <meta property="og:description" content="데이터 분석을 하면서 필수적으로 하는 작업이 ‘결측값 확인 및 처리’이다.  파이썬에서 어떤 값을 결측으로 인식하는지 확인하고, 결측이 있는 경우 함수들이 어떻게 작용하는지 알아보자.">
+
+
+
+
+
+
+
+  <meta property="article:published_time" content="2021-11-18T00:00:00-05:00">
+
+
+
+
+
+  
+
+  
+
+
+<link rel="canonical" href="http://localhost:4000/da/Dealing_to_missing_data/">
+
+
+
+
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    
+      "@type": "Person",
+      "name": "HyangGon Jin",
+      "url": "http://localhost:4000/"
+    
+  }
+</script>
+
+
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+
+  <link href="/feed.xml" type="application/atom+xml" rel="alternate" title="Lego Feed">
+
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css"></noscript>
+
+
+
+    <!-- start custom head snippets -->
+
+<!-- insert favicons. use https://realfavicongenerator.net/ -->
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body class="layout--single">
+    <nav class="skip-links">
+  <ul>
+    <li><a href="#site-nav" class="screen-reader-shortcut">Skip to primary navigation</a></li>
+    <li><a href="#main" class="screen-reader-shortcut">Skip to content</a></li>
+    <li><a href="#footer" class="screen-reader-shortcut">Skip to footer</a></li>
+  </ul>
+</nav>
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+        <a class="site-title" href="/">
+          Lego
+          <span class="site-subtitle"></span>
+        </a>
+        <ul class="visible-links"><li class="masthead__menu-item">
+              <a href="/categories/">Category</a>
+            </li><li class="masthead__menu-item">
+              <a href="/tags/">Tag</a>
+            </li><li class="masthead__menu-item">
+              <a href="/about/">About</a>
+            </li><li class="masthead__menu-item">
+              <a href="/search/">Search</a>
+            </li></ul>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">Toggle menu</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="https://schema.org/Person" class="h-card">
+
+  
+    <div class="author__avatar">
+      <a href="http://localhost:4000/">
+        <img src="/assets/images/blue_lego_ver.1.png" alt="HyangGon Jin" itemprop="image" class="u-photo">
+      </a>
+    </div>
+  
+
+  <div class="author__content">
+    <h3 class="author__name p-name" itemprop="name">
+      <a class="u-url" rel="me" href="http://localhost:4000/" itemprop="url">HyangGon Jin</a>
+    </h3>
+    
+      <div class="author__bio p-note" itemprop="description">
+        <p>#Statistics #ML #Python #R</p>
+
+      </div>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">Follow</button>
+    <ul class="author__urls social-icons">
+      
+        <li itemprop="homeLocation" itemscope itemtype="https://schema.org/Place">
+          <i class="fas fa-fw fa-map-marker-alt" aria-hidden="true"></i> <span itemprop="name" class="p-locality">Seoul</span>
+        </li>
+      
+
+      
+        
+          
+            <li><a href="mailto:nike3616@gmail.com" rel="nofollow noopener noreferrer me"><i class="fas fa-fw fa-envelope-square" aria-hidden="true"></i><span class="label">Email</span></a></li>
+          
+        
+          
+        
+          
+        
+          
+            <li><a href="https://github.com/hyanggonjin" rel="nofollow noopener noreferrer me"><i class="fab fa-fw fa-github" aria-hidden="true"></i><span class="label">GitHub</span></a></li>
+          
+        
+          
+        
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs" rel="nofollow noopener noreferrer me">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+  
+  </div>
+
+
+
+  <article class="page h-entry" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="결측값 다루기">
+    <meta itemprop="description" content="데이터 분석을 하면서 필수적으로 하는 작업이 ‘결측값 확인 및 처리’이다. 파이썬에서 어떤 값을 결측으로 인식하는지 확인하고, 결측이 있는 경우 함수들이 어떻게 작용하는지 알아보자.">
+    <meta itemprop="datePublished" content="2021-11-18T00:00:00-05:00">
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <h1 id="page-title" class="page__title p-name" itemprop="headline">
+            <a href="http://localhost:4000/da/Dealing_to_missing_data/" class="u-url" itemprop="url">결측값 다루기
+</a>
+          </h1>
+          
+
+
+        </header>
+      
+
+      <section class="page__content e-content" itemprop="text">
+        
+          <aside class="sidebar__right sticky">
+            <nav class="toc">
+              <header><h4 class="nav__title"><i class="fas fa-file-alt"></i> On this page</h4></header>
+              <ul class="toc__menu"><li><a href="#1-결측값-확인">1. 결측값 확인</a></li><li><a href="#2-결측값-연산">2. 결측값 연산</a></li><li><a href="#3-pandas의-groupby">3. pandas의 groupby</a></li></ul>
+
+            </nav>
+          </aside>
+        
+        <p>데이터 분석을 하면서 필수적으로 하는 작업이 ‘결측값 확인 및 처리’이다. <br />
+파이썬에서 어떤 값을 결측으로 인식하는지 확인하고, 결측이 있는 경우 함수들이 어떻게 작용하는지 알아보자.</p>
+
+<h2 id="1-결측값-확인">1. 결측값 확인</h2>
+<p>우선, 파이썬에서 어떤 값들을 결측으로 인식하는지 알아보자.</p>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="n">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="n">pd</span>
+
+<span class="n">a</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="n">nan</span>
+<span class="n">b</span> <span class="o">=</span> <span class="s">""</span>
+<span class="n">c</span> <span class="o">=</span> <span class="bp">None</span>
+
+<span class="k">print</span><span class="p">(</span><span class="n">a</span><span class="p">)</span> <span class="c1"># nan
+</span><span class="k">print</span><span class="p">(</span><span class="n">b</span><span class="p">)</span> <span class="c1">#
+</span><span class="k">print</span><span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="c1"># None
+</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="p">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="p">[</span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">,</span><span class="n">c</span><span class="p">],</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s">"var1"</span><span class="p">])</span>
+<span class="n">df</span><span class="p">.</span><span class="n">isna</span><span class="p">()</span>
+</code></pre></div></div>
+
+<p align="center">
+<img src="../assets/images/missing1_output.png" width="650" height="160" />
+<!-- </img> -->
+</p>
+
+<p><code class="language-plaintext highlighter-rouge">nan</code>과 <code class="language-plaintext highlighter-rouge">None</code>은 결측값으로 정확히 인식하였으나, ““(빈 칸)의 경우는 결측으로 인식하지 못했다.</p>
+
+<p align="center">
+<img src="../assets/images/pandas_missing_options.png" width="600" height="120" />
+        <figcaption align="center"> &lt;출처 : pandas 공식문서&gt; </figcaption>
+<!-- </img> -->
+</p>
+
+<p>참고로, pandas의 <code class="language-plaintext highlighter-rouge">read_csv</code> 함수의 ‘na_values’ 옵션을 보면 여러 형태의 결측값을 지원하고 있고, 파일에서의 빈 칸을 결측으로 처리하는 것으로 보인다.</p>
+
+<h2 id="2-결측값-연산">2. 결측값 연산</h2>
+
+<p>다음으로, 결측값이 있는 경우 다양한 연산 or 함수들이 어떻게 적용되는지 알아보자.</p>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="n">np</span>
+
+<span class="n">lst1</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="p">.</span><span class="n">nan</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">]</span>
+
+<span class="k">print</span><span class="p">(</span><span class="n">np</span><span class="p">.</span><span class="n">nan</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="c1"># nan
+</span><span class="k">print</span><span class="p">(</span><span class="n">np</span><span class="p">.</span><span class="nb">sum</span><span class="p">([</span><span class="n">np</span><span class="p">.</span><span class="n">nan</span><span class="p">,</span><span class="mi">1</span><span class="p">]))</span> <span class="c1"># nan
+</span><span class="k">print</span><span class="p">(</span><span class="n">np</span><span class="p">.</span><span class="n">nansum</span><span class="p">([</span><span class="n">np</span><span class="p">.</span><span class="n">nan</span><span class="p">,</span><span class="mi">1</span><span class="p">]))</span> <span class="c1"># 1.0
+</span>
+<span class="k">print</span><span class="p">(</span><span class="n">np</span><span class="p">.</span><span class="nb">max</span><span class="p">(</span><span class="n">lst1</span><span class="p">))</span> <span class="c1"># nan
+</span><span class="k">print</span><span class="p">(</span><span class="n">np</span><span class="p">.</span><span class="nb">min</span><span class="p">(</span><span class="n">lst1</span><span class="p">))</span> <span class="c1"># nan
+</span><span class="k">print</span><span class="p">(</span><span class="n">np</span><span class="p">.</span><span class="n">nanmax</span><span class="p">(</span><span class="n">lst1</span><span class="p">))</span> <span class="c1"># 4.0
+</span><span class="k">print</span><span class="p">(</span><span class="n">np</span><span class="p">.</span><span class="n">nanmin</span><span class="p">(</span><span class="n">lst1</span><span class="p">))</span> <span class="c1"># 1.0
+</span></code></pre></div></div>
+
+<p>위 결과에서 보듯이 결측이 포함된 경우, 일반적으로 하는 사칙연산이나 <code class="language-plaintext highlighter-rouge">max</code>, <code class="language-plaintext highlighter-rouge">min</code> 등과 같은 함수들의 사용한다면 무조건 결측을 출력한다. 이에 대한 해결법 중 하나로 numpy에서 지원하는 다양한 함수들을 이용할 수 있다. numpy에서 지원하는 결측값과 관련된 함수들을 아래와 같으니 참고하길 바란다.</p>
+
+<!-- ![결측관련 함수](./images/nan_function.png)    -->
+<p align="center">
+<img src="../assets/images/nan_function.png" width="600" height="500" />
+        <figcaption align="center"> &lt;출처 : numpy 공식문서&gt; </figcaption>
+<!-- </img> -->
+</p>
+
+<h2 id="3-pandas의-groupby">3. pandas의 <code class="language-plaintext highlighter-rouge">groupby</code></h2>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="n">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="n">pd</span>
+
+<span class="n">a</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span>
+<span class="n">b</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="n">np</span><span class="p">.</span><span class="n">nan</span><span class="p">]</span>
+<span class="n">c</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">3</span><span class="p">]</span>
+<span class="n">d</span> <span class="o">=</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span>
+<span class="n">e</span> <span class="o">=</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="n">np</span><span class="p">.</span><span class="n">nan</span><span class="p">]</span>
+<span class="n">f</span> <span class="o">=</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="n">np</span><span class="p">.</span><span class="n">nan</span><span class="p">,</span><span class="mi">3</span><span class="p">]</span>
+
+<span class="n">lst1</span> <span class="o">=</span> <span class="p">[</span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">,</span><span class="n">c</span><span class="p">,</span><span class="n">d</span><span class="p">,</span><span class="n">e</span><span class="p">,</span><span class="n">f</span><span class="p">]</span>
+<span class="n">df1</span> <span class="o">=</span> <span class="n">pd</span><span class="p">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">lst1</span><span class="p">,</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s">'grp'</span><span class="p">,</span><span class="s">'var1'</span><span class="p">,</span><span class="s">'var2'</span><span class="p">])</span> 
+
+<span class="n">df1</span><span class="p">.</span><span class="n">groupby</span><span class="p">(</span><span class="s">"grp"</span><span class="p">,</span><span class="n">as_index</span><span class="o">=</span><span class="bp">False</span><span class="p">).</span><span class="n">aggregate</span><span class="p">({</span><span class="s">'var1'</span><span class="p">:</span><span class="s">'mean'</span><span class="p">,</span><span class="s">'var2'</span><span class="p">:</span><span class="s">'mean'</span><span class="p">})</span>
+<span class="n">df1</span><span class="p">.</span><span class="n">groupby</span><span class="p">(</span><span class="s">"grp"</span><span class="p">,</span><span class="n">as_index</span><span class="o">=</span><span class="bp">False</span><span class="p">).</span><span class="n">aggregate</span><span class="p">({</span><span class="s">'var1'</span><span class="p">:</span><span class="n">np</span><span class="p">.</span><span class="nb">sum</span><span class="p">,</span><span class="s">'var2'</span><span class="p">:</span><span class="n">np</span><span class="p">.</span><span class="n">mean</span><span class="p">})</span>
+</code></pre></div></div>
+
+<p align="center">
+<img src="../assets/images/pandas_groupby.png" width="700" height="450" />
+</p>
+
+<p>결측값이 포함된 데이터프레임을 이용해 pandas의 <code class="language-plaintext highlighter-rouge">groupby</code> 함수를 적용한 결과를 볼 때, 결측을 제외한 결과를 계산함을 알 수 있다.</p>
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> Tags: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/tags/#data-analysis" class="page__taxonomy-item p-category" rel="tag">data analysis</a><span class="sep">, </span>
+    
+      <a href="/tags/#numpy" class="page__taxonomy-item p-category" rel="tag">numpy</a><span class="sep">, </span>
+    
+      <a href="/tags/#pandas" class="page__taxonomy-item p-category" rel="tag">pandas</a><span class="sep">, </span>
+    
+      <a href="/tags/#python" class="page__taxonomy-item p-category" rel="tag">python</a>
+    
+    </span>
+  </p>
+
+
+
+
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-folder-open" aria-hidden="true"></i> Categories: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/categories/#da" class="page__taxonomy-item p-category" rel="tag">DA</a>
+    
+    </span>
+  </p>
+
+
+        
+
+  <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time class="dt-published" datetime="2021-11-18T00:00:00-05:00">November 18, 2021</time></p>
+
+      </footer>
+
+      <section class="page__share">
+  
+    <h4 class="page__share-title">Share on</h4>
+  
+
+  <a href="https://twitter.com/intent/tweet?text=%EA%B2%B0%EC%B8%A1%EA%B0%92+%EB%8B%A4%EB%A3%A8%EA%B8%B0%20http%3A%2F%2Flocalhost%3A4000%2Fda%2FDealing_to_missing_data%2F" class="btn btn--twitter" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Twitter"><i class="fab fa-fw fa-twitter" aria-hidden="true"></i><span> Twitter</span></a>
+
+  <a href="https://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Flocalhost%3A4000%2Fda%2FDealing_to_missing_data%2F" class="btn btn--facebook" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Facebook"><i class="fab fa-fw fa-facebook" aria-hidden="true"></i><span> Facebook</span></a>
+
+  <a href="https://www.linkedin.com/shareArticle?mini=true&url=http%3A%2F%2Flocalhost%3A4000%2Fda%2FDealing_to_missing_data%2F" class="btn btn--linkedin" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on LinkedIn"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i><span> LinkedIn</span></a>
+</section>
+
+
+      
+  <nav class="pagination">
+    
+      <a href="#" class="pagination--pager disabled">Previous</a>
+    
+    
+      <a href="/de/da/Connect_to_DB(mysql,mongo)/" class="pagination--pager" title="데이터베이스 연결
+">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+  </article>
+
+  
+  
+    <div class="page__related">
+      <h2 class="page__related-title">You may also enjoy</h2>
+      <div class="grid__wrapper">
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/de/da/Connect_to_DB(mysql,mongo)/" rel="permalink">데이터베이스 연결
+</a>
+      
+    </h2>
+    
+
+
+    <p class="archive__item-excerpt" itemprop="description">1. MySQL
+1.1 DB 연결
+```py
+import os
+import sys
+import logging
+import pymysql
+
+</p>
+  </article>
+</div>
+
+        
+      </div>
+    </div>
+  
+  
+</div>
+    </div>
+
+    
+
+    <div id="footer" class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+
+<!-- end custom footer snippets -->
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+      <li><strong>Follow:</strong></li>
+    
+
+    
+      
+        
+      
+        
+          <li><a href="https://github.com/hyanggonjin" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+        
+      
+        
+      
+    
+
+    
+      <li><a href="/feed.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+    
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2021 HyangGon Jin. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script src="/assets/js/main.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+  </body>
+</html>

@@ -1,0 +1,588 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.24.0 by Michael Rose
+  Copyright 2013-2020 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="en" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>데이터베이스 연결 - Lego</title>
+<meta name="description" content="1. MySQL 1.1 DB 연결 ```py import os import sys import logging import pymysql">
+
+
+  <meta name="author" content="HyangGon Jin">
+  
+  <meta property="article:author" content="HyangGon Jin">
+  
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="en_US">
+<meta property="og:site_name" content="Lego">
+<meta property="og:title" content="데이터베이스 연결">
+<meta property="og:url" content="http://localhost:4000/de/da/Connect_to_DB(mysql,mongo)/">
+
+
+  <meta property="og:description" content="1. MySQL 1.1 DB 연결 ```py import os import sys import logging import pymysql">
+
+
+
+
+
+
+
+  <meta property="article:published_time" content="2021-11-21T00:00:00-05:00">
+
+
+
+
+
+  
+
+  
+
+
+<link rel="canonical" href="http://localhost:4000/de/da/Connect_to_DB(mysql,mongo)/">
+
+
+
+
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    
+      "@type": "Person",
+      "name": "HyangGon Jin",
+      "url": "http://localhost:4000/"
+    
+  }
+</script>
+
+
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+
+  <link href="/feed.xml" type="application/atom+xml" rel="alternate" title="Lego Feed">
+
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css"></noscript>
+
+
+
+    <!-- start custom head snippets -->
+
+<!-- insert favicons. use https://realfavicongenerator.net/ -->
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body class="layout--single">
+    <nav class="skip-links">
+  <ul>
+    <li><a href="#site-nav" class="screen-reader-shortcut">Skip to primary navigation</a></li>
+    <li><a href="#main" class="screen-reader-shortcut">Skip to content</a></li>
+    <li><a href="#footer" class="screen-reader-shortcut">Skip to footer</a></li>
+  </ul>
+</nav>
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+        <a class="site-title" href="/">
+          Lego
+          <span class="site-subtitle"></span>
+        </a>
+        <ul class="visible-links"><li class="masthead__menu-item">
+              <a href="/categories/">Category</a>
+            </li><li class="masthead__menu-item">
+              <a href="/tags/">Tag</a>
+            </li><li class="masthead__menu-item">
+              <a href="/about/">About</a>
+            </li><li class="masthead__menu-item">
+              <a href="/search/">Search</a>
+            </li></ul>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">Toggle menu</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="https://schema.org/Person" class="h-card">
+
+  
+    <div class="author__avatar">
+      <a href="http://localhost:4000/">
+        <img src="/assets/images/blue_lego_ver.1.png" alt="HyangGon Jin" itemprop="image" class="u-photo">
+      </a>
+    </div>
+  
+
+  <div class="author__content">
+    <h3 class="author__name p-name" itemprop="name">
+      <a class="u-url" rel="me" href="http://localhost:4000/" itemprop="url">HyangGon Jin</a>
+    </h3>
+    
+      <div class="author__bio p-note" itemprop="description">
+        <p>#Statistics #ML #Python #R</p>
+
+      </div>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">Follow</button>
+    <ul class="author__urls social-icons">
+      
+        <li itemprop="homeLocation" itemscope itemtype="https://schema.org/Place">
+          <i class="fas fa-fw fa-map-marker-alt" aria-hidden="true"></i> <span itemprop="name" class="p-locality">Seoul</span>
+        </li>
+      
+
+      
+        
+          
+            <li><a href="mailto:nike3616@gmail.com" rel="nofollow noopener noreferrer me"><i class="fas fa-fw fa-envelope-square" aria-hidden="true"></i><span class="label">Email</span></a></li>
+          
+        
+          
+        
+          
+        
+          
+            <li><a href="https://github.com/hyanggonjin" rel="nofollow noopener noreferrer me"><i class="fab fa-fw fa-github" aria-hidden="true"></i><span class="label">GitHub</span></a></li>
+          
+        
+          
+        
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs" rel="nofollow noopener noreferrer me">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+  
+  </div>
+
+
+
+  <article class="page h-entry" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="데이터베이스 연결">
+    <meta itemprop="description" content="1. MySQL1.1 DB 연결```pyimport osimport sysimport loggingimport pymysql">
+    <meta itemprop="datePublished" content="2021-11-21T00:00:00-05:00">
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <h1 id="page-title" class="page__title p-name" itemprop="headline">
+            <a href="http://localhost:4000/de/da/Connect_to_DB(mysql,mongo)/" class="u-url" itemprop="url">데이터베이스 연결
+</a>
+          </h1>
+          
+
+
+        </header>
+      
+
+      <section class="page__content e-content" itemprop="text">
+        
+          <aside class="sidebar__right sticky">
+            <nav class="toc">
+              <header><h4 class="nav__title"><i class="fas fa-file-alt"></i> On this page</h4></header>
+              <ul class="toc__menu"><li><a href="#1-mysql">1. MySQL</a></li><li><a href="#11-db-연결">1.1 DB 연결</a></li><li><a href="#12-pandas의-to_sql">1.2 pandas의 to_sql().</a></li><li><a href="#2-mongodb">2. MongoDB</a></li><li><a href="#21-db-연결">2.1 DB 연결</a></li></ul>
+
+            </nav>
+          </aside>
+        
+        <h2 id="1-mysql">1. <strong>MySQL</strong></h2>
+<h2 id="11-db-연결">1.1 DB 연결</h2>
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">pymysql</span>
+
+<span class="c1"># DB 정보.
+</span><span class="n">host</span> <span class="o">=</span> <span class="s">"your host!"</span>
+<span class="n">port</span> <span class="o">=</span> <span class="s">"your port!"</span>
+<span class="n">username</span> <span class="o">=</span> <span class="s">"your username!"</span>
+<span class="n">database</span> <span class="o">=</span> <span class="s">"your database name!"</span>
+<span class="n">password</span> <span class="o">=</span> <span class="s">"your password!!"</span>
+
+<span class="c1"># MySQL DB 연결.
+</span><span class="n">conn</span> <span class="o">=</span> <span class="n">pymysql</span><span class="p">.</span><span class="n">connect</span><span class="p">(</span><span class="n">host</span><span class="o">=</span><span class="n">host</span><span class="p">,</span> <span class="n">user</span><span class="o">=</span><span class="n">username</span><span class="p">,</span> <span class="n">passwd</span><span class="o">=</span><span class="n">password</span><span class="p">,</span> <span class="n">db</span><span class="o">=</span><span class="n">database</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="n">port</span><span class="p">,</span> <span class="n">use_unicode</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">charset</span><span class="o">=</span><span class="s">'utf8'</span><span class="p">)</span>
+
+<span class="c1"># Cursor 생성.
+</span><span class="n">cursor</span> <span class="o">=</span> <span class="n">conn</span><span class="p">.</span><span class="n">cursor</span><span class="p">()</span>
+
+
+<span class="c1"># 다양한 query들을 실행할 수 있음.
+</span><span class="n">query</span> <span class="o">=</span> <span class="s">"""CREATE DATABASE IF NOT EXISTS test DEFAULT CHARSET='utf8'"""</span>
+<span class="n">cursor</span><span class="p">.</span><span class="n">execute</span><span class="p">(</span><span class="n">query</span><span class="p">)</span>
+
+<span class="n">query</span> <span class="o">=</span> <span class="s">"""USE test"""</span>
+<span class="n">cursor</span><span class="p">.</span><span class="n">execute</span><span class="p">(</span><span class="n">query</span><span class="p">)</span>
+
+<span class="n">query</span> <span class="o">=</span> <span class="s">"""SHOW TABLES"""</span>
+<span class="n">cursor</span><span class="p">.</span><span class="n">execute</span><span class="p">(</span><span class="n">query</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="n">cursor</span><span class="p">.</span><span class="n">fetchall</span><span class="p">())</span>
+</code></pre></div></div>
+
+<ul>
+  <li>
+    <p>참고할 내용</p>
+
+    <ul>
+      <li>CHARSET=’utf8’을 디폴트로 해야 한글로 입력된 파일을 올리는데 문제가 생기지 않음.</li>
+      <li>cursor를 통해 실행한 query의 결과는 <code class="language-plaintext highlighter-rouge">cursor.fetchall()</code>을 통해서 확인할 수 있음.</li>
+    </ul>
+  </li>
+</ul>
+
+<hr />
+
+<h2 id="12-pandas의-to_sql">1.2 pandas의 <code class="language-plaintext highlighter-rouge">to_sql()</code>.</h2>
+<p>사용된 데이터는 ‘서울 열린데이터광장’의 <a href="http://data.seoul.go.kr/dataList/OA-1218/S/1/datasetView.do;jsessionid=1024575F5105EFBB20B362FF4C6925E7.new_portal-svr-11">서울시 공공와이파이 위치정보 데이터</a> 입니다.</p>
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="n">pd</span>
+
+<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="p">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s">"wifi/서울시 공공와이파이 위치정보.csv"</span><span class="p">,</span><span class="n">encoding</span><span class="o">=</span><span class="s">'euc-kr'</span><span class="p">)</span>
+<span class="n">df</span><span class="p">.</span><span class="n">head</span><span class="p">()</span>
+
+<span class="kn">from</span> <span class="nn">sqlalchemy</span> <span class="kn">import</span> <span class="n">create_engine</span>
+<span class="n">dialect</span> <span class="o">=</span> <span class="s">"mysql+pymysql://"</span> <span class="o">+</span> <span class="n">username</span> <span class="o">+</span> <span class="s">":"</span> <span class="o">+</span> <span class="n">password</span> <span class="o">+</span> <span class="s">"@"</span> <span class="o">+</span> <span class="n">host</span> <span class="o">+</span> <span class="s">":"</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">port</span><span class="p">)</span> <span class="o">+</span> <span class="s">"/"</span> <span class="o">+</span> <span class="n">database</span> 
+<span class="n">engine</span> <span class="o">=</span> <span class="n">create_engine</span><span class="p">(</span><span class="n">dialect</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s">'utf-8'</span><span class="p">)</span>
+
+<span class="n">df</span><span class="p">.</span><span class="n">to_sql</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">'wifi'</span><span class="p">,</span> <span class="n">con</span><span class="o">=</span><span class="n">engine</span><span class="p">,</span> <span class="n">if_exists</span><span class="o">=</span><span class="s">"replace"</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+
+<span class="n">conn</span> <span class="o">=</span> <span class="n">pymysql</span><span class="p">.</span><span class="n">connect</span><span class="p">(</span><span class="n">host</span><span class="o">=</span><span class="n">host</span><span class="p">,</span> <span class="n">user</span><span class="o">=</span><span class="n">username</span><span class="p">,</span> <span class="n">passwd</span><span class="o">=</span><span class="n">password</span><span class="p">,</span> <span class="n">db</span><span class="o">=</span><span class="n">database</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="n">port</span><span class="p">,</span> <span class="n">use_unicode</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">charset</span><span class="o">=</span><span class="s">'utf8'</span><span class="p">)</span>
+<span class="n">cursor</span> <span class="o">=</span> <span class="n">conn</span><span class="p">.</span><span class="n">cursor</span><span class="p">()</span>
+
+<span class="n">cursor</span><span class="p">.</span><span class="n">execute</span><span class="p">(</span><span class="s">"SHOW TABLES"</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="n">cursor</span><span class="p">.</span><span class="n">fetchall</span><span class="p">())</span>
+
+<span class="n">cursor</span><span class="p">.</span><span class="n">execute</span><span class="p">(</span><span class="s">"select * from wifi limit 1"</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="n">cursor</span><span class="p">.</span><span class="n">fetchall</span><span class="p">())</span>
+
+</code></pre></div></div>
+
+<p align="center">
+<img src="../assets/images/to_sql output.png" width="650" height="300" />
+</p>
+
+<ul>
+  <li>
+    <p>참고자료</p>
+
+    <ul>
+      <li>https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.to_sql.html</li>
+      <li>https://docs.sqlalchemy.org/en/13/core/engines.html</li>
+      <li>https://towardsdatascience.com/using-aws-rds-and-python-together-5718a6878e4c</li>
+    </ul>
+  </li>
+</ul>
+
+<hr />
+
+<h2 id="2-mongodb">2. <strong>MongoDB</strong></h2>
+<h2 id="21-db-연결">2.1 DB 연결</h2>
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">pymongo</span> <span class="kn">import</span> <span class="n">MongoClient</span>
+
+<span class="n">client</span> <span class="o">=</span> <span class="n">MongoClient</span><span class="p">(</span><span class="s">'localhost'</span><span class="p">,</span> <span class="mi">27017</span><span class="p">)</span>
+<span class="c1"># client = MongoClient('mongodb://localhost:27017/')
+</span>
+<span class="c1"># database 확인.
+</span><span class="n">client</span><span class="p">.</span><span class="n">list_database_names</span><span class="p">()</span>
+
+<span class="c1"># database 접근.
+</span><span class="n">db</span> <span class="o">=</span> <span class="n">client</span><span class="p">.</span><span class="n">mydb</span>
+<span class="c1"># db = client['mydb']
+</span>
+<span class="c1"># database 내 collection 확인.
+</span><span class="n">db</span><span class="p">.</span><span class="n">list_collection_names</span><span class="p">()</span>
+
+<span class="c1"># collection 접근.
+</span><span class="n">collection</span> <span class="o">=</span> <span class="n">db</span><span class="p">.</span><span class="n">zips</span>
+<span class="c1"># collection = db['zips']
+</span>
+<span class="c1"># document 확인.
+</span><span class="kn">import</span> <span class="nn">pprint</span>
+<span class="n">pprint</span><span class="p">.</span><span class="n">pprint</span><span class="p">(</span><span class="n">collection</span><span class="p">.</span><span class="n">find_one</span><span class="p">())</span>
+</code></pre></div></div>
+<p align="center">
+<img src="../assets/images/pymongo output.png" width="700" height="450" />
+</p>
+
+<ul>
+  <li>
+    <p>참고자료</p>
+
+    <ul>
+      <li>https://pymongo.readthedocs.io/en/stable/tutorial.html</li>
+    </ul>
+  </li>
+</ul>
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> Tags: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/tags/#data-engineering" class="page__taxonomy-item p-category" rel="tag">data engineering</a><span class="sep">, </span>
+    
+      <a href="/tags/#python" class="page__taxonomy-item p-category" rel="tag">python</a>
+    
+    </span>
+  </p>
+
+
+
+
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-folder-open" aria-hidden="true"></i> Categories: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/categories/#da" class="page__taxonomy-item p-category" rel="tag">DA</a><span class="sep">, </span>
+    
+      <a href="/categories/#de" class="page__taxonomy-item p-category" rel="tag">DE</a>
+    
+    </span>
+  </p>
+
+
+        
+
+  <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time class="dt-published" datetime="2021-11-21T00:00:00-05:00">November 21, 2021</time></p>
+
+      </footer>
+
+      <section class="page__share">
+  
+    <h4 class="page__share-title">Share on</h4>
+  
+
+  <a href="https://twitter.com/intent/tweet?text=%EB%8D%B0%EC%9D%B4%ED%84%B0%EB%B2%A0%EC%9D%B4%EC%8A%A4+%EC%97%B0%EA%B2%B0%20http%3A%2F%2Flocalhost%3A4000%2Fde%2Fda%2FConnect_to_DB%28mysql%2Cmongo%29%2F" class="btn btn--twitter" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Twitter"><i class="fab fa-fw fa-twitter" aria-hidden="true"></i><span> Twitter</span></a>
+
+  <a href="https://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Flocalhost%3A4000%2Fde%2Fda%2FConnect_to_DB%28mysql%2Cmongo%29%2F" class="btn btn--facebook" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Facebook"><i class="fab fa-fw fa-facebook" aria-hidden="true"></i><span> Facebook</span></a>
+
+  <a href="https://www.linkedin.com/shareArticle?mini=true&url=http%3A%2F%2Flocalhost%3A4000%2Fde%2Fda%2FConnect_to_DB%28mysql%2Cmongo%29%2F" class="btn btn--linkedin" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on LinkedIn"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i><span> LinkedIn</span></a>
+</section>
+
+
+      
+  <nav class="pagination">
+    
+      <a href="/da/Dealing_to_missing_data/" class="pagination--pager" title="결측값 다루기
+">Previous</a>
+    
+    
+      <a href="#" class="pagination--pager disabled">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+  </article>
+
+  
+  
+    <div class="page__related">
+      <h2 class="page__related-title">You may also enjoy</h2>
+      <div class="grid__wrapper">
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/da/Dealing_to_missing_data/" rel="permalink">결측값 다루기
+</a>
+      
+    </h2>
+    
+
+
+    <p class="archive__item-excerpt" itemprop="description">데이터 분석을 하면서 필수적으로 하는 작업이 ‘결측값 확인 및 처리’이다. 
+파이썬에서 어떤 값을 결측으로 인식하는지 확인하고, 결측이 있는 경우 함수들이 어떻게 작용하는지 알아보자.
+
+</p>
+  </article>
+</div>
+
+        
+      </div>
+    </div>
+  
+  
+</div>
+    </div>
+
+    
+
+    <div id="footer" class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+
+<!-- end custom footer snippets -->
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+      <li><strong>Follow:</strong></li>
+    
+
+    
+      
+        
+      
+        
+          <li><a href="https://github.com/hyanggonjin" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+        
+      
+        
+      
+    
+
+    
+      <li><a href="/feed.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+    
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2021 HyangGon Jin. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script src="/assets/js/main.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+  </body>
+</html>

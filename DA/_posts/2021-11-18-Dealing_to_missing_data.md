@@ -1,12 +1,14 @@
 ---
 title: "결측값 다루기"
-# categories:
-#   - Data Handling
+categories:
+  - DA
 tags:
-  - Data Analysis
-  - Data Handling
+  - data analysis
+  - python
   - numpy
   - pandas
+toc : True
+toc_sticky: true
 ---
 
 데이터 분석을 하면서 필수적으로 하는 작업이 '결측값 확인 및 처리'이다.   
@@ -32,7 +34,7 @@ df.isna()
 ```
 
 <p align="center">
-<img src = '../assets/images/결측값1_결과.png' width="650" height="160">
+<img src = '../assets/images/missing1_output.png' width="650" height="160">
 <!-- </img> -->
 </p>
 
@@ -40,7 +42,7 @@ df.isna()
 
 
 <p align="center">
-<img src = '../assets/images/판다스_결측옵션.png' width="600" height="120">
+<img src = '../assets/images/pandas_missing_options.png' width="600" height="120">
         <figcaption align="center"> <출처 : pandas 공식문서> </figcaption>
 <!-- </img> -->
 </p> 
@@ -97,8 +99,7 @@ df1.groupby("grp",as_index=False).aggregate({'var1':np.sum,'var2':np.mean})
 ```
 
 <p align="center">
-<img src = '../assets/images/판다스_그룹바이_with_결측.png' width="750" height="500">
-</img>
+<img src = '../assets/images/pandas_groupby.png' width="700" height="450">
 </p>
 
 결측값이 포함된 데이터프레임을 이용해 pandas의 `groupby` 함수를 적용한 결과를 볼 때, 결측을 제외한 결과를 계산함을 알 수 있다.

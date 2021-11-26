@@ -1,7 +1,7 @@
 ---
 title: "데이터베이스 연결"
 categories:
-  - DA
+  - DE
 tags:
   - data engineering
   - python

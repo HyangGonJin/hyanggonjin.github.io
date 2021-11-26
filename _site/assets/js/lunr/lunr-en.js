@@ -35,7 +35,7 @@ $(document).ready(function() {
         })
       });
     resultdiv.empty();
-    resultdiv.prepend('<p class="results__found">'+result.length+' Result(s) found</p>');
+    resultdiv.prepend('<p class="results__found">'+result.length+' 개 결과 발견</p>');
     for (var item in result) {
       var ref = result[item].ref;
       if(store[ref].teaser){

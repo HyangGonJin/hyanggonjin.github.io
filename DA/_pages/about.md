@@ -17,4 +17,3 @@ menu : True
 * 관련링크
   *  Email : nike3616@gmail.com
   *  Github : https://github.com/hyanggonjin
- 

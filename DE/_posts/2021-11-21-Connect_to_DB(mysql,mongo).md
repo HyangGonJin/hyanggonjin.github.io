@@ -8,6 +8,7 @@ tags:
 toc : True
 toc_sticky: true
 ---
+파이썬을 이용해 MySQL과 MongoDB에 접근하는 방법을 알아보자. 
 
 ## 1. **MySQL**
 ## 1.1 DB 연결
@@ -75,16 +76,11 @@ print(cursor.fetchall())
 
 ```
 
-<p align="center">
-<img src = '../assets/images/to_sql output.png' width="650" height="300">
-</p> 
-
-
 * 참고자료
   
-  * https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.to_sql.html
-  * https://docs.sqlalchemy.org/en/13/core/engines.html
-  * https://towardsdatascience.com/using-aws-rds-and-python-together-5718a6878e4c
+  * [pandas.DataFram.to_sql 문서](https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.to_sql.html)
+  * [sqlalchemy 문서](https://docs.sqlalchemy.org/en/13/core/engines.html)
+  * [관련 Medium 게시물 - Using AWS RDS and python together](https://towardsdatascience.com/using-aws-rds-and-python-together-5718a6878e4c)
 
 
 ---
@@ -115,11 +111,9 @@ collection = db.zips
 import pprint
 pprint.pprint(collection.find_one())
 ```
-<p align="center">
-<img src = '../assets/images/pymongo output.png' width="700" height="450">
-</p> 
+
 
 
 * 참고자료 
   
-  * https://pymongo.readthedocs.io/en/stable/tutorial.html
+  * [pymongo 공식 tutorial](https://pymongo.readthedocs.io/en/stable/tutorial.html)

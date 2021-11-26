@@ -5,12 +5,12 @@
   Free for personal and commercial use under the MIT license
   https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
 -->
-<html lang="en" class="no-js">
+<html lang="ko" class="no-js">
   <head>
     <meta charset="utf-8">
 
 <!-- begin _includes/seo.html --><title>데이터베이스 연결 - Lego</title>
-<meta name="description" content="1. MySQL 1.1 DB 연결 ```py import os import sys import logging import pymysql">
+<meta name="description" content="파이썬을 이용해 MySQL과 MongoDB에 접근하는 방법을 알아보자.">
 
 
   <meta name="author" content="HyangGon Jin">
@@ -20,13 +20,13 @@
 
 
 <meta property="og:type" content="article">
-<meta property="og:locale" content="en_US">
+<meta property="og:locale" content="ko_KR">
 <meta property="og:site_name" content="Lego">
 <meta property="og:title" content="데이터베이스 연결">
 <meta property="og:url" content="http://localhost:4000/de/da/Connect_to_DB(mysql,mongo)/">
 
 
-  <meta property="og:description" content="1. MySQL 1.1 DB 연결 ```py import os import sys import logging import pymysql">
+  <meta property="og:description" content="파이썬을 이용해 MySQL과 MongoDB에 접근하는 방법을 알아보자.">
 
 
 
@@ -34,7 +34,7 @@
 
 
 
-  <meta property="article:published_time" content="2021-11-21T00:00:00-05:00">
+  <meta property="article:published_time" content="2021-11-21T00:00:00+00:00">
 
 
 
@@ -131,7 +131,7 @@
             </li></ul>
         
         <button class="greedy-nav__toggle hidden" type="button">
-          <span class="visually-hidden">Toggle menu</span>
+          <span class="visually-hidden">토글 메뉴</span>
           <div class="navicon"></div>
         </button>
         <ul class="hidden-links hidden"></ul>
@@ -175,7 +175,7 @@
   </div>
 
   <div class="author__urls-wrapper">
-    <button class="btn btn--inverse">Follow</button>
+    <button class="btn btn--inverse">팔로우</button>
     <ul class="author__urls social-icons">
       
         <li itemprop="homeLocation" itemscope itemtype="https://schema.org/Place">
@@ -266,8 +266,8 @@
 
   <article class="page h-entry" itemscope itemtype="https://schema.org/CreativeWork">
     <meta itemprop="headline" content="데이터베이스 연결">
-    <meta itemprop="description" content="1. MySQL1.1 DB 연결```pyimport osimport sysimport loggingimport pymysql">
-    <meta itemprop="datePublished" content="2021-11-21T00:00:00-05:00">
+    <meta itemprop="description" content="파이썬을 이용해 MySQL과 MongoDB에 접근하는 방법을 알아보자.">
+    <meta itemprop="datePublished" content="2021-11-21T00:00:00+00:00">
     
 
     <div class="page__inner-wrap">
@@ -287,13 +287,15 @@
         
           <aside class="sidebar__right sticky">
             <nav class="toc">
-              <header><h4 class="nav__title"><i class="fas fa-file-alt"></i> On this page</h4></header>
+              <header><h4 class="nav__title"><i class="fas fa-file-alt"></i> On This Page</h4></header>
               <ul class="toc__menu"><li><a href="#1-mysql">1. MySQL</a></li><li><a href="#11-db-연결">1.1 DB 연결</a></li><li><a href="#12-pandas의-to_sql">1.2 pandas의 to_sql().</a></li><li><a href="#2-mongodb">2. MongoDB</a></li><li><a href="#21-db-연결">2.1 DB 연결</a></li></ul>
 
             </nav>
           </aside>
         
-        <h2 id="1-mysql">1. <strong>MySQL</strong></h2>
+        <p>파이썬을 이용해 MySQL과 MongoDB에 접근하는 방법을 알아보자.</p>
+
+<h2 id="1-mysql">1. <strong>MySQL</strong></h2>
 <h2 id="11-db-연결">1.1 DB 연결</h2>
 <div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">sys</span>
@@ -363,18 +365,14 @@
 
 </code></pre></div></div>
 
-<p align="center">
-<img src="../assets/images/to_sql output.png" width="650" height="300" />
-</p>
-
 <ul>
   <li>
     <p>참고자료</p>
 
     <ul>
-      <li>https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.to_sql.html</li>
-      <li>https://docs.sqlalchemy.org/en/13/core/engines.html</li>
-      <li>https://towardsdatascience.com/using-aws-rds-and-python-together-5718a6878e4c</li>
+      <li><a href="https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.to_sql.html">pandas.DataFram.to_sql 문서</a></li>
+      <li><a href="https://docs.sqlalchemy.org/en/13/core/engines.html">sqlalchemy 문서</a></li>
+      <li><a href="https://towardsdatascience.com/using-aws-rds-and-python-together-5718a6878e4c">관련 Medium 게시물 - Using AWS RDS and python together</a></li>
     </ul>
   </li>
 </ul>
@@ -406,16 +404,13 @@
 </span><span class="kn">import</span> <span class="nn">pprint</span>
 <span class="n">pprint</span><span class="p">.</span><span class="n">pprint</span><span class="p">(</span><span class="n">collection</span><span class="p">.</span><span class="n">find_one</span><span class="p">())</span>
 </code></pre></div></div>
-<p align="center">
-<img src="../assets/images/pymongo output.png" width="700" height="450" />
-</p>
 
 <ul>
   <li>
     <p>참고자료</p>
 
     <ul>
-      <li>https://pymongo.readthedocs.io/en/stable/tutorial.html</li>
+      <li><a href="https://pymongo.readthedocs.io/en/stable/tutorial.html">pymongo 공식 tutorial</a></li>
     </ul>
   </li>
 </ul>
@@ -432,7 +427,7 @@
   
 
   <p class="page__taxonomy">
-    <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> Tags: </strong>
+    <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> 태그: </strong>
     <span itemprop="keywords">
     
       <a href="/tags/#data-engineering" class="page__taxonomy-item p-category" rel="tag">data engineering</a><span class="sep">, </span>
@@ -451,7 +446,7 @@
   
 
   <p class="page__taxonomy">
-    <strong><i class="fas fa-fw fa-folder-open" aria-hidden="true"></i> Categories: </strong>
+    <strong><i class="fas fa-fw fa-folder-open" aria-hidden="true"></i> 카테고리: </strong>
     <span itemprop="keywords">
     
       <a href="/categories/#da" class="page__taxonomy-item p-category" rel="tag">DA</a><span class="sep">, </span>
@@ -464,20 +459,20 @@
 
         
 
-  <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time class="dt-published" datetime="2021-11-21T00:00:00-05:00">November 21, 2021</time></p>
+  <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> 업데이트:</strong> <time class="dt-published" datetime="2021-11-21T00:00:00+00:00">November 21, 2021</time></p>
 
       </footer>
 
       <section class="page__share">
   
-    <h4 class="page__share-title">Share on</h4>
+    <h4 class="page__share-title">공유하기</h4>
   
 
-  <a href="https://twitter.com/intent/tweet?text=%EB%8D%B0%EC%9D%B4%ED%84%B0%EB%B2%A0%EC%9D%B4%EC%8A%A4+%EC%97%B0%EA%B2%B0%20http%3A%2F%2Flocalhost%3A4000%2Fde%2Fda%2FConnect_to_DB%28mysql%2Cmongo%29%2F" class="btn btn--twitter" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Twitter"><i class="fab fa-fw fa-twitter" aria-hidden="true"></i><span> Twitter</span></a>
+  <a href="https://twitter.com/intent/tweet?text=%EB%8D%B0%EC%9D%B4%ED%84%B0%EB%B2%A0%EC%9D%B4%EC%8A%A4+%EC%97%B0%EA%B2%B0%20http%3A%2F%2Flocalhost%3A4000%2Fde%2Fda%2FConnect_to_DB%28mysql%2Cmongo%29%2F" class="btn btn--twitter" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="공유하기 Twitter"><i class="fab fa-fw fa-twitter" aria-hidden="true"></i><span> Twitter</span></a>
 
-  <a href="https://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Flocalhost%3A4000%2Fde%2Fda%2FConnect_to_DB%28mysql%2Cmongo%29%2F" class="btn btn--facebook" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Facebook"><i class="fab fa-fw fa-facebook" aria-hidden="true"></i><span> Facebook</span></a>
+  <a href="https://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Flocalhost%3A4000%2Fde%2Fda%2FConnect_to_DB%28mysql%2Cmongo%29%2F" class="btn btn--facebook" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="공유하기 Facebook"><i class="fab fa-fw fa-facebook" aria-hidden="true"></i><span> Facebook</span></a>
 
-  <a href="https://www.linkedin.com/shareArticle?mini=true&url=http%3A%2F%2Flocalhost%3A4000%2Fde%2Fda%2FConnect_to_DB%28mysql%2Cmongo%29%2F" class="btn btn--linkedin" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on LinkedIn"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i><span> LinkedIn</span></a>
+  <a href="https://www.linkedin.com/shareArticle?mini=true&url=http%3A%2F%2Flocalhost%3A4000%2Fde%2Fda%2FConnect_to_DB%28mysql%2Cmongo%29%2F" class="btn btn--linkedin" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="공유하기 LinkedIn"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i><span> LinkedIn</span></a>
 </section>
 
 
@@ -485,10 +480,10 @@
   <nav class="pagination">
     
       <a href="/da/Dealing_to_missing_data/" class="pagination--pager" title="결측값 다루기
-">Previous</a>
+">이전</a>
     
     
-      <a href="#" class="pagination--pager disabled">Next</a>
+      <a href="#" class="pagination--pager disabled">다음</a>
     
   </nav>
 
@@ -500,7 +495,7 @@
   
   
     <div class="page__related">
-      <h2 class="page__related-title">You may also enjoy</h2>
+      <h2 class="page__related-title">참고</h2>
       <div class="grid__wrapper">
         
           
@@ -544,7 +539,7 @@
         <div class="page__footer-follow">
   <ul class="social-icons">
     
-      <li><strong>Follow:</strong></li>
+      <li><strong>팔로우:</strong></li>
     
 
     
@@ -560,7 +555,7 @@
     
 
     
-      <li><a href="/feed.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+      <li><a href="/feed.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> 피드</a></li>
     
   </ul>
 </div>

@@ -5,7 +5,7 @@
   Free for personal and commercial use under the MIT license
   https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
 -->
-<html lang="en" class="no-js">
+<html lang="ko" class="no-js">
   <head>
     <meta charset="utf-8">
 
@@ -20,7 +20,7 @@
 
 
 <meta property="og:type" content="article">
-<meta property="og:locale" content="en_US">
+<meta property="og:locale" content="ko_KR">
 <meta property="og:site_name" content="Lego">
 <meta property="og:title" content="결측값 다루기">
 <meta property="og:url" content="http://localhost:4000/da/Dealing_to_missing_data/">
@@ -34,7 +34,7 @@
 
 
 
-  <meta property="article:published_time" content="2021-11-18T00:00:00-05:00">
+  <meta property="article:published_time" content="2021-11-18T00:00:00+00:00">
 
 
 
@@ -131,7 +131,7 @@
             </li></ul>
         
         <button class="greedy-nav__toggle hidden" type="button">
-          <span class="visually-hidden">Toggle menu</span>
+          <span class="visually-hidden">토글 메뉴</span>
           <div class="navicon"></div>
         </button>
         <ul class="hidden-links hidden"></ul>
@@ -175,7 +175,7 @@
   </div>
 
   <div class="author__urls-wrapper">
-    <button class="btn btn--inverse">Follow</button>
+    <button class="btn btn--inverse">팔로우</button>
     <ul class="author__urls social-icons">
       
         <li itemprop="homeLocation" itemscope itemtype="https://schema.org/Place">
@@ -267,7 +267,7 @@
   <article class="page h-entry" itemscope itemtype="https://schema.org/CreativeWork">
     <meta itemprop="headline" content="결측값 다루기">
     <meta itemprop="description" content="데이터 분석을 하면서 필수적으로 하는 작업이 ‘결측값 확인 및 처리’이다. 파이썬에서 어떤 값을 결측으로 인식하는지 확인하고, 결측이 있는 경우 함수들이 어떻게 작용하는지 알아보자.">
-    <meta itemprop="datePublished" content="2021-11-18T00:00:00-05:00">
+    <meta itemprop="datePublished" content="2021-11-18T00:00:00+00:00">
     
 
     <div class="page__inner-wrap">
@@ -287,7 +287,7 @@
         
           <aside class="sidebar__right sticky">
             <nav class="toc">
-              <header><h4 class="nav__title"><i class="fas fa-file-alt"></i> On this page</h4></header>
+              <header><h4 class="nav__title"><i class="fas fa-file-alt"></i> On This Page</h4></header>
               <ul class="toc__menu"><li><a href="#1-결측값-확인">1. 결측값 확인</a></li><li><a href="#2-결측값-연산">2. 결측값 연산</a></li><li><a href="#3-pandas의-groupby">3. pandas의 groupby</a></li></ul>
 
             </nav>
@@ -393,7 +393,7 @@
   
 
   <p class="page__taxonomy">
-    <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> Tags: </strong>
+    <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> 태그: </strong>
     <span itemprop="keywords">
     
       <a href="/tags/#data-analysis" class="page__taxonomy-item p-category" rel="tag">data analysis</a><span class="sep">, </span>
@@ -416,7 +416,7 @@
   
 
   <p class="page__taxonomy">
-    <strong><i class="fas fa-fw fa-folder-open" aria-hidden="true"></i> Categories: </strong>
+    <strong><i class="fas fa-fw fa-folder-open" aria-hidden="true"></i> 카테고리: </strong>
     <span itemprop="keywords">
     
       <a href="/categories/#da" class="page__taxonomy-item p-category" rel="tag">DA</a>
@@ -427,31 +427,31 @@
 
         
 
-  <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time class="dt-published" datetime="2021-11-18T00:00:00-05:00">November 18, 2021</time></p>
+  <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> 업데이트:</strong> <time class="dt-published" datetime="2021-11-18T00:00:00+00:00">November 18, 2021</time></p>
 
       </footer>
 
       <section class="page__share">
   
-    <h4 class="page__share-title">Share on</h4>
+    <h4 class="page__share-title">공유하기</h4>
   
 
-  <a href="https://twitter.com/intent/tweet?text=%EA%B2%B0%EC%B8%A1%EA%B0%92+%EB%8B%A4%EB%A3%A8%EA%B8%B0%20http%3A%2F%2Flocalhost%3A4000%2Fda%2FDealing_to_missing_data%2F" class="btn btn--twitter" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Twitter"><i class="fab fa-fw fa-twitter" aria-hidden="true"></i><span> Twitter</span></a>
+  <a href="https://twitter.com/intent/tweet?text=%EA%B2%B0%EC%B8%A1%EA%B0%92+%EB%8B%A4%EB%A3%A8%EA%B8%B0%20http%3A%2F%2Flocalhost%3A4000%2Fda%2FDealing_to_missing_data%2F" class="btn btn--twitter" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="공유하기 Twitter"><i class="fab fa-fw fa-twitter" aria-hidden="true"></i><span> Twitter</span></a>
 
-  <a href="https://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Flocalhost%3A4000%2Fda%2FDealing_to_missing_data%2F" class="btn btn--facebook" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Facebook"><i class="fab fa-fw fa-facebook" aria-hidden="true"></i><span> Facebook</span></a>
+  <a href="https://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Flocalhost%3A4000%2Fda%2FDealing_to_missing_data%2F" class="btn btn--facebook" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="공유하기 Facebook"><i class="fab fa-fw fa-facebook" aria-hidden="true"></i><span> Facebook</span></a>
 
-  <a href="https://www.linkedin.com/shareArticle?mini=true&url=http%3A%2F%2Flocalhost%3A4000%2Fda%2FDealing_to_missing_data%2F" class="btn btn--linkedin" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on LinkedIn"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i><span> LinkedIn</span></a>
+  <a href="https://www.linkedin.com/shareArticle?mini=true&url=http%3A%2F%2Flocalhost%3A4000%2Fda%2FDealing_to_missing_data%2F" class="btn btn--linkedin" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="공유하기 LinkedIn"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i><span> LinkedIn</span></a>
 </section>
 
 
       
   <nav class="pagination">
     
-      <a href="#" class="pagination--pager disabled">Previous</a>
+      <a href="#" class="pagination--pager disabled">이전</a>
     
     
       <a href="/de/da/Connect_to_DB(mysql,mongo)/" class="pagination--pager" title="데이터베이스 연결
-">Next</a>
+">다음</a>
     
   </nav>
 
@@ -463,7 +463,7 @@
   
   
     <div class="page__related">
-      <h2 class="page__related-title">You may also enjoy</h2>
+      <h2 class="page__related-title">참고</h2>
       <div class="grid__wrapper">
         
           
@@ -482,13 +482,7 @@
     
 
 
-    <p class="archive__item-excerpt" itemprop="description">1. MySQL
-1.1 DB 연결
-```py
-import os
-import sys
-import logging
-import pymysql
+    <p class="archive__item-excerpt" itemprop="description">파이썬을 이용해 MySQL과 MongoDB에 접근하는 방법을 알아보자.
 
 </p>
   </article>
@@ -512,7 +506,7 @@ import pymysql
         <div class="page__footer-follow">
   <ul class="social-icons">
     
-      <li><strong>Follow:</strong></li>
+      <li><strong>팔로우:</strong></li>
     
 
     
@@ -528,7 +522,7 @@ import pymysql
     
 
     
-      <li><a href="/feed.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+      <li><a href="/feed.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> 피드</a></li>
     
   </ul>
 </div>

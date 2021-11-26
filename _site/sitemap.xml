@@ -2,11 +2,11 @@
 <urlset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd" xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 <url>
 <loc>http://localhost:4000/da/Dealing_to_missing_data/</loc>
-<lastmod>2021-11-18T00:00:00-05:00</lastmod>
+<lastmod>2021-11-18T00:00:00+00:00</lastmod>
 </url>
 <url>
 <loc>http://localhost:4000/de/da/Connect_to_DB(mysql,mongo)/</loc>
-<lastmod>2021-11-21T00:00:00-05:00</lastmod>
+<lastmod>2021-11-21T00:00:00+00:00</lastmod>
 </url>
 <url>
 <loc>http://localhost:4000/about/</loc>
@@ -19,15 +19,15 @@
 </url>
 <url>
 <loc>http://localhost:4000/categories/</loc>
-</url>
-<url>
-<loc>http://localhost:4000/</loc>
 </url>
 <url>
 <loc>http://localhost:4000/DA/</loc>
 </url>
 <url>
 <loc>http://localhost:4000/DE/</loc>
+</url>
+<url>
+<loc>http://localhost:4000/</loc>
 </url>
 <url>
 <loc>http://localhost:4000/search/</loc>

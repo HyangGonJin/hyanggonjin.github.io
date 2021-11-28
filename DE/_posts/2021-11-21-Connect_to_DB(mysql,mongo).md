@@ -76,6 +76,11 @@ print(cursor.fetchall())
 
 ```
 
+<p align="center">
+<img src = './../assets/images/to_sql_output.png' width="700" height="300">
+<!-- </img> -->
+</p>
+
 * 참고자료
   
   * [pandas.DataFram.to_sql 문서](https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.to_sql.html)
@@ -111,6 +116,10 @@ collection = db.zips
 import pprint
 pprint.pprint(collection.find_one())
 ```
+<p align="center">
+<img src = './../assets/images/pymongo_output.png' width="700" height="300">
+<!-- </img> -->
+</p>
 
 
 

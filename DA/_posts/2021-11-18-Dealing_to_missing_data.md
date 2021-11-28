@@ -34,7 +34,7 @@ df.isna()
 ```
 
 <p align="center">
-<img src = '../assets/images/missing1_output.png' width="650" height="160">
+<img src = './../assets/images/missing1_output.png' width="650" height="160">
 <!-- </img> -->
 </p>
 
@@ -42,7 +42,7 @@ df.isna()
 
 
 <p align="center">
-<img src = '../assets/images/pandas_missing_options.png' width="600" height="120">
+<img src = './../assets/images/pandas_missing_options.png' width="600" height="120">
         <figcaption align="center"> <출처 : pandas 공식문서> </figcaption>
 <!-- </img> -->
 </p> 
@@ -73,7 +73,7 @@ print(np.nanmin(lst1)) # 1.0
 
 <!-- ![결측관련 함수](./images/nan_function.png)    -->
 <p align="center">
-<img src = '../assets/images/nan_function.png' width="600" height="500">
+<img src = './../assets/images/nan_function.png' width="600" height="500">
         <figcaption align="center"> <출처 : numpy 공식문서> </figcaption>
 <!-- </img> -->
 </p> 
@@ -99,7 +99,7 @@ df1.groupby("grp",as_index=False).aggregate({'var1':np.sum,'var2':np.mean})
 ```
 
 <p align="center">
-<img src = '../assets/images/pandas_groupby.png' width="700" height="450">
+<img src = './../assets/images/pandas_groupby.png' width="700" height="450">
 </p>
 
 결측값이 포함된 데이터프레임을 이용해 pandas의 `groupby` 함수를 적용한 결과를 볼 때, 결측을 제외한 결과를 계산함을 알 수 있다.

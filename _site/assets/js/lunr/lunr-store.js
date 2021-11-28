@@ -6,8 +6,8 @@ var store = [{
         "teaser": null
       },{
         "title": "데이터베이스 연결",
-        "excerpt":"파이썬을 이용해 MySQL과 MongoDB에 접근하는 방법을 알아보자. 1. MySQL 1.1 DB 연결 import os import sys import logging import pymysql # DB 정보. host = \"your host!\" port = \"your port!\" username = \"your username!\" database = \"your database name!\" password = \"your password!!\" # MySQL DB 연결. conn =...","categories": ["DE","DA"],
+        "excerpt":"파이썬을 이용해 MySQL과 MongoDB에 접근하는 방법을 알아보자. 1. MySQL 1.1 DB 연결 import os import sys import logging import pymysql # DB 정보. host = \"your host!\" port = \"your port!\" username = \"your username!\" database = \"your database name!\" password = \"your password!!\" # MySQL DB 연결. conn =...","categories": ["DE"],
         "tags": ["data engineering","python"],
-        "url": "/de/da/Connect_to_DB(mysql,mongo)/",
+        "url": "/de/Connect_to_DB(mysql,mongo)/",
         "teaser": null
       }]

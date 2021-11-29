@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.0">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2021-11-29T11:17:58+00:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">Lego</title><subtitle>#Statistics #ML #Python #R</subtitle><author><name>HyangGon Jin</name></author><entry><title type="html">데이터베이스 연결</title><link href="http://localhost:4000/de/Connect_to_DB(mysql,mongo)/" rel="alternate" type="text/html" title="데이터베이스 연결" /><published>2021-11-21T00:00:00+00:00</published><updated>2021-11-21T00:00:00+00:00</updated><id>http://localhost:4000/de/Connect_to_DB(mysql,mongo)</id><content type="html" xml:base="http://localhost:4000/de/Connect_to_DB(mysql,mongo)/">&lt;p&gt;파이썬을 이용해 MySQL과 MongoDB에 접근하는 방법을 알아보자.&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.0">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2021-11-29T11:22:24+00:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">Lego</title><subtitle>#Statistics #ML #Python #R</subtitle><author><name>HyangGon Jin</name></author><entry><title type="html">데이터베이스 연결</title><link href="http://localhost:4000/de/Connect_to_DB(mysql,mongo)/" rel="alternate" type="text/html" title="데이터베이스 연결" /><published>2021-11-21T00:00:00+00:00</published><updated>2021-11-21T00:00:00+00:00</updated><id>http://localhost:4000/de/Connect_to_DB(mysql,mongo)</id><content type="html" xml:base="http://localhost:4000/de/Connect_to_DB(mysql,mongo)/">&lt;p&gt;파이썬을 이용해 MySQL과 MongoDB에 접근하는 방법을 알아보자.&lt;/p&gt;
 
 &lt;h2 id=&quot;1-mysql&quot;&gt;1. &lt;strong&gt;MySQL&lt;/strong&gt;&lt;/h2&gt;
 &lt;h2 id=&quot;11-db-연결&quot;&gt;1.1 DB 연결&lt;/h2&gt;
@@ -71,7 +71,7 @@
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
 &lt;p align=&quot;center&quot;&gt;
-&lt;img src=&quot;./../assets/images/to_sql_output.png&quot; width=&quot;700&quot; height=&quot;300&quot; /&gt;
+&lt;img src=&quot;/assets/images/to_sql_output.png&quot; width=&quot;700&quot; height=&quot;300&quot; /&gt;
 &lt;!-- &lt;/img&gt; --&gt;
 &lt;/p&gt;
 
@@ -156,7 +156,7 @@
 &lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;nan&lt;/code&gt;과 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;None&lt;/code&gt;은 결측값으로 정확히 인식하였으나, ““(빈 칸)의 경우는 결측으로 인식하지 못했다.&lt;/p&gt;
 
 &lt;p align=&quot;center&quot;&gt;
-&lt;img src=&quot;./assets/images/pandas_missing_options.png&quot; width=&quot;600&quot; height=&quot;120&quot; /&gt;
+&lt;img src=&quot;/assets/images/pandas_missing_options.png&quot; width=&quot;600&quot; height=&quot;120&quot; /&gt;
         &lt;figcaption align=&quot;center&quot;&gt; &amp;lt;출처 : pandas 공식문서&amp;gt; &lt;/figcaption&gt;
 &lt;!-- &lt;/img&gt; --&gt;
 &lt;/p&gt;
@@ -185,7 +185,7 @@
 
 &lt;!-- ![결측관련 함수](./images/nan_function.png)    --&gt;
 &lt;p align=&quot;center&quot;&gt;
-&lt;img src=&quot;./assets/images/nan_function.png&quot; width=&quot;600&quot; height=&quot;500&quot; /&gt;
+&lt;img src=&quot;/assets/images/nan_function.png&quot; width=&quot;600&quot; height=&quot;500&quot; /&gt;
         &lt;figcaption align=&quot;center&quot;&gt; &amp;lt;출처 : numpy 공식문서&amp;gt; &lt;/figcaption&gt;
 &lt;!-- &lt;/img&gt; --&gt;
 &lt;/p&gt;
@@ -210,7 +210,7 @@
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
 &lt;p align=&quot;center&quot;&gt;
-&lt;img src=&quot;./assets/images/pandas_groupby.png&quot; width=&quot;700&quot; height=&quot;450&quot; /&gt;
+&lt;img src=&quot;/assets/images/pandas_groupby.png&quot; width=&quot;700&quot; height=&quot;450&quot; /&gt;
 &lt;/p&gt;
 
 &lt;p&gt;결측값이 포함된 데이터프레임을 이용해 pandas의 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;groupby&lt;/code&gt; 함수를 적용한 결과를 볼 때, 결측을 제외한 결과를 계산함을 알 수 있다.&lt;/p&gt;</content><author><name>HyangGon Jin</name></author><category term="DA" /><category term="data analysis" /><category term="python" /><category term="numpy" /><category term="pandas" /><summary type="html">데이터 분석을 하면서 필수적으로 하는 작업이 ‘결측값 확인 및 처리’이다. 파이썬에서 어떤 값을 결측으로 인식하는지 확인하고, 결측이 있는 경우 함수들이 어떻게 작용하는지 알아보자.</summary></entry></feed>

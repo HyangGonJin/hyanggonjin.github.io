@@ -77,7 +77,7 @@ print(cursor.fetchall())
 ```
 
 <p align="center">
-<img src = './../assets/images/to_sql_output.png' width="700" height="300">
+<img src = '/assets/images/to_sql_output.png' width="700" height="300">
 <!-- </img> -->
 </p>
 
@@ -117,7 +117,7 @@ import pprint
 pprint.pprint(collection.find_one())
 ```
 <p align="center">
-<img src = './../assets/images/pymongo_output.png' width="700" height="300">
+<img src = '/assets/images/pymongo_output.png' width="700" height="300">
 <!-- </img> -->
 </p>
 

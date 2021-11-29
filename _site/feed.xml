@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.0">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2021-11-29T11:22:24+00:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">Lego</title><subtitle>#Statistics #ML #Python #R</subtitle><author><name>HyangGon Jin</name></author><entry><title type="html">데이터베이스 연결</title><link href="http://localhost:4000/de/Connect_to_DB(mysql,mongo)/" rel="alternate" type="text/html" title="데이터베이스 연결" /><published>2021-11-21T00:00:00+00:00</published><updated>2021-11-21T00:00:00+00:00</updated><id>http://localhost:4000/de/Connect_to_DB(mysql,mongo)</id><content type="html" xml:base="http://localhost:4000/de/Connect_to_DB(mysql,mongo)/">&lt;p&gt;파이썬을 이용해 MySQL과 MongoDB에 접근하는 방법을 알아보자.&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.0">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2021-11-29T11:22:29+00:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">Lego</title><subtitle>#Statistics #ML #Python #R</subtitle><author><name>HyangGon Jin</name></author><entry><title type="html">데이터베이스 연결</title><link href="http://localhost:4000/de/Connect_to_DB(mysql,mongo)/" rel="alternate" type="text/html" title="데이터베이스 연결" /><published>2021-11-21T00:00:00+00:00</published><updated>2021-11-21T00:00:00+00:00</updated><id>http://localhost:4000/de/Connect_to_DB(mysql,mongo)</id><content type="html" xml:base="http://localhost:4000/de/Connect_to_DB(mysql,mongo)/">&lt;p&gt;파이썬을 이용해 MySQL과 MongoDB에 접근하는 방법을 알아보자.&lt;/p&gt;
 
 &lt;h2 id=&quot;1-mysql&quot;&gt;1. &lt;strong&gt;MySQL&lt;/strong&gt;&lt;/h2&gt;
 &lt;h2 id=&quot;11-db-연결&quot;&gt;1.1 DB 연결&lt;/h2&gt;
@@ -115,7 +115,7 @@
 &lt;span class=&quot;n&quot;&gt;pprint&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pprint&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;collection&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;find_one&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;())&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 &lt;p align=&quot;center&quot;&gt;
-&lt;img src=&quot;./../assets/images/pymongo_output.png&quot; width=&quot;700&quot; height=&quot;300&quot; /&gt;
+&lt;img src=&quot;/assets/images/pymongo_output.png&quot; width=&quot;700&quot; height=&quot;300&quot; /&gt;
 &lt;!-- &lt;/img&gt; --&gt;
 &lt;/p&gt;
 

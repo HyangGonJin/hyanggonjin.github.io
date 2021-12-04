@@ -7,8 +7,9 @@ tags:
   - python
 toc : True
 toc_sticky: true
+last_modified_at: 2021-12-05
 ---
-파이썬을 이용해 MySQL과 MongoDB에 접근하는 방법을 알아보자. 
+파이썬에서 DB에 직접 연결이 필요한 경우가 있습니다. 이에, 파이썬을 이용해 MySQL과 MongoDB에 접근하는 방법을 알아봅니다. 
 
 ## 1. **MySQL**
 ## 1.1 DB 연결
@@ -44,7 +45,7 @@ cursor.execute(query)
 print(cursor.fetchall())
 ```
 
-* 참고할 내용
+* **참고**
 
   * CHARSET='utf8'을 디폴트로 해야 한글로 입력된 파일을 올리는데 문제가 생기지 않음.
   * cursor를 통해 실행한 query의 결과는 `cursor.fetchall()`을 통해서 확인할 수 있음.

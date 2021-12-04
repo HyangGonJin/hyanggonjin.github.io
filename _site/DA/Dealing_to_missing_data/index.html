@@ -10,7 +10,7 @@
     <meta charset="utf-8">
 
 <!-- begin _includes/seo.html --><title>결측값 다루기 - Lego</title>
-<meta name="description" content="데이터 분석을 하면서 필수적으로 하는 작업이 ‘결측값 확인 및 처리’이다.  파이썬에서 어떤 값을 결측으로 인식하는지 확인하고, 결측이 있는 경우 함수들이 어떻게 작용하는지 알아보자.">
+<meta name="description" content="데이터 분석을 하면서 필수적으로 하는 작업이 ‘결측값 확인 및 처리’입니다.  파이썬에서 어떤 값을 결측으로 인식하는지 확인하고, 결측이 있는 경우 함수들이 어떻게 작용하는지 알아봅니다.">
 
 
   <meta name="author" content="HyangGon Jin">
@@ -26,7 +26,7 @@
 <meta property="og:url" content="http://localhost:4000/da/Dealing_to_missing_data/">
 
 
-  <meta property="og:description" content="데이터 분석을 하면서 필수적으로 하는 작업이 ‘결측값 확인 및 처리’이다.  파이썬에서 어떤 값을 결측으로 인식하는지 확인하고, 결측이 있는 경우 함수들이 어떻게 작용하는지 알아보자.">
+  <meta property="og:description" content="데이터 분석을 하면서 필수적으로 하는 작업이 ‘결측값 확인 및 처리’입니다.  파이썬에서 어떤 값을 결측으로 인식하는지 확인하고, 결측이 있는 경우 함수들이 어떻게 작용하는지 알아봅니다.">
 
 
 
@@ -37,6 +37,8 @@
   <meta property="article:published_time" content="2021-11-18T00:00:00+00:00">
 
 
+
+  <meta property="article:modified_time" content="2021-12-05T00:00:00+00:00">
 
 
 
@@ -266,9 +268,9 @@
 
   <article class="page h-entry" itemscope itemtype="https://schema.org/CreativeWork">
     <meta itemprop="headline" content="결측값 다루기">
-    <meta itemprop="description" content="데이터 분석을 하면서 필수적으로 하는 작업이 ‘결측값 확인 및 처리’이다. 파이썬에서 어떤 값을 결측으로 인식하는지 확인하고, 결측이 있는 경우 함수들이 어떻게 작용하는지 알아보자.">
+    <meta itemprop="description" content="데이터 분석을 하면서 필수적으로 하는 작업이 ‘결측값 확인 및 처리’입니다. 파이썬에서 어떤 값을 결측으로 인식하는지 확인하고, 결측이 있는 경우 함수들이 어떻게 작용하는지 알아봅니다.">
     <meta itemprop="datePublished" content="2021-11-18T00:00:00+00:00">
-    
+    <meta itemprop="dateModified" content="2021-12-05T00:00:00+00:00">
 
     <div class="page__inner-wrap">
       
@@ -293,11 +295,11 @@
             </nav>
           </aside>
         
-        <p>데이터 분석을 하면서 필수적으로 하는 작업이 ‘결측값 확인 및 처리’이다. <br />
-파이썬에서 어떤 값을 결측으로 인식하는지 확인하고, 결측이 있는 경우 함수들이 어떻게 작용하는지 알아보자.</p>
+        <p>데이터 분석을 하면서 필수적으로 하는 작업이 ‘결측값 확인 및 처리’입니다. <br />
+파이썬에서 어떤 값을 결측으로 인식하는지 확인하고, 결측이 있는 경우 함수들이 어떻게 작용하는지 알아봅니다.</p>
 
 <h2 id="1-결측값-확인">1. 결측값 확인</h2>
-<p>우선, 파이썬에서 어떤 값들을 결측으로 인식하는지 알아보자.</p>
+<p>우선, 파이썬에서 어떤 값들을 결측으로 인식하는지 알아봅니다.</p>
 
 <div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="n">np</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="n">pd</span>
@@ -319,7 +321,7 @@
 <!-- </img> -->
 </p>
 
-<p><code class="language-plaintext highlighter-rouge">nan</code>과 <code class="language-plaintext highlighter-rouge">None</code>은 결측값으로 정확히 인식하였으나, ““(빈 칸)의 경우는 결측으로 인식하지 못했다.</p>
+<p><code class="language-plaintext highlighter-rouge">nan</code>과 <code class="language-plaintext highlighter-rouge">None</code>은 결측값으로 정확히 인식하였으나, ““(빈 칸)의 경우는 결측으로 인식하지 못했습니다.</p>
 
 <p align="center">
 <img src="/assets/images/pandas_missing_options.png" width="600" height="120" />
@@ -327,11 +329,11 @@
 <!-- </img> -->
 </p>
 
-<p>참고로, pandas의 <code class="language-plaintext highlighter-rouge">read_csv</code> 함수의 ‘na_values’ 옵션을 보면 여러 형태의 결측값을 지원하고 있고, 파일에서의 빈 칸을 결측으로 처리하는 것으로 보인다.</p>
+<p>참고로, pandas의 <code class="language-plaintext highlighter-rouge">read_csv</code> 함수의 ‘na_values’ 옵션을 보면 여러 형태의 결측값을 지원하고 있습니다.</p>
 
 <h2 id="2-결측값-연산">2. 결측값 연산</h2>
 
-<p>다음으로, 결측값이 있는 경우 다양한 연산 or 함수들이 어떻게 적용되는지 알아보자.</p>
+<p>다음으로, 결측값이 있는 경우 다양한 연산 or 함수들이 어떻게 적용되는지 알아봅니다.</p>
 
 <div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="n">np</span>
 
@@ -347,7 +349,7 @@
 </span><span class="k">print</span><span class="p">(</span><span class="n">np</span><span class="p">.</span><span class="n">nanmin</span><span class="p">(</span><span class="n">lst1</span><span class="p">))</span> <span class="c1"># 1.0
 </span></code></pre></div></div>
 
-<p>위 결과에서 보듯이 결측이 포함된 경우, 일반적으로 하는 사칙연산이나 <code class="language-plaintext highlighter-rouge">max</code>, <code class="language-plaintext highlighter-rouge">min</code> 등과 같은 함수들의 사용한다면 무조건 결측을 출력한다. 이에 대한 해결법 중 하나로 numpy에서 지원하는 다양한 함수들을 이용할 수 있다. numpy에서 지원하는 결측값과 관련된 함수들을 아래와 같으니 참고하길 바란다.</p>
+<p>위 결과에서 보듯이 결측이 포함된 경우, 일반적으로 하는 사칙연산이나 <code class="language-plaintext highlighter-rouge">max</code>, <code class="language-plaintext highlighter-rouge">min</code> 등과 같은 함수들의 사용한다면 무조건 결측을 출력합니다. 이에 대한 해결법 중 하나로 numpy에서 지원하는 다양한 함수들을 이용할 수 있습니다. numpy에서 지원하는 결측값과 관련된 함수들을 아래를 참고하길 바랍니다.</p>
 
 <!-- ![결측관련 함수](./images/nan_function.png)    -->
 <p align="center">
@@ -379,7 +381,7 @@
 <img src="/assets/images/pandas_groupby.png" width="700" height="450" />
 </p>
 
-<p>결측값이 포함된 데이터프레임을 이용해 pandas의 <code class="language-plaintext highlighter-rouge">groupby</code> 함수를 적용한 결과를 볼 때, 결측을 제외한 결과를 계산함을 알 수 있다.</p>
+<p>결측값이 포함된 데이터프레임을 이용해 pandas의 <code class="language-plaintext highlighter-rouge">groupby</code> 함수를 적용한 결과를 볼 때, 결측을 제외한 결과를 계산함을 알 수 있습니다.</p>
 
         
       </section>
@@ -427,7 +429,7 @@
 
         
 
-  <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> 업데이트:</strong> <time class="dt-published" datetime="2021-11-18T00:00:00+00:00">November 18, 2021</time></p>
+  <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> 업데이트:</strong> <time class="dt-published" datetime="2021-12-05">December 5, 2021</time></p>
 
       </footer>
 
@@ -482,7 +484,7 @@
     
 
 
-    <p class="archive__item-excerpt" itemprop="description">파이썬을 이용해 MySQL과 MongoDB에 접근하는 방법을 알아보자.
+    <p class="archive__item-excerpt" itemprop="description">파이썬에서 DB에 직접 연결이 필요한 경우가 있습니다. 이에, 파이썬을 이용해 MySQL과 MongoDB에 접근하는 방법을 알아봅니다.
 
 </p>
   </article>

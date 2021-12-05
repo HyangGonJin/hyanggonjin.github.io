@@ -10,4 +10,10 @@ var store = [{
         "tags": ["data engineering","python"],
         "url": "/de/Connect_to_DB(mysql,mongo)/",
         "teaser": null
+      },{
+        "title": "유용한 Python 함수 - Part 1.",
+        "excerpt":"많은 경우에 수집된 데이터가 그대로 데이터 분석에 사용되지 않습니다. 사용하는 방법론에 따라, 분석 대상에 따라, 이외 여러 가지의 이유로 데이터를 변환하는 작업을 합니다. 이런 데이터 핸들링에 도움이 되는 python 함수들을 알아보고자 합니다. enumerate enumerate(*args, **kwargs) 예시) 반복문에서 순서와 값이 모두 필요할 때 사용. a = ['apple','banana','cat','dog'] for index, element in...","categories": ["DA"],
+        "tags": ["data analysis","python","numpy","pandas"],
+        "url": "/da/useful_python_functions_1/",
+        "teaser": null
       }]

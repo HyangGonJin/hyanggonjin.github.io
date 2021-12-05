@@ -1,0 +1,776 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.24.0 by Michael Rose
+  Copyright 2013-2020 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="ko" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>유용한 Python 함수 - Part 1. - Lego</title>
+<meta name="description" content="많은 경우에 수집된 데이터가 그대로 데이터 분석에 사용되지 않습니다. 사용하는 방법론에 따라, 분석 대상에 따라, 이외 여러 가지의 이유로 데이터를 변환하는 작업을 합니다. 이런 데이터 핸들링에 도움이 되는 python 함수들을 알아보고자 합니다.">
+
+
+  <meta name="author" content="HyangGon Jin">
+  
+  <meta property="article:author" content="HyangGon Jin">
+  
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="ko_KR">
+<meta property="og:site_name" content="Lego">
+<meta property="og:title" content="유용한 Python 함수 - Part 1.">
+<meta property="og:url" content="http://localhost:4000/da/useful_python_functions_1/">
+
+
+  <meta property="og:description" content="많은 경우에 수집된 데이터가 그대로 데이터 분석에 사용되지 않습니다. 사용하는 방법론에 따라, 분석 대상에 따라, 이외 여러 가지의 이유로 데이터를 변환하는 작업을 합니다. 이런 데이터 핸들링에 도움이 되는 python 함수들을 알아보고자 합니다.">
+
+
+
+
+
+
+
+  <meta property="article:published_time" content="2021-12-02T00:00:00+00:00">
+
+
+
+  <meta property="article:modified_time" content="2021-12-05T00:00:00+00:00">
+
+
+
+  
+
+  
+
+
+<link rel="canonical" href="http://localhost:4000/da/useful_python_functions_1/">
+
+
+
+
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    
+      "@type": "Person",
+      "name": "HyangGon Jin",
+      "url": "http://localhost:4000/"
+    
+  }
+</script>
+
+
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+
+  <link href="/feed.xml" type="application/atom+xml" rel="alternate" title="Lego Feed">
+
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css"></noscript>
+
+
+
+    <!-- start custom head snippets -->
+
+<!-- insert favicons. use https://realfavicongenerator.net/ -->
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body class="layout--single">
+    <nav class="skip-links">
+  <ul>
+    <li><a href="#site-nav" class="screen-reader-shortcut">Skip to primary navigation</a></li>
+    <li><a href="#main" class="screen-reader-shortcut">Skip to content</a></li>
+    <li><a href="#footer" class="screen-reader-shortcut">Skip to footer</a></li>
+  </ul>
+</nav>
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+        <a class="site-title" href="/">
+          Lego
+          <span class="site-subtitle"></span>
+        </a>
+        <ul class="visible-links"><li class="masthead__menu-item">
+              <a href="/categories/">Category</a>
+            </li><li class="masthead__menu-item">
+              <a href="/tags/">Tag</a>
+            </li><li class="masthead__menu-item">
+              <a href="/about/">About</a>
+            </li><li class="masthead__menu-item">
+              <a href="/search/">Search</a>
+            </li></ul>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">토글 메뉴</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="https://schema.org/Person" class="h-card">
+
+  
+    <div class="author__avatar">
+      <a href="http://localhost:4000/">
+        <img src="/assets/images/blue_lego_ver.1.png" alt="HyangGon Jin" itemprop="image" class="u-photo">
+      </a>
+    </div>
+  
+
+  <div class="author__content">
+    <h3 class="author__name p-name" itemprop="name">
+      <a class="u-url" rel="me" href="http://localhost:4000/" itemprop="url">HyangGon Jin</a>
+    </h3>
+    
+      <div class="author__bio p-note" itemprop="description">
+        <p>#Statistics #ML #Python #R</p>
+
+      </div>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">팔로우</button>
+    <ul class="author__urls social-icons">
+      
+        <li itemprop="homeLocation" itemscope itemtype="https://schema.org/Place">
+          <i class="fas fa-fw fa-map-marker-alt" aria-hidden="true"></i> <span itemprop="name" class="p-locality">Seoul</span>
+        </li>
+      
+
+      
+        
+          
+            <li><a href="mailto:nike3616@gmail.com" rel="nofollow noopener noreferrer me"><i class="fas fa-fw fa-envelope-square" aria-hidden="true"></i><span class="label">Email</span></a></li>
+          
+        
+          
+        
+          
+        
+          
+            <li><a href="https://github.com/hyanggonjin" rel="nofollow noopener noreferrer me"><i class="fab fa-fw fa-github" aria-hidden="true"></i><span class="label">GitHub</span></a></li>
+          
+        
+          
+        
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs" rel="nofollow noopener noreferrer me">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+  
+  </div>
+
+
+
+  <article class="page h-entry" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="유용한 Python 함수 - Part 1.">
+    <meta itemprop="description" content="많은 경우에 수집된 데이터가 그대로 데이터 분석에 사용되지 않습니다. 사용하는 방법론에 따라, 분석 대상에 따라, 이외 여러 가지의 이유로 데이터를 변환하는 작업을 합니다. 이런 데이터 핸들링에 도움이 되는 python 함수들을 알아보고자 합니다.">
+    <meta itemprop="datePublished" content="2021-12-02T00:00:00+00:00">
+    <meta itemprop="dateModified" content="2021-12-05T00:00:00+00:00">
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <h1 id="page-title" class="page__title p-name" itemprop="headline">
+            <a href="http://localhost:4000/da/useful_python_functions_1/" class="u-url" itemprop="url">유용한 Python 함수 - Part 1.
+</a>
+          </h1>
+          
+
+
+        </header>
+      
+
+      <section class="page__content e-content" itemprop="text">
+        
+          <aside class="sidebar__right sticky">
+            <nav class="toc">
+              <header><h4 class="nav__title"><i class="fas fa-file-alt"></i> On This Page</h4></header>
+              <ul class="toc__menu"><li><a href="#enumerate">enumerate</a></li><li><a href="#zip">zip</a></li><li><a href="#map">map</a></li><li><a href="#crosstab">crosstab</a></li><li><a href="#cut">cut</a></li><li><a href="#qcut">qcut</a></li><li><a href="#select_dtypes">select_dtypes</a></li><li><a href="#idxmin--idxmax">idxmin / idxmax</a></li><li><a href="#nsmallest--nlargest">nsmallest &amp; nlargest</a></li><li><a href="#explode">explode</a></li></ul>
+
+            </nav>
+          </aside>
+        
+        <p>많은 경우에 수집된 데이터가 그대로 데이터 분석에 사용되지 않습니다. 사용하는 방법론에 따라, 분석 대상에 따라, 이외 여러 가지의 이유로 데이터를 변환하는 작업을 합니다. 이런 데이터 핸들링에 도움이 되는 python 함수들을 알아보고자 합니다.</p>
+
+<h2 id="enumerate">enumerate</h2>
+
+<ul>
+  <li>enumerate(*args, **kwargs)</li>
+  <li>예시) 반복문에서 순서와 값이 모두 필요할 때 사용.</li>
+</ul>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">a</span> <span class="o">=</span> <span class="p">[</span><span class="s">'apple'</span><span class="p">,</span><span class="s">'banana'</span><span class="p">,</span><span class="s">'cat'</span><span class="p">,</span><span class="s">'dog'</span><span class="p">]</span>
+
+<span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">element</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">a</span><span class="p">)</span> <span class="p">:</span>
+    <span class="k">print</span><span class="p">(</span><span class="sa">f</span><span class="s">"(</span><span class="si">{</span><span class="n">index</span><span class="si">}</span><span class="s"> : </span><span class="si">{</span><span class="n">element</span><span class="si">}</span><span class="s">)"</span><span class="p">)</span>
+<span class="c1"># (0 : apple)
+# (1 : banana)
+# (2 : cat)
+# (3 : dog)
+</span></code></pre></div></div>
+
+<h2 id="zip">zip</h2>
+
+<ul>
+  <li>zip(*iterables) –&gt; zip object.</li>
+  <li>예시) 쌍(pair)으로 반복(iterate)할 때 사용.</li>
+</ul>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">a</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">)]</span>
+<span class="n">b</span> <span class="o">=</span> <span class="p">[</span><span class="n">j</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">11</span><span class="p">)]</span>
+
+<span class="k">print</span><span class="p">(</span><span class="sa">f</span><span class="s">"a : </span><span class="si">{</span><span class="n">a</span><span class="si">}</span><span class="s">"</span><span class="p">)</span> <span class="c1"># a : [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+</span><span class="k">print</span><span class="p">(</span><span class="sa">f</span><span class="s">"b : </span><span class="si">{</span><span class="n">b</span><span class="si">}</span><span class="s">"</span><span class="p">)</span> <span class="c1"># b : [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+</span>
+<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">)</span> <span class="p">:</span>
+    <span class="k">print</span><span class="p">(</span><span class="sa">f</span><span class="s">"(</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s">,</span><span class="si">{</span><span class="n">j</span><span class="si">}</span><span class="s">)"</span><span class="p">)</span>
+<span class="c1"># (0,1)
+# (1,2)
+# (2,3)
+# (3,4)
+# (4,5)
+# (5,6)
+# (6,7)
+# (7,8)
+# (8,9)
+# (9,10)
+</span></code></pre></div></div>
+
+<h2 id="map">map</h2>
+<ul>
+  <li>map(func, *iterables) –&gt; map object.</li>
+  <li>예시) 반복해서 함수를 적용할 때 사용.</li>
+</ul>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">square_root</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="p">:</span> <span class="k">return</span><span class="p">(</span><span class="n">x</span><span class="o">**</span><span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="mi">2</span><span class="p">))</span>
+<span class="n">c</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">9</span><span class="p">,</span><span class="mi">16</span><span class="p">]</span>
+
+<span class="k">print</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="n">square_root</span><span class="p">,</span><span class="n">c</span><span class="p">)))</span>
+<span class="c1"># [1.0, 1.4142135623730951, 2.0, 3.0, 4.0]
+</span></code></pre></div></div>
+
+<h2 id="crosstab">crosstab</h2>
+<ul>
+  <li>def crosstab(index, columns, values=None, rownames=None, colnames=None, aggfunc=None,…) -&gt;’DataFrame’</li>
+  <li>예시) 간단한 cross-table을 만들 때 사용.</li>
+  <li><strong>Parameters</strong>
+    <ul>
+      <li><strong>margins</strong>: bool, default False. row/column에 대한 subtotal을 제공.</li>
+      <li><strong>margins_name</strong>: str, default ‘All’</li>
+      <li>
+        <p><strong>normalize</strong>: bool, {‘all’, ‘index’, ‘columns’}, or {0,1}, default False. 조건에 따라 normalize한 값을 제공.</p>
+
+        <ul>
+          <li>‘all’ or True : 모든 값에 대해서 normalize.</li>
+          <li>‘index’ : 각 행별로 normalize.</li>
+          <li>‘columns’ : 각 열별로 normalize.</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+</ul>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="n">pd</span>
+<span class="kn">import</span> <span class="nn">seaborn</span> <span class="k">as</span> <span class="n">sns</span>
+
+<span class="n">mpg</span> <span class="o">=</span> <span class="n">sns</span><span class="p">.</span><span class="n">load_dataset</span><span class="p">(</span><span class="s">'mpg'</span><span class="p">)</span>
+<span class="n">mpg</span><span class="p">.</span><span class="n">head</span><span class="p">()</span>
+</code></pre></div></div>
+
+<p align="center">
+<img src="/assets/images/mpg_head.png" width="800" height="300" />
+</p>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">pd</span><span class="p">.</span><span class="n">crosstab</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="n">mpg</span><span class="p">[</span><span class="s">'origin'</span><span class="p">],</span> <span class="n">columns</span><span class="o">=</span><span class="n">mpg</span><span class="p">[</span><span class="s">'model_year'</span><span class="p">],</span> <span class="n">values</span><span class="o">=</span><span class="n">mpg</span><span class="p">[</span><span class="s">'horsepower'</span><span class="p">],</span> <span class="n">aggfunc</span><span class="o">=</span><span class="s">'mean'</span><span class="p">,</span> <span class="n">margins</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p align="center">
+<img src="/assets/images/crosstab_output1.png" width="1050" height="350" />
+</p>
+
+<h2 id="cut">cut</h2>
+<ul>
+  <li>def cut(x, bins, right: bool=True, labels=None, retbins: bool=False, …)</li>
+  <li>예시) 연속형 값을 이산화/구간화할 때 사용.</li>
+  <li><strong>Parameters</strong>
+    <ul>
+      <li><strong>x</strong> : array-like. 1차 array여야 함.</li>
+      <li>
+        <p><strong>bins</strong> : int, sequence of scalars, or IntervalIndex.</p>
+
+        <ul>
+          <li>int : 동일한 길이의 구간 생성.</li>
+          <li>sequence of scalars : 구간의 길이가 동일하지 않을 수 있음.</li>
+          <li>IntervalIndex : 비연속적인 구간 설정 가능.</li>
+        </ul>
+      </li>
+      <li><strong>right</strong> : bool, default True. 오른쪽 경계값의 포함 여부.</li>
+      <li><strong>labels</strong> : array or False, default None. 각 bins의 label 부여.</li>
+      <li><strong>retbins</strong> : bool, default False. bins에 대한 정보.</li>
+      <li><strong>include_lowest</strong> : bool, default False</li>
+    </ul>
+  </li>
+</ul>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">mpg</span><span class="p">[</span><span class="s">'mpg_bin'</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="p">.</span><span class="n">cut</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">mpg</span><span class="p">[</span><span class="s">'mpg'</span><span class="p">],</span><span class="n">bins</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span><span class="n">labels</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">5</span><span class="p">)))</span> 
+<span class="n">mpg</span><span class="p">[[</span><span class="s">'mpg'</span><span class="p">,</span><span class="s">'mpg_bin'</span><span class="p">]].</span><span class="n">head</span><span class="p">()</span>
+
+<span class="n">cut_val</span> <span class="o">=</span> <span class="n">pd</span><span class="p">.</span><span class="n">cut</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">mpg</span><span class="p">[</span><span class="s">'mpg'</span><span class="p">],</span><span class="n">bins</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span><span class="n">labels</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">5</span><span class="p">)),</span><span class="n">retbins</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span> <span class="c1"># retbins : return the bins.
+</span><span class="n">cut_val</span>
+</code></pre></div></div>
+
+<p align="center">
+<img src="/assets/images/cut_output1.png" width="500" height="550" />
+</p>
+
+<h2 id="qcut">qcut</h2>
+<ul>
+  <li>def qcut(x, q, labels=None, retbins: bool=False, …)</li>
+  <li>예시) 특정 분위수(quantile)에 대해서 구간화할 때 사용.</li>
+  <li><strong>Parameters</strong>
+    <ul>
+      <li><strong>x</strong> : 1d ndarray or Series</li>
+      <li><strong>q</strong> : int or list-like of float. 분위수의 개수 또는 지정하고자 하는 분위수의 list.</li>
+    </ul>
+  </li>
+</ul>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">pd</span><span class="p">.</span><span class="n">qcut</span><span class="p">(</span><span class="n">x</span> <span class="o">=</span> <span class="n">mpg</span><span class="p">[</span><span class="s">'mpg'</span><span class="p">],</span> <span class="n">q</span> <span class="o">=</span> <span class="mi">4</span><span class="p">,</span> <span class="n">labels</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">],</span> <span class="n">retbins</span> <span class="o">=</span> <span class="bp">True</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p align="center">
+<img src="/assets/images/qcut_output1.png" width="650" height="330" />
+</p>
+
+<h2 id="select_dtypes">select_dtypes</h2>
+<ul>
+  <li>def select_dtypes(include=None, exclude=None) -&gt;’DataFrame’
+Return a subset of the DataFrame’s columns based on the column dtypes.</li>
+  <li>예시) 필요한 type의 변수만 이용하고자 할 때 사용.</li>
+  <li><strong>parameters</strong>
+    <ul>
+      <li><strong>include</strong>, <strong>exclude</strong> : scalar or list-like</li>
+    </ul>
+  </li>
+</ul>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">mpg</span><span class="p">.</span><span class="n">select_dtypes</span><span class="p">(</span><span class="n">include</span><span class="o">=</span><span class="s">'object'</span><span class="p">).</span><span class="n">head</span><span class="p">()</span>
+<span class="n">mpg</span><span class="p">.</span><span class="n">select_dtypes</span><span class="p">(</span><span class="n">exclude</span><span class="o">=</span><span class="s">'object'</span><span class="p">).</span><span class="n">head</span><span class="p">()</span>
+</code></pre></div></div>
+
+<p align="center">
+<img src="/assets/images/select_dtypes_output1.png" width="700" height="450" />
+</p>
+
+<h2 id="idxmin--idxmax">idxmin / idxmax</h2>
+<ul>
+  <li>def idxmin(axis=0, skipna=True, *args, **kwargs)</li>
+  <li>예시) 최소값(idxmin) 혹은 최대값(idxmax)의 row 위치를 알고자 할 때 사용.</li>
+  <li>찾고자 하는 값이 unique하지 않다면 가장 처음 나오는 row 위치를 알려줌.</li>
+  <li><strong>parameters</strong>
+    <ul>
+      <li><strong>axis</strong> : int, default 0</li>
+      <li><strong>skipna</strong> : bool, default True</li>
+    </ul>
+  </li>
+</ul>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="n">pd</span>
+
+<span class="n">x</span><span class="o">=</span><span class="n">pd</span><span class="p">.</span><span class="n">Series</span><span class="p">([</span><span class="mi">3</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">6</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">9</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">9</span><span class="p">])</span>
+<span class="k">print</span><span class="p">(</span><span class="n">x</span><span class="p">.</span><span class="n">idxmin</span><span class="p">())</span>
+<span class="k">print</span><span class="p">(</span><span class="n">x</span><span class="p">.</span><span class="n">idxmax</span><span class="p">())</span>
+<span class="c1"># 1
+# 5
+</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="p">.</span><span class="n">DataFrame</span><span class="p">()</span>
+<span class="n">df</span><span class="p">[</span><span class="s">'X'</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">6</span><span class="p">,</span><span class="mi">9</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">9</span><span class="p">]</span>
+
+<span class="n">df</span><span class="p">[</span><span class="s">'X'</span><span class="p">].</span><span class="n">ne</span><span class="p">(</span><span class="mi">0</span><span class="p">).</span><span class="n">idxmax</span><span class="p">()</span>
+<span class="c1"># 4
+</span></code></pre></div></div>
+
+<h2 id="nsmallest--nlargest">nsmallest &amp; nlargest</h2>
+<ul>
+  <li>def nsmallest(n, columns, keep=’first’) -&gt;’DataFrame’</li>
+  <li>예시) 가장 작은(nsamllest) 또는 가장 큰(nlargest) n개의 값을 구하고자 할 때 사용.</li>
+  <li>df.sort_values(columns, ascending=True).head(n)와 동일한 결과.</li>
+  <li><strong>parameters</strong>
+    <ul>
+      <li><strong>n</strong> : int</li>
+      <li><strong>columns</strong> : list or str</li>
+      <li>
+        <p><strong>keep</strong> : {‘first’, ‘last’, ‘all’}, default ‘first’</p>
+
+        <ul>
+          <li>first : 중복이 있는 경우, 가장 처음 나오는 값을 출력.</li>
+          <li>last : 중복이 있는 경우, 가장 마지막에 나오는 값을 출력.</li>
+          <li>all : 중복을 제거하지 않음. n개 이상의 결과가 나올 수 있음.</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+</ul>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="p">.</span><span class="n">DataFrame</span><span class="p">({</span>
+    <span class="s">'key'</span> <span class="p">:</span> <span class="p">[</span><span class="s">'A'</span><span class="p">,</span><span class="s">'B'</span><span class="p">,</span><span class="s">'C'</span><span class="p">,</span><span class="s">'D'</span><span class="p">,</span><span class="s">'E'</span><span class="p">],</span>
+    <span class="s">'value'</span> <span class="p">:</span> <span class="p">[</span><span class="mi">10</span><span class="p">,</span><span class="mi">20</span><span class="p">,</span><span class="mi">90</span><span class="p">,</span><span class="mi">50</span><span class="p">,</span><span class="mi">50</span><span class="p">]</span>
+<span class="p">})</span>
+<span class="n">df</span>
+<span class="c1"># 	key	value
+# 0	A	10
+# 1	B	20
+# 2	C	90
+# 3	D	50
+# 4	E	50
+</span>
+<span class="n">df</span><span class="p">.</span><span class="n">nsmallest</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="s">'value'</span><span class="p">,</span><span class="n">keep</span><span class="o">=</span><span class="s">'all'</span><span class="p">)</span>
+<span class="c1"># 	key	value
+# 0	A	10
+# 1	B	20
+# 3	D	50
+# 4	E	50
+</span>
+<span class="n">df</span><span class="p">.</span><span class="n">nlargest</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="s">'value'</span><span class="p">)</span>
+<span class="c1"># 	key	value
+# 2	C	90
+# 3	D	50
+# 4	E	50
+</span></code></pre></div></div>
+
+<h2 id="explode">explode</h2>
+<ul>
+  <li>def explode(column: Union[str, Tuple], ignore_index: bool=False) -&gt;’DataFrame’</li>
+  <li>예시) list의 값을 동일한 index로 풀고자 할 때 사용.</li>
+  <li><strong>parameters</strong>
+    <ul>
+      <li><strong>column</strong> : str or tuple.</li>
+      <li><strong>ignore_index</strong> : bool, default False. 만약 True라면, index를 순차적으로 부여함.</li>
+    </ul>
+  </li>
+</ul>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">d</span> <span class="o">=</span> <span class="p">{</span><span class="s">'A'</span><span class="p">:[[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">],</span><span class="s">'a'</span><span class="p">,[],[</span><span class="s">'a'</span><span class="p">,</span><span class="mi">1</span><span class="p">]],</span><span class="s">'B'</span><span class="p">:</span><span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">5</span><span class="p">))}</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="p">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
+<span class="n">df</span>
+<span class="c1">#       A	B
+# 0	[1, 2]	1
+# 1	a	2
+# 2	[]	3
+# 3	[a, 1]	4
+</span>
+<span class="n">df</span><span class="p">.</span><span class="n">explode</span><span class="p">(</span><span class="s">'A'</span><span class="p">)</span>
+<span class="c1"># 	A	B
+# 0	1	1
+# 0	2	1
+# 1	a	2
+# 2	NaN	3
+# 3	a	4
+# 3	1	4
+</span>
+<span class="n">df</span><span class="p">.</span><span class="n">explode</span><span class="p">(</span><span class="s">'A'</span><span class="p">,</span><span class="n">ignore_index</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="c1"># 	A	B
+# 0	1	1
+# 1	2	1
+# 2	a	2
+# 3	NaN	3
+# 4	a	4
+# 5	1	4
+</span></code></pre></div></div>
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> 태그: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/tags/#data-analysis" class="page__taxonomy-item p-category" rel="tag">data analysis</a><span class="sep">, </span>
+    
+      <a href="/tags/#numpy" class="page__taxonomy-item p-category" rel="tag">numpy</a><span class="sep">, </span>
+    
+      <a href="/tags/#pandas" class="page__taxonomy-item p-category" rel="tag">pandas</a><span class="sep">, </span>
+    
+      <a href="/tags/#python" class="page__taxonomy-item p-category" rel="tag">python</a>
+    
+    </span>
+  </p>
+
+
+
+
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-folder-open" aria-hidden="true"></i> 카테고리: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/categories/#da" class="page__taxonomy-item p-category" rel="tag">DA</a>
+    
+    </span>
+  </p>
+
+
+        
+
+  <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> 업데이트:</strong> <time class="dt-published" datetime="2021-12-05">December 5, 2021</time></p>
+
+      </footer>
+
+      <section class="page__share">
+  
+    <h4 class="page__share-title">공유하기</h4>
+  
+
+  <a href="https://twitter.com/intent/tweet?text=%EC%9C%A0%EC%9A%A9%ED%95%9C+Python+%ED%95%A8%EC%88%98+-+Part+1.%20http%3A%2F%2Flocalhost%3A4000%2Fda%2Fuseful_python_functions_1%2F" class="btn btn--twitter" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="공유하기 Twitter"><i class="fab fa-fw fa-twitter" aria-hidden="true"></i><span> Twitter</span></a>
+
+  <a href="https://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Flocalhost%3A4000%2Fda%2Fuseful_python_functions_1%2F" class="btn btn--facebook" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="공유하기 Facebook"><i class="fab fa-fw fa-facebook" aria-hidden="true"></i><span> Facebook</span></a>
+
+  <a href="https://www.linkedin.com/shareArticle?mini=true&url=http%3A%2F%2Flocalhost%3A4000%2Fda%2Fuseful_python_functions_1%2F" class="btn btn--linkedin" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="공유하기 LinkedIn"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i><span> LinkedIn</span></a>
+</section>
+
+
+      
+  <nav class="pagination">
+    
+      <a href="/de/Connect_to_DB(mysql,mongo)/" class="pagination--pager" title="데이터베이스 연결
+">이전</a>
+    
+    
+      <a href="#" class="pagination--pager disabled">다음</a>
+    
+  </nav>
+
+    </div>
+
+    
+  </article>
+
+  
+  
+    <div class="page__related">
+      <h2 class="page__related-title">참고</h2>
+      <div class="grid__wrapper">
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/de/Connect_to_DB(mysql,mongo)/" rel="permalink">데이터베이스 연결
+</a>
+      
+    </h2>
+    
+
+
+    <p class="archive__item-excerpt" itemprop="description">파이썬에서 DB에 직접 연결이 필요한 경우가 있습니다. 이에, 파이썬을 이용해 MySQL과 MongoDB에 접근하는 방법을 알아봅니다.
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/da/Dealing_to_missing_data/" rel="permalink">결측값 다루기
+</a>
+      
+    </h2>
+    
+
+
+    <p class="archive__item-excerpt" itemprop="description">데이터 분석을 하면서 필수적으로 하는 작업이 ‘결측값 확인 및 처리’입니다. 
+파이썬에서 어떤 값을 결측으로 인식하는지 확인하고, 결측이 있는 경우 함수들이 어떻게 작용하는지 알아봅니다.
+
+</p>
+  </article>
+</div>
+
+        
+      </div>
+    </div>
+  
+  
+</div>
+    </div>
+
+    
+
+    <div id="footer" class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+
+<!-- end custom footer snippets -->
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+      <li><strong>팔로우:</strong></li>
+    
+
+    
+      
+        
+      
+        
+          <li><a href="https://github.com/hyanggonjin" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+        
+      
+        
+      
+    
+
+    
+      <li><a href="/feed.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> 피드</a></li>
+    
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2021 HyangGon Jin. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script src="/assets/js/main.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+  </body>
+</html>

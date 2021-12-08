@@ -9,7 +9,7 @@ tags:
   - pandas
 toc : True
 toc_sticky: true
-last_modified_at: 2021-12-05
+last_modified_at: 2021-12-08
 ---
 
 많은 경우에 수집된 데이터가 그대로 데이터 분석에 사용되지 않습니다. 사용하는 방법론에 따라, 분석 대상에 따라, 이외 여러 가지의 이유로 데이터를 변환하는 작업을 합니다. 이런 데이터 핸들링에 도움이 되는 python 함수들을 알아보고자 합니다.
@@ -34,7 +34,7 @@ for index, element in enumerate(a) :
 
 ## zip
 
-- zip(*iterables) --> zip object.
+- zip(*iterables)
 - 예시) 쌍(pair)으로 반복(iterate)할 때 사용.
 
 
@@ -60,7 +60,7 @@ for i, j in zip(a,b) :
 ```
 
 ## map
-- map(func, *iterables) --> map object.
+- map(func, *iterables)
 - 예시) 반복해서 함수를 적용할 때 사용.
 
 ```py
@@ -72,7 +72,7 @@ print(list(map(square_root,c)))
 ```
 
 ## crosstab
-- def crosstab(index, columns, values=None, rownames=None, colnames=None, aggfunc=None,...) ->'DataFrame'
+- def crosstab(index, columns, values=None, rownames=None, colnames=None, aggfunc=None,...)
 - 예시) 간단한 cross-table을 만들 때 사용.
 - **Parameters**
   - **margins**: bool, default False. row/column에 대한 subtotal을 제공.
@@ -100,7 +100,7 @@ pd.crosstab(index=mpg['origin'], columns=mpg['model_year'], values=mpg['horsepow
 ```
 
 <p align="center">
-<img src = '/assets/images/crosstab_output1.png' width="1050" height="350">
+<img src = '/assets/images/crosstab_output1.png' width="700" height="800">
 </p> 
 
 
@@ -150,8 +150,7 @@ pd.qcut(x = mpg['mpg'], q = 4, labels = [1,2,3,4], retbins = True)
 </p> 
 
 ## select_dtypes
-- def select_dtypes(include=None, exclude=None) ->'DataFrame'
-Return a subset of the DataFrame's columns based on the column dtypes.
+- def select_dtypes(include=None, exclude=None)
 - 예시) 필요한 type의 변수만 이용하고자 할 때 사용.
 - **parameters**
     - **include**, **exclude** : scalar or list-like
@@ -191,7 +190,7 @@ df['X'].ne(0).idxmax()
 ```
 
 ## nsmallest & nlargest
-- def nsmallest(n, columns, keep='first') ->'DataFrame'
+- def nsmallest(n, columns, keep='first')
 - 예시) 가장 작은(nsamllest) 또는 가장 큰(nlargest) n개의 값을 구하고자 할 때 사용.
 - df.sort_values(columns, ascending=True).head(n)와 동일한 결과. 
 - **parameters**
@@ -232,7 +231,7 @@ df.nlargest(3,'value')
 
 
 ## explode
-- def explode(column: Union[str, Tuple], ignore_index: bool=False) ->'DataFrame'
+- def explode(column: Union[str, Tuple], ignore_index: bool=False)
 - 예시) list의 값을 동일한 index로 풀고자 할 때 사용.
 - **parameters**
     - **column** : str or tuple.

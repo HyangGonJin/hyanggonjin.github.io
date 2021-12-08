@@ -16,4 +16,10 @@ var store = [{
         "tags": ["data analysis","python","numpy","pandas"],
         "url": "/da/useful_python_functions_1/",
         "teaser": null
+      },{
+        "title": "유용한 Python 함수 - Part 2.",
+        "excerpt":"Part 1.에 이어서 데이터 핸들링에 도움이 되는 python 함수들을 알아봅니다. pivot def pivot(index=None, columns=None, values=None) 예시) index와 column에 대해 value를 가지는 형태로 변환할 때 사용 (pivot). index와 column에 대해 unique한 값을 가지고 있어야 함 (pivot_table과의 차이). parameters index : str or object or a list of str, optional columns :...","categories": ["DA"],
+        "tags": ["data analysis","python","numpy","pandas"],
+        "url": "/da/useful_python_functions_2/",
+        "teaser": null
       }]

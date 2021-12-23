@@ -22,4 +22,10 @@ var store = [{
         "tags": ["data analysis","python","numpy","pandas"],
         "url": "/da/useful_python_functions_2/",
         "teaser": null
+      },{
+        "title": "DataFrame Style",
+        "excerpt":"pandas의 DataFrame에서는 format, highlighting 등 여러 가지 style을 지정할 수 있습니다. (경험에 의하면) style의 지정은 단순히 이쁘게 보여주는 기능 외에도 하나의 column 내에서 값을 비교하거나, 관심있는 수치 구간을 확인할 때 직관적으로 원하는 정보를 쉽게 얻을 수 있다는 장점이 있었습니다. Data 코드 작성에는 ‘KDX 한국데이터거래소’에 있는 삼성카드 온라인쇼핑 요일/시간대별 이용 특징...","categories": ["DA"],
+        "tags": ["python","pandas"],
+        "url": "/da/pandas-data-frame-styler/",
+        "teaser": null
       }]

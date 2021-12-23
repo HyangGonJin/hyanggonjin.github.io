@@ -1,0 +1,752 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.24.0 by Michael Rose
+  Copyright 2013-2020 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="ko" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>DataFrame Style - Lego</title>
+<meta name="description" content="pandas의 DataFrame에서는 format, highlighting 등 여러 가지 style을 지정할 수 있습니다. (경험에 의하면) style의 지정은 단순히 이쁘게 보여주는 기능 외에도 하나의 column 내에서 값을 비교하거나, 관심있는 수치 구간을 확인할 때 직관적으로 원하는 정보를 쉽게 얻을 수 있다는 장점이 있었습니다.">
+
+
+  <meta name="author" content="HyangGon Jin">
+  
+  <meta property="article:author" content="HyangGon Jin">
+  
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="ko_KR">
+<meta property="og:site_name" content="Lego">
+<meta property="og:title" content="DataFrame Style">
+<meta property="og:url" content="http://localhost:4000/da/pandas-data-frame-styler/">
+
+
+  <meta property="og:description" content="pandas의 DataFrame에서는 format, highlighting 등 여러 가지 style을 지정할 수 있습니다. (경험에 의하면) style의 지정은 단순히 이쁘게 보여주는 기능 외에도 하나의 column 내에서 값을 비교하거나, 관심있는 수치 구간을 확인할 때 직관적으로 원하는 정보를 쉽게 얻을 수 있다는 장점이 있었습니다.">
+
+
+
+
+
+
+
+  <meta property="article:published_time" content="2021-12-22T00:00:00+00:00">
+
+
+
+  <meta property="article:modified_time" content="2021-12-23T00:00:00+00:00">
+
+
+
+  
+
+  
+
+
+<link rel="canonical" href="http://localhost:4000/da/pandas-data-frame-styler/">
+
+
+
+
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    
+      "@type": "Person",
+      "name": "HyangGon Jin",
+      "url": "http://localhost:4000/"
+    
+  }
+</script>
+
+
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+
+  <link href="/feed.xml" type="application/atom+xml" rel="alternate" title="Lego Feed">
+
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css"></noscript>
+
+
+
+    <!-- start custom head snippets -->
+
+<!-- insert favicons. use https://realfavicongenerator.net/ -->
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body class="layout--single">
+    <nav class="skip-links">
+  <ul>
+    <li><a href="#site-nav" class="screen-reader-shortcut">Skip to primary navigation</a></li>
+    <li><a href="#main" class="screen-reader-shortcut">Skip to content</a></li>
+    <li><a href="#footer" class="screen-reader-shortcut">Skip to footer</a></li>
+  </ul>
+</nav>
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+        <a class="site-title" href="/">
+          Lego
+          <span class="site-subtitle"></span>
+        </a>
+        <ul class="visible-links"><li class="masthead__menu-item">
+              <a href="/categories/">Category</a>
+            </li><li class="masthead__menu-item">
+              <a href="/tags/">Tag</a>
+            </li><li class="masthead__menu-item">
+              <a href="/about/">About</a>
+            </li><li class="masthead__menu-item">
+              <a href="/search/">Search</a>
+            </li></ul>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">토글 메뉴</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="https://schema.org/Person" class="h-card">
+
+  
+    <div class="author__avatar">
+      <a href="http://localhost:4000/">
+        <img src="/assets/images/blue_lego_ver.1.png" alt="HyangGon Jin" itemprop="image" class="u-photo">
+      </a>
+    </div>
+  
+
+  <div class="author__content">
+    <h3 class="author__name p-name" itemprop="name">
+      <a class="u-url" rel="me" href="http://localhost:4000/" itemprop="url">HyangGon Jin</a>
+    </h3>
+    
+      <div class="author__bio p-note" itemprop="description">
+        <p>#Statistics #ML #Python #R</p>
+
+      </div>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">팔로우</button>
+    <ul class="author__urls social-icons">
+      
+        <li itemprop="homeLocation" itemscope itemtype="https://schema.org/Place">
+          <i class="fas fa-fw fa-map-marker-alt" aria-hidden="true"></i> <span itemprop="name" class="p-locality">Seoul</span>
+        </li>
+      
+
+      
+        
+          
+            <li><a href="mailto:nike3616@gmail.com" rel="nofollow noopener noreferrer me"><i class="fas fa-fw fa-envelope-square" aria-hidden="true"></i><span class="label">Email</span></a></li>
+          
+        
+          
+        
+          
+        
+          
+            <li><a href="https://github.com/hyanggonjin" rel="nofollow noopener noreferrer me"><i class="fab fa-fw fa-github" aria-hidden="true"></i><span class="label">GitHub</span></a></li>
+          
+        
+          
+        
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs" rel="nofollow noopener noreferrer me">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+  
+  </div>
+
+
+
+  <article class="page h-entry" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="DataFrame Style">
+    <meta itemprop="description" content="pandas의 DataFrame에서는 format, highlighting 등 여러 가지 style을 지정할 수 있습니다. (경험에 의하면) style의 지정은 단순히 이쁘게 보여주는 기능 외에도 하나의 column 내에서 값을 비교하거나, 관심있는 수치 구간을 확인할 때 직관적으로 원하는 정보를 쉽게 얻을 수 있다는 장점이 있었습니다.">
+    <meta itemprop="datePublished" content="2021-12-22T00:00:00+00:00">
+    <meta itemprop="dateModified" content="2021-12-23T00:00:00+00:00">
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <h1 id="page-title" class="page__title p-name" itemprop="headline">
+            <a href="http://localhost:4000/da/pandas-data-frame-styler/" class="u-url" itemprop="url">DataFrame Style
+</a>
+          </h1>
+          
+
+
+        </header>
+      
+
+      <section class="page__content e-content" itemprop="text">
+        
+          <aside class="sidebar__right sticky">
+            <nav class="toc">
+              <header><h4 class="nav__title"><i class="fas fa-file-alt"></i> On This Page</h4></header>
+              <ul class="toc__menu"><li><a href="#data">Data</a></li><li><a href="#background_gradient">background_gradient</a><ul><li><a href="#함수설명">함수설명</a></li><li><a href="#data-aggreation">data aggreation</a></li><li><a href="#subset">subset</a></li><li><a href="#text_color_threshold">text_color_threshold</a></li><li><a href="#vmin--vmax">vmin &amp; vmax</a></li><li><a href="#gmap">gmap</a></li></ul></li><li><a href="#styleapply">style.apply</a><ul><li><a href="#함수설명-1">함수설명</a></li></ul></li><li><a href="#stylehighlight_between">style.highlight_between</a><ul><li><a href="#함수설명-2">함수설명</a></li><li><a href="#color">color</a></li><li><a href="#props">props</a></li></ul></li></ul>
+
+            </nav>
+          </aside>
+        
+        <p><code class="language-plaintext highlighter-rouge">pandas</code>의 DataFrame에서는 format, highlighting 등 여러 가지 style을 지정할 수 있습니다. (경험에 의하면) style의 지정은 단순히 이쁘게 보여주는 기능 외에도 <strong>하나의 column 내에서 값을 비교</strong>하거나, <strong>관심있는 수치 구간을 확인</strong>할 때 직관적으로 원하는 정보를 쉽게 얻을 수 있다는 장점이 있었습니다.</p>
+
+<h2 id="data">Data</h2>
+<p>코드 작성에는 ‘KDX 한국데이터거래소’에 있는 <a href="https://kdx.kr/data/view/31454">삼성카드 온라인쇼핑 요일/시간대별 이용 특징</a> 데이터를 사용하였습니다. 터는 온라인쇼핑의 세부 업종별 소비 특징 데이터로, ‘19.5월/’20.5월/’21.5월 기간에 대해 14개의 주요 온라인 쇼핑 업종의 연령/성별/구매시간대별 소비 건수를 집계한 데이터입니다.</p>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="n">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="n">pd</span>
+
+<span class="n">ssc_online</span> <span class="o">=</span> <span class="n">pd</span><span class="p">.</span><span class="n">read_excel</span><span class="p">(</span><span class="s">"KDX2021_SSC_ONLINE_DATA.xlsx"</span><span class="p">)</span>
+<span class="n">ssc_online</span><span class="p">.</span><span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="s">'cri_ym'</span><span class="p">,</span><span class="s">'tag'</span><span class="p">,</span><span class="s">'weekday'</span><span class="p">,</span><span class="s">'day_of_week'</span><span class="p">,</span><span class="s">'time_group'</span><span class="p">,</span><span class="s">'gender'</span><span class="p">,</span><span class="s">'age_group'</span><span class="p">,</span><span class="s">'cnt'</span><span class="p">]</span>
+<span class="n">ssc_online</span><span class="p">.</span><span class="n">head</span><span class="p">()</span>
+</code></pre></div></div>
+
+<p><img src="/assets/images/output_data_head2.png" alt="image" /></p>
+
+<h2 id="background_gradient">background_gradient</h2>
+<p><code class="language-plaintext highlighter-rouge">background_gradient</code> 함수를 통해 데이터의 배경에 colormap을 적용시킬 수 있습니다.</p>
+
+<h3 id="함수설명">함수설명</h3>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: center"><strong>parameters</strong></th>
+      <th style="text-align: left"><strong>형태</strong></th>
+      <th style="text-align: left"><strong>설명</strong></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: center">cmap</td>
+      <td style="text-align: left">str or colormap</td>
+      <td style="text-align: left"> </td>
+    </tr>
+    <tr>
+      <td style="text-align: center">axis</td>
+      <td style="text-align: left">{0 or ‘index’, 1 or ‘columns’, None}, default 0</td>
+      <td style="text-align: left">0: 각 col별로, 1: 각 row별로 적용</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">subset</td>
+      <td style="text-align: left">label, array-like, IndexSlice</td>
+      <td style="text-align: left">적용하고 싶은 column</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">text_color_threshold</td>
+      <td style="text-align: left">float or int</td>
+      <td style="text-align: left">[0, 1] 사이의 값</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">vmin/vmax</td>
+      <td style="text-align: left">float</td>
+      <td style="text-align: left">colormap의 최소값/최대값에 대응하는 값</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">gmap</td>
+      <td style="text-align: left">array-like</td>
+      <td style="text-align: left">주어진 axis와 subset에 따라 전체 적용</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="data-aggreation">data aggreation</h3>
+<p>결과를 쉽게 확인하기 위해 아래와 같이 데이터를 축소시켜 함수를 적용하겠습니다.</p>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">tmp</span> <span class="o">=</span> <span class="n">ssc_online</span><span class="p">.</span><span class="n">groupby</span><span class="p">([</span><span class="s">'gender'</span><span class="p">,</span><span class="s">'tag'</span><span class="p">],</span><span class="n">as_index</span><span class="o">=</span><span class="bp">False</span><span class="p">).</span><span class="n">agg</span><span class="p">({</span><span class="s">'cnt'</span><span class="p">:</span><span class="s">'mean'</span><span class="p">})</span>
+<span class="n">tmp1</span> <span class="o">=</span> <span class="n">tmp</span><span class="p">.</span><span class="n">head</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+<span class="n">tmp1</span>
+</code></pre></div></div>
+<p><img src="/assets/images/output_agg_head.png" alt="image" /></p>
+
+<h3 id="subset">subset</h3>
+<p><code class="language-plaintext highlighter-rouge">subset</code> 옵션을 통해 ‘cnt’에만 배경 스타일이 적용됨을 확인할 수 있습니다.</p>
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">tmp1</span><span class="p">.</span><span class="n">style</span><span class="p">.</span><span class="n">background_gradient</span><span class="p">(</span><span class="n">cmap</span><span class="o">=</span><span class="s">'cividis'</span><span class="p">,</span> <span class="n">subset</span><span class="o">=</span><span class="p">[</span><span class="s">'cnt'</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+</code></pre></div></div>
+<p><img src="/assets/images/output_gradient_subset.png" alt="image" /></p>
+
+<p>적용 가능한 colormap은 <a href="https://matplotlib.org/stable/tutorials/colors/colormaps.html">matplotlib 공식문서</a>를 통해 알 수 있습니다.</p>
+
+<h3 id="text_color_threshold">text_color_threshold</h3>
+<p><code class="language-plaintext highlighter-rouge">text_color_threshold</code> 옵션은 ‘0’이면 어둡게 ‘1’이면 밝게 글자를 보여줍니다.</p>
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">tmp1</span><span class="p">.</span><span class="n">style</span><span class="p">.</span><span class="n">background_gradient</span><span class="p">(</span><span class="n">cmap</span><span class="o">=</span><span class="s">'cividis'</span><span class="p">,</span> <span class="n">subset</span><span class="o">=</span><span class="p">[</span><span class="s">'cnt'</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">text_color_threshold</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+</code></pre></div></div>
+<p><img src="/assets/images/output_gradient_text_color.png" alt="image" /></p>
+
+<h3 id="vmin--vmax">vmin &amp; vmax</h3>
+<p><code class="language-plaintext highlighter-rouge">vmin</code>, <code class="language-plaintext highlighter-rouge">vmax</code> 옵션은 colormap의 최소, 최대와 대응하는 값입니다. 아래 코드의 결과는 ‘400’ 이하, ‘2000’이상의 값들이 각각 동일한 색으로 표시된 것을 확인할 수 있습니다.</p>
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">tmp1</span><span class="p">.</span><span class="n">style</span><span class="p">.</span><span class="n">background_gradient</span><span class="p">(</span><span class="n">cmap</span><span class="o">=</span><span class="s">'cividis'</span><span class="p">,</span> <span class="n">subset</span><span class="o">=</span><span class="p">[</span><span class="s">'cnt'</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span><span class="n">vmin</span><span class="o">=</span><span class="mi">400</span><span class="p">,</span><span class="n">vmax</span><span class="o">=</span><span class="mi">2000</span><span class="p">)</span>
+</code></pre></div></div>
+<p><img src="/assets/images/output_gradient_vmin.png" alt="image" /></p>
+
+<h3 id="gmap">gmap</h3>
+<p><code class="language-plaintext highlighter-rouge">gmap</code> 옵션은 정의한 <code class="language-plaintext highlighter-rouge">axis</code>와 <code class="language-plaintext highlighter-rouge">subset</code>에 대한 결과를 전체 index 또는 column에 동일하게 적용하는 옵션입니다. 해당 옵션은 1.3.0 이상의 버전에서 지원합니다.</p>
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">tmp1</span><span class="p">.</span><span class="n">style</span><span class="p">.</span><span class="n">background_gradient</span><span class="p">(</span><span class="n">cmap</span><span class="o">=</span><span class="s">'cividis'</span><span class="p">,</span> <span class="n">gmap</span><span class="o">=</span><span class="n">tmp1</span><span class="p">[</span><span class="s">'cnt'</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> 
+</code></pre></div></div>
+<p><img src="/assets/images/output_gradient_gmap.png" alt="image" /></p>
+
+<h2 id="styleapply">style.apply</h2>
+<p><code class="language-plaintext highlighter-rouge">style.apply</code> 함수를 통해 CSS-styling을 적용할 수 있습니다.</p>
+
+<h3 id="함수설명-1">함수설명</h3>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: center"><strong>parameters</strong></th>
+      <th style="text-align: left"><strong>형태</strong></th>
+      <th style="text-align: left"><strong>설명</strong></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: center">func</td>
+      <td style="text-align: left">function</td>
+      <td style="text-align: left">적용할 함수</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">axis</td>
+      <td style="text-align: left">{0 or ‘index’, 1 or ‘columns’, None}, default 0</td>
+      <td style="text-align: left">0: 각 col별로, 1: 각 row별로 적용</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">subset</td>
+      <td style="text-align: left">label, array-like, IndexSlice</td>
+      <td style="text-align: left">적용하고 싶은 column</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">**kwargs</td>
+      <td style="text-align: left">dict</td>
+      <td style="text-align: left">func에 대한 옵션</td>
+    </tr>
+  </tbody>
+</table>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">highlight_max</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">color</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">np</span><span class="p">.</span><span class="n">where</span><span class="p">(</span><span class="n">x</span> <span class="o">==</span> <span class="n">np</span><span class="p">.</span><span class="n">nanmax</span><span class="p">(</span><span class="n">x</span><span class="p">.</span><span class="n">to_numpy</span><span class="p">()),</span> <span class="sa">f</span><span class="s">"color: </span><span class="si">{</span><span class="n">color</span><span class="si">}</span><span class="s">;"</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
+
+<span class="n">tmp1</span><span class="p">.</span><span class="n">style</span><span class="p">.</span><span class="nb">apply</span><span class="p">(</span><span class="n">highlight_max</span><span class="p">,</span> <span class="n">subset</span><span class="o">=</span><span class="p">[</span><span class="s">'gender'</span><span class="p">,</span><span class="s">'cnt'</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s">'red'</span><span class="p">)</span>
+</code></pre></div></div>
+<p><img src="/assets/images/output_apply.png" alt="image" /></p>
+
+<h2 id="stylehighlight_between">style.highlight_between</h2>
+<p><code class="language-plaintext highlighter-rouge">style.highlight_between</code> 함수를 통해 정의된 구간에 대해 스타일을 적용할 수 있습니다.</p>
+
+<h3 id="함수설명-2">함수설명</h3>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: center"><strong>parameters</strong></th>
+      <th style="text-align: left"><strong>형태</strong></th>
+      <th style="text-align: left"><strong>설명</strong></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: center">subset</td>
+      <td style="text-align: left">label, array-like, IndexSlice</td>
+      <td style="text-align: left"> </td>
+    </tr>
+    <tr>
+      <td style="text-align: center">color</td>
+      <td style="text-align: left">str</td>
+      <td style="text-align: left">배경 색</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">axis</td>
+      <td style="text-align: left">{0 or ‘index’, 1 or ‘columns’, None}, default 0</td>
+      <td style="text-align: left">0: 각 col별로, 1: 각 row별로 적용</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">left/right</td>
+      <td style="text-align: left">scalar or datetime-like, or sequence or array-like</td>
+      <td style="text-align: left">구간의 하한/상한값</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">inclusive</td>
+      <td style="text-align: left">{‘both’, ‘neither’, ‘left’, ‘right’}</td>
+      <td style="text-align: left">경계값 포함 여부</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">vmin/vmax</td>
+      <td style="text-align: left">float</td>
+      <td style="text-align: left">colormap의 최소값/최대값에 대응하는 값</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">props</td>
+      <td style="text-align: left">str</td>
+      <td style="text-align: left">해당 옵션을 이용하면 <code class="language-plaintext highlighter-rouge">color</code>옵션은 사용되지 않음</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="color">color</h3>
+<p>‘Hex color code’는 <a href="https://htmlcolorcodes.com/">html-color-codes</a>를 통해 쉽게 알 수 있습니다.</p>
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">tmp1</span><span class="p">.</span><span class="n">style</span><span class="p">.</span><span class="n">highlight_between</span><span class="p">(</span><span class="n">subset</span><span class="o">=</span><span class="p">[</span><span class="s">'cnt'</span><span class="p">],</span> <span class="n">left</span><span class="o">=</span><span class="mi">400</span><span class="p">,</span> <span class="n">right</span><span class="o">=</span><span class="mi">2000</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s">"#BDA4F6"</span><span class="p">)</span>
+</code></pre></div></div>
+<p><img src="/assets/images/output_highlight_between.png" alt="image" /></p>
+
+<h3 id="props">props</h3>
+<p><code class="language-plaintext highlighter-rouge">props</code> 옵션을 통해 CSS properties를 적용할 수 있습니다.</p>
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">tmp1</span><span class="p">.</span><span class="n">style</span><span class="p">.</span><span class="n">highlight_between</span><span class="p">(</span><span class="n">subset</span><span class="o">=</span><span class="p">[</span><span class="s">'cnt'</span><span class="p">],</span> <span class="n">left</span><span class="o">=</span><span class="mi">400</span><span class="p">,</span> <span class="n">right</span><span class="o">=</span><span class="mi">2000</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">props</span><span class="o">=</span><span class="s">'font-weight:bold;color:#F97D69'</span><span class="p">)</span>
+</code></pre></div></div>
+<p><img src="/assets/images/output_highlight_between2.png" alt="image" /></p>
+
+<p><code class="language-plaintext highlighter-rouge">style.highlight_between</code> 외에도 특정값에 highlight를 지원하는 다양한 함수들이 있습니다. 
+<img src="/assets/images/output_pandas_styler_highlight.png" alt="image" /></p>
+
+<p>마지막으로, <code class="language-plaintext highlighter-rouge">pandas</code>에서는 highlight 기능 뿐만 아니라 format과 관련한 다양한 함수들도 지원하고 있으니 관심이 있다면 공식문서를 확인해보는 것을 추천합니다.</p>
+
+<ul>
+  <li>
+    <p>참고자료</p>
+
+    <ul>
+      <li><a href="https://pandas.pydata.org/docs/reference/api/pandas.io.formats.style.Styler.background_gradient.html">pandas 공식문서 - background_gradient</a></li>
+      <li><a href="https://pandas.pydata.org/docs/reference/api/pandas.io.formats.style.Styler.apply.html">pandas 공식문서 - style.apply</a></li>
+      <li><a href="https://pandas.pydata.org/docs/reference/api/pandas.io.formats.style.Styler.highlight_between.html">pandas 공식문서 - style.highlight_between</a></li>
+    </ul>
+  </li>
+</ul>
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> 태그: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/tags/#pandas" class="page__taxonomy-item p-category" rel="tag">pandas</a><span class="sep">, </span>
+    
+      <a href="/tags/#python" class="page__taxonomy-item p-category" rel="tag">python</a>
+    
+    </span>
+  </p>
+
+
+
+
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-folder-open" aria-hidden="true"></i> 카테고리: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/categories/#da" class="page__taxonomy-item p-category" rel="tag">DA</a>
+    
+    </span>
+  </p>
+
+
+        
+
+  <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> 업데이트:</strong> <time class="dt-published" datetime="2021-12-23">December 23, 2021</time></p>
+
+      </footer>
+
+      <section class="page__share">
+  
+    <h4 class="page__share-title">공유하기</h4>
+  
+
+  <a href="https://twitter.com/intent/tweet?text=DataFrame+Style%20http%3A%2F%2Flocalhost%3A4000%2Fda%2Fpandas-data-frame-styler%2F" class="btn btn--twitter" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="공유하기 Twitter"><i class="fab fa-fw fa-twitter" aria-hidden="true"></i><span> Twitter</span></a>
+
+  <a href="https://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Flocalhost%3A4000%2Fda%2Fpandas-data-frame-styler%2F" class="btn btn--facebook" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="공유하기 Facebook"><i class="fab fa-fw fa-facebook" aria-hidden="true"></i><span> Facebook</span></a>
+
+  <a href="https://www.linkedin.com/shareArticle?mini=true&url=http%3A%2F%2Flocalhost%3A4000%2Fda%2Fpandas-data-frame-styler%2F" class="btn btn--linkedin" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="공유하기 LinkedIn"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i><span> LinkedIn</span></a>
+</section>
+
+
+      
+  <nav class="pagination">
+    
+      <a href="/da/useful_python_functions_2/" class="pagination--pager" title="유용한 Python 함수 - Part 2.
+">이전</a>
+    
+    
+      <a href="#" class="pagination--pager disabled">다음</a>
+    
+  </nav>
+
+    </div>
+
+    
+  </article>
+
+  
+  
+    <div class="page__related">
+      <h2 class="page__related-title">참고</h2>
+      <div class="grid__wrapper">
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/da/useful_python_functions_2/" rel="permalink">유용한 Python 함수 - Part 2.
+</a>
+      
+    </h2>
+    
+
+
+    <p class="archive__item-excerpt" itemprop="description">Part 1.에 이어서 데이터 핸들링에 도움이 되는 python 함수들을 알아봅니다.
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/da/useful_python_functions_1/" rel="permalink">유용한 Python 함수 - Part 1.
+</a>
+      
+    </h2>
+    
+
+
+    <p class="archive__item-excerpt" itemprop="description">많은 경우에 수집된 데이터가 그대로 데이터 분석에 사용되지 않습니다. 사용하는 방법론에 따라, 분석 대상에 따라, 이외 여러 가지의 이유로 데이터를 변환하는 작업을 합니다. 이런 데이터 핸들링에 도움이 되는 python 함수들을 알아보고자 합니다.
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/de/Connect_to_DB(mysql,mongo)/" rel="permalink">데이터베이스 연결
+</a>
+      
+    </h2>
+    
+
+
+    <p class="archive__item-excerpt" itemprop="description">파이썬에서 DB에 직접 연결이 필요한 경우가 있습니다. 이에, 파이썬을 이용해 MySQL과 MongoDB에 접근하는 방법을 알아봅니다.
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/da/Dealing_to_missing_data/" rel="permalink">결측값 다루기
+</a>
+      
+    </h2>
+    
+
+
+    <p class="archive__item-excerpt" itemprop="description">데이터 분석을 하면서 필수적으로 하는 작업이 ‘결측값 확인 및 처리’입니다. 
+파이썬에서 어떤 값을 결측으로 인식하는지 확인하고, 결측이 있는 경우 함수들이 어떻게 작용하는지 알아봅니다.
+
+</p>
+  </article>
+</div>
+
+        
+      </div>
+    </div>
+  
+  
+</div>
+    </div>
+
+    
+
+    <div id="footer" class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+
+<!-- end custom footer snippets -->
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+      <li><strong>팔로우:</strong></li>
+    
+
+    
+      
+        
+      
+        
+          <li><a href="https://github.com/hyanggonjin" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+        
+      
+        
+      
+    
+
+    
+      <li><a href="/feed.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> 피드</a></li>
+    
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2021 HyangGon Jin. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script src="/assets/js/main.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+  </body>
+</html>

@@ -28,4 +28,10 @@ var store = [{
         "tags": ["python","pandas"],
         "url": "/da/pandas-data-frame-styler/",
         "teaser": null
+      },{
+        "title": "모듈 import",
+        "excerpt":"Python에서는 다양한 함수, 패키지 등이 존재하지만 부득이하게 직접 함수 등을 만들어서 사용해야하는 경우가 있습니다. 이때 import하는 파일을 모듈(module)이라고 합니다. 작성한 모듈을 어떤 식으로 불러오는지 간단한 예제를 통해서 알아보겠습니다. 먼저, 모듈에 대한 간단한 정의입니다. 모듈이란 함수나 변수 또는 클래스를 모아 놓은 파일이다. 모듈은 다른 파이썬 프로그램에서 불러와 사용할 수 있게끔 만든...","categories": ["DE"],
+        "tags": ["de","python"],
+        "url": "/de/import-the-py-file/",
+        "teaser": null
       }]

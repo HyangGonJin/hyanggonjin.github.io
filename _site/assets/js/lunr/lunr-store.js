@@ -23,7 +23,7 @@ var store = [{
         "url": "/da/useful_python_functions_2/",
         "teaser": null
       },{
-        "title": "DataFrame Style",
+        "title": "DataFrame Style 적용하기 (1)",
         "excerpt":"pandas의 DataFrame에서는 format, highlighting 등 여러 가지 style을 지정할 수 있습니다. (경험에 의하면) style의 지정은 단순히 이쁘게 보여주는 기능 외에도 하나의 column 내에서 값을 비교하거나, 관심있는 수치 구간을 확인할 때 직관적으로 원하는 정보를 쉽게 얻을 수 있다는 장점이 있었습니다. Data 코드 작성에는 ‘KDX 한국데이터거래소’에 있는 삼성카드 온라인쇼핑 요일/시간대별 이용 특징...","categories": ["DA"],
         "tags": ["python","pandas"],
         "url": "/da/pandas-data-frame-styler/",
@@ -33,5 +33,11 @@ var store = [{
         "excerpt":"Python에서는 다양한 함수, 패키지 등이 존재하지만 부득이하게 직접 함수 등을 만들어서 사용해야하는 경우가 있습니다. 이때 import하는 파일을 모듈(module)이라고 합니다. 작성한 모듈을 어떤 식으로 불러오는지 간단한 예제를 통해서 알아보겠습니다. 먼저, 모듈에 대한 간단한 정의입니다. 모듈이란 함수나 변수 또는 클래스를 모아 놓은 파일이다. 모듈은 다른 파이썬 프로그램에서 불러와 사용할 수 있게끔 만든...","categories": ["DE"],
         "tags": ["de","python"],
         "url": "/de/import-the-py-file/",
+        "teaser": null
+      },{
+        "title": "DataFrame Style 적용하기 (2)",
+        "excerpt":"이전 글을 통해 pandas의 데이터프레임의 셀들의 배경과 텍스트에 스타일을 설정하는 방법에 대해서 알아보았습니다. 이번에는 index나 header 등 다른 요소들에 스타일을 설정하는 방법과 더불어 유용한 기능을 알아보고자 합니다. 본문은 pandas 공식문서에 있는 ‘Table Visualization’ 부분 중 일부를 정리했습니다. import pandas as pd import numpy as np df = pd.DataFrame([[38.0, 2.0, 18.0,...","categories": ["DA"],
+        "tags": ["python","pandas"],
+        "url": "/da/visualization_of_tabular_data_using_styler/",
         "teaser": null
       }]

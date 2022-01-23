@@ -1,5 +1,5 @@
 ---
-title: "DataFrame Style"
+title: "DataFrame Style 적용하기 (1)"
 categories:
   - DA
 tags:

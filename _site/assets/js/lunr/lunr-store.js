@@ -7,7 +7,7 @@ var store = [{
       },{
         "title": "데이터베이스 연결",
         "excerpt":"파이썬에서 DB에 직접 연결이 필요한 경우가 있습니다. 이에, 파이썬을 이용해 MySQL과 MongoDB에 접근하는 방법을 알아봅니다. 1. MySQL 1.1 DB 연결 import os import sys import logging import pymysql # DB 정보. host = \"your host!\" port = \"your port!\" username = \"your username!\" database = \"your database name!\" password =...","categories": ["DE"],
-        "tags": ["data engineering","python"],
+        "tags": ["data engineering","mysql","mongodb"],
         "url": "/de/Connect_to_DB(mysql,mongo)/",
         "teaser": null
       },{
@@ -29,15 +29,21 @@ var store = [{
         "url": "/da/pandas-data-frame-styler/",
         "teaser": null
       },{
+        "title": "DataFrame Style 적용하기 (2)",
+        "excerpt":"이전 글을 통해 pandas의 데이터프레임의 셀들의 배경과 텍스트에 스타일을 설정하는 방법에 대해서 알아보았습니다. 이번에는 index나 header 등 다른 요소들에 스타일을 설정하는 방법과 더불어 유용한 기능을 알아보고자 합니다. 본문은 pandas 공식문서에 있는 ‘Table Visualization’ 부분 중 일부를 정리했습니다. import pandas as pd import numpy as np df = pd.DataFrame([[38.0, 2.0, 18.0,...","categories": ["DA"],
+        "tags": ["python","pandas"],
+        "url": "/da/visualization_of_tabular_data_using_styler/",
+        "teaser": null
+      },{
         "title": "모듈 import",
         "excerpt":"Python에서는 다양한 함수, 패키지 등이 존재하지만 부득이하게 직접 함수 등을 만들어서 사용해야하는 경우가 있습니다. 이때 import하는 파일을 모듈(module)이라고 합니다. 작성한 모듈을 어떤 식으로 불러오는지 간단한 예제를 통해서 알아보겠습니다. 먼저, 모듈에 대한 간단한 정의입니다. 모듈이란 함수나 변수 또는 클래스를 모아 놓은 파일이다. 모듈은 다른 파이썬 프로그램에서 불러와 사용할 수 있게끔 만든...","categories": ["DE"],
         "tags": ["de","python"],
         "url": "/de/import-the-py-file/",
         "teaser": null
       },{
-        "title": "DataFrame Style 적용하기 (2)",
-        "excerpt":"이전 글을 통해 pandas의 데이터프레임의 셀들의 배경과 텍스트에 스타일을 설정하는 방법에 대해서 알아보았습니다. 이번에는 index나 header 등 다른 요소들에 스타일을 설정하는 방법과 더불어 유용한 기능을 알아보고자 합니다. 본문은 pandas 공식문서에 있는 ‘Table Visualization’ 부분 중 일부를 정리했습니다. import pandas as pd import numpy as np df = pd.DataFrame([[38.0, 2.0, 18.0,...","categories": ["DA"],
-        "tags": ["python","pandas"],
-        "url": "/da/visualization_of_tabular_data_using_styler/",
+        "title": "Airflow - MySQL operator",
+        "excerpt":"Apache Airflow는 워크플로우 스케쥴을 작성하고, 모니터링하기 위한 오픈 소스 워크플로우 관리 플랫폼입니다. 파이썬을 이용하여 보다 쉽고, 복잡한 파이프라인을 구성할 수 있게 합니다. Airflow를 이용해 MySQL에 데이터를 쌓는 작업을 자동화할 수 있습니다. 0. test DB 생성 test_airflow DB를 생성한 후, 현재 날짜와 시간을 업데이트 해주는 간단한 쿼리를 작성합니다. # test_airflow.sql --...","categories": ["DE","de"],
+        "tags": ["de","airflow","mysql"],
+        "url": "/de/airflow/",
         "teaser": null
       }]

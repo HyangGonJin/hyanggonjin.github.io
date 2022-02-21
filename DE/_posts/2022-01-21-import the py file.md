@@ -7,7 +7,7 @@ tags:
   - python
 toc : True
 toc_sticky: true
-last_modified_at: 2022-01-04
+last_modified_at: 2022-01-21
 ---
 
 Python에서는 다양한 함수, 패키지 등이 존재하지만 부득이하게 직접 함수 등을 만들어서 사용해야하는 경우가 있습니다. 이때 import하는 파일을 모듈(module)이라고 합니다. 작성한 모듈을 어떤 식으로 불러오는지 간단한 예제를 통해서 알아보겠습니다.

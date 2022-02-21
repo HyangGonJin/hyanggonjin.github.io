@@ -4,7 +4,8 @@ categories:
   - DE
 tags:
   - data engineering
-  - python
+  - mysql
+  - mongodb
 toc : True
 toc_sticky: true
 last_modified_at: 2021-12-05

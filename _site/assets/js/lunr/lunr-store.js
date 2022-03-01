@@ -46,4 +46,10 @@ var store = [{
         "tags": ["de","airflow","mysql"],
         "url": "/de/airflow/",
         "teaser": null
+      },{
+        "title": "Airflow - Custom operator",
+        "excerpt":"Airflow는 다양한 Operator를 지원하지만, 필요한 Operator를 직접 만들 수도 있습니다. airflow.models.baseoperator.BaseOperator를 통해 이러한 확장성을 지원합니다. Custom Operator 생성 BaseOperator에 2가지를 override하는 것으로 Custom Operator를 생성할 수 있습니다. Constructor - 생성할 Operator의 parameter를 정의합니다. Execute - Operator가 실행할 코드를 작성합니다. Operator 생성 생성할 operator 파일을 만들어 ‘plugins-operators’ 폴더(‘custom-operator’ 등 폴더명을 다르게...","categories": ["DE"],
+        "tags": ["de","mongodb","airflow"],
+        "url": "/de/airflow_custom_operator/",
+        "teaser": null
       }]

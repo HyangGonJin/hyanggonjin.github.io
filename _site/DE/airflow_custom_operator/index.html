@@ -1,0 +1,717 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.24.0 by Michael Rose
+  Copyright 2013-2020 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="ko" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>Airflow - Custom operator - Lego</title>
+<meta name="description" content="Airflow는 다양한 Operator를 지원하지만, 필요한 Operator를 직접 만들 수도 있습니다. airflow.models.baseoperator.BaseOperator를 통해 이러한 확장성을 지원합니다.  Custom Operator 생성 BaseOperator에 2가지를 override하는 것으로 Custom Operator를 생성할 수 있습니다.     Constructor - 생성할 Operator의 parameter를 정의합니다.   Execute - Operator가 실행할 코드를 작성합니다.   Operator 생성 생성할 operator 파일을 만들어 ‘plugins-operators’ 폴더(‘custom-operator’ 등 폴더명을 다르게 하여 operator를 관리할 수 있음)에 생성합니다. # hello_operator.py from airflow.models.baseoperator import BaseOperator   class HelloOperator(BaseOperator):     def __init__(self, name: str, **kwargs) -&gt; None:         super().__init__(**kwargs)         self.name = name      def execute(self, context):         message = f&quot;Hello {self.name}&quot;         print(message)         return message   DAG 생성 다음과 같이 DAG을 만듭니다. # hello_dag.py from datetime import datetime, timedelta  from airflow import DAG from operators.hello_operator import HelloOperator  with DAG(     dag_id=&quot;example_hello&quot;,     schedule_interval=timedelta(minutes=5),     start_date=datetime(2021, 1, 1),     catchup=False,     dagrun_timeout=timedelta(minutes=60),     tags=[&quot;example&quot;], ) as dag:     hello_task = HelloOperator(task_id=&quot;sample-task&quot;, name=&quot;foo_bar&quot;, dag=dag)      hello_task  if __name__ == &quot;__main__&quot;:     dag.cli()   MongoDB Operator 생성 위와 같은 방법을 이용해 MongoDB에 데이터를 쌓는 DAG를 만들 수 있습니다.  test collection 생성 test_coll이라는 collection에 Date()함수를 이용해 현재 날짜와 시간을 저장합니다  db.createCollection(&quot;test_coll&quot;)  db.test_coll.insertOne({date:Date()})   Operator 생성 우선, BaseOperator를 이용해 ‘mongo_operator’ 파일을 ‘plugins - operators’ 폴더에 생성합니다.  from airflow.models import BaseOperator from pymongo import MongoClient   class MongoCreateDocumentOperator(BaseOperator):     def __init__(self, host, database, collection, data, *args, **kwargs):         self.host = host         self.database = database         self.collection = collection         self.data = data         super().__init__(*args, **kwargs)      def execute(self, context):         mongo = MongoClient(host=self.host, port=27017)         mongo[self.database][self.collection].insert_one(self.data)   DAG 생성 위에서 만든 MongoCreateDocumentOperator를 이용하여 쿼리를 실행하는 DAG을 만듭니다. #test_mongo_dag.py from datetime import datetime, timedelta  from airflow import DAG from operators.mongo_operator import MongoCreateDocumentOperator  with DAG(     dag_id=&quot;example_mongo&quot;,     schedule_interval=timedelta(minutes=5),     start_date=datetime(2022, 2, 27),     catchup=False,     tags=[&quot;example&quot;], ) as dag:     mongo_task = MongoCreateDocumentOperator(         task_id=&quot;insert_data&quot;,         host=&quot;127.0.0.1&quot;,         database=&quot;test&quot;,         collection=&quot;test_coll&quot;,         data={&quot;date&quot;: datetime.today().strftime(&quot;%Y/%m/%d %H:%M:%S&quot;)},         dag=dag,     )     mongo_task  if __name__ == &quot;__main__&quot;:     dag.cli()   Hooks Hook을 통해 외부 resource에 연결할 수 있습니다. 또한, Airflow의 connection 정보를 이용하기 때문에 비밀번호와 같은 인증 정보를 파일에 작성하지 않아도 된다는 장점이 있습니다.  먼저, 터미널 창에서 mongo-provider를 설치합니다. pip install apache-airflow-providers-mongo  그리고 Airflow 메뉴 중 ‘admin → connections → mongo_default’에서 아래 정보를 입력합니다.     Connection Type : MongoDB  Host : your host (e.g. localhost)  Schema : your schema (e.g. test)  Port : your port (e.g. 27017)   마지막으로 아래와 같이 Operator와 DAG을 구성하면 위에서 만든 MongoCreateDocumentOperator와 동일하게 현재 날짜와 시간을 document에 저장할 수 있습니다.  ### mongodb_operator.py from datetime import datetime  from airflow.models.baseoperator import BaseOperator from airflow.providers.mongo.hooks.mongo import MongoHook   class MongoDBOperator(BaseOperator):     def __init__(self, conn_id: str, **kwargs) -&gt; None:         super().__init__(**kwargs)         self.conn_id = conn_id      def execute(self, context):         hook = MongoHook(conn_id=self.conn_id)         query = {&quot;date&quot;: datetime.today().strftime(&quot;%Y/%m/%d %H:%M:%S&quot;)}         result = hook.insert_one(             mongo_collection=&quot;test_coll&quot;, doc=query, mongo_db=&quot;test&quot;         )         message = f&quot;result: {result}&quot;         print(message)         return message  ### test2_mongo_dag.py from datetime import datetime, timedelta  from airflow import DAG from operators.mongodb_operator import MongoDBOperator  with DAG(     dag_id=&quot;example_mongodb&quot;,     schedule_interval=timedelta(minutes=5),     start_date=datetime(2021, 1, 1),     catchup=False,     dagrun_timeout=timedelta(minutes=60),     tags=[&quot;example&quot;], ) as dag:     mongo_task = MongoDBOperator(         task_id=&quot;sample-task&quot;,         conn_id=&quot;mongo_default&quot;,         dag=dag,     )      mongo_task  if __name__ == &quot;__main__&quot;:     dag.cli()           참고자료             Airflow 공식문서 - Creating a custom Operator       Airflow 공식문서 - MongoHook       블로그 - Airflow에서 MongoDB 사용하기">
+
+
+  <meta name="author" content="HyangGon Jin">
+  
+  <meta property="article:author" content="HyangGon Jin">
+  
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="ko_KR">
+<meta property="og:site_name" content="Lego">
+<meta property="og:title" content="Airflow - Custom operator">
+<meta property="og:url" content="http://localhost:4000/de/airflow_custom_operator/">
+
+
+  <meta property="og:description" content="Airflow는 다양한 Operator를 지원하지만, 필요한 Operator를 직접 만들 수도 있습니다. airflow.models.baseoperator.BaseOperator를 통해 이러한 확장성을 지원합니다.  Custom Operator 생성 BaseOperator에 2가지를 override하는 것으로 Custom Operator를 생성할 수 있습니다.     Constructor - 생성할 Operator의 parameter를 정의합니다.   Execute - Operator가 실행할 코드를 작성합니다.   Operator 생성 생성할 operator 파일을 만들어 ‘plugins-operators’ 폴더(‘custom-operator’ 등 폴더명을 다르게 하여 operator를 관리할 수 있음)에 생성합니다. # hello_operator.py from airflow.models.baseoperator import BaseOperator   class HelloOperator(BaseOperator):     def __init__(self, name: str, **kwargs) -&gt; None:         super().__init__(**kwargs)         self.name = name      def execute(self, context):         message = f&quot;Hello {self.name}&quot;         print(message)         return message   DAG 생성 다음과 같이 DAG을 만듭니다. # hello_dag.py from datetime import datetime, timedelta  from airflow import DAG from operators.hello_operator import HelloOperator  with DAG(     dag_id=&quot;example_hello&quot;,     schedule_interval=timedelta(minutes=5),     start_date=datetime(2021, 1, 1),     catchup=False,     dagrun_timeout=timedelta(minutes=60),     tags=[&quot;example&quot;], ) as dag:     hello_task = HelloOperator(task_id=&quot;sample-task&quot;, name=&quot;foo_bar&quot;, dag=dag)      hello_task  if __name__ == &quot;__main__&quot;:     dag.cli()   MongoDB Operator 생성 위와 같은 방법을 이용해 MongoDB에 데이터를 쌓는 DAG를 만들 수 있습니다.  test collection 생성 test_coll이라는 collection에 Date()함수를 이용해 현재 날짜와 시간을 저장합니다  db.createCollection(&quot;test_coll&quot;)  db.test_coll.insertOne({date:Date()})   Operator 생성 우선, BaseOperator를 이용해 ‘mongo_operator’ 파일을 ‘plugins - operators’ 폴더에 생성합니다.  from airflow.models import BaseOperator from pymongo import MongoClient   class MongoCreateDocumentOperator(BaseOperator):     def __init__(self, host, database, collection, data, *args, **kwargs):         self.host = host         self.database = database         self.collection = collection         self.data = data         super().__init__(*args, **kwargs)      def execute(self, context):         mongo = MongoClient(host=self.host, port=27017)         mongo[self.database][self.collection].insert_one(self.data)   DAG 생성 위에서 만든 MongoCreateDocumentOperator를 이용하여 쿼리를 실행하는 DAG을 만듭니다. #test_mongo_dag.py from datetime import datetime, timedelta  from airflow import DAG from operators.mongo_operator import MongoCreateDocumentOperator  with DAG(     dag_id=&quot;example_mongo&quot;,     schedule_interval=timedelta(minutes=5),     start_date=datetime(2022, 2, 27),     catchup=False,     tags=[&quot;example&quot;], ) as dag:     mongo_task = MongoCreateDocumentOperator(         task_id=&quot;insert_data&quot;,         host=&quot;127.0.0.1&quot;,         database=&quot;test&quot;,         collection=&quot;test_coll&quot;,         data={&quot;date&quot;: datetime.today().strftime(&quot;%Y/%m/%d %H:%M:%S&quot;)},         dag=dag,     )     mongo_task  if __name__ == &quot;__main__&quot;:     dag.cli()   Hooks Hook을 통해 외부 resource에 연결할 수 있습니다. 또한, Airflow의 connection 정보를 이용하기 때문에 비밀번호와 같은 인증 정보를 파일에 작성하지 않아도 된다는 장점이 있습니다.  먼저, 터미널 창에서 mongo-provider를 설치합니다. pip install apache-airflow-providers-mongo  그리고 Airflow 메뉴 중 ‘admin → connections → mongo_default’에서 아래 정보를 입력합니다.     Connection Type : MongoDB  Host : your host (e.g. localhost)  Schema : your schema (e.g. test)  Port : your port (e.g. 27017)   마지막으로 아래와 같이 Operator와 DAG을 구성하면 위에서 만든 MongoCreateDocumentOperator와 동일하게 현재 날짜와 시간을 document에 저장할 수 있습니다.  ### mongodb_operator.py from datetime import datetime  from airflow.models.baseoperator import BaseOperator from airflow.providers.mongo.hooks.mongo import MongoHook   class MongoDBOperator(BaseOperator):     def __init__(self, conn_id: str, **kwargs) -&gt; None:         super().__init__(**kwargs)         self.conn_id = conn_id      def execute(self, context):         hook = MongoHook(conn_id=self.conn_id)         query = {&quot;date&quot;: datetime.today().strftime(&quot;%Y/%m/%d %H:%M:%S&quot;)}         result = hook.insert_one(             mongo_collection=&quot;test_coll&quot;, doc=query, mongo_db=&quot;test&quot;         )         message = f&quot;result: {result}&quot;         print(message)         return message  ### test2_mongo_dag.py from datetime import datetime, timedelta  from airflow import DAG from operators.mongodb_operator import MongoDBOperator  with DAG(     dag_id=&quot;example_mongodb&quot;,     schedule_interval=timedelta(minutes=5),     start_date=datetime(2021, 1, 1),     catchup=False,     dagrun_timeout=timedelta(minutes=60),     tags=[&quot;example&quot;], ) as dag:     mongo_task = MongoDBOperator(         task_id=&quot;sample-task&quot;,         conn_id=&quot;mongo_default&quot;,         dag=dag,     )      mongo_task  if __name__ == &quot;__main__&quot;:     dag.cli()           참고자료             Airflow 공식문서 - Creating a custom Operator       Airflow 공식문서 - MongoHook       블로그 - Airflow에서 MongoDB 사용하기">
+
+
+
+
+
+
+
+  <meta property="article:published_time" content="2022-03-01T00:00:00+09:00">
+
+
+
+  <meta property="article:modified_time" content="2022-03-01T00:00:00+09:00">
+
+
+
+  
+
+  
+
+
+<link rel="canonical" href="http://localhost:4000/de/airflow_custom_operator/">
+
+
+
+
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    
+      "@type": "Person",
+      "name": "HyangGon Jin",
+      "url": "http://localhost:4000/"
+    
+  }
+</script>
+
+
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+
+  <link href="/feed.xml" type="application/atom+xml" rel="alternate" title="Lego Feed">
+
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css"></noscript>
+
+
+
+    <!-- start custom head snippets -->
+
+<!-- insert favicons. use https://realfavicongenerator.net/ -->
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body class="layout--single">
+    <nav class="skip-links">
+  <ul>
+    <li><a href="#site-nav" class="screen-reader-shortcut">Skip to primary navigation</a></li>
+    <li><a href="#main" class="screen-reader-shortcut">Skip to content</a></li>
+    <li><a href="#footer" class="screen-reader-shortcut">Skip to footer</a></li>
+  </ul>
+</nav>
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+        <a class="site-title" href="/">
+          Lego
+          <span class="site-subtitle"></span>
+        </a>
+        <ul class="visible-links"><li class="masthead__menu-item">
+              <a href="/categories/">Category</a>
+            </li><li class="masthead__menu-item">
+              <a href="/tags/">Tag</a>
+            </li><li class="masthead__menu-item">
+              <a href="/about/">About</a>
+            </li><li class="masthead__menu-item">
+              <a href="/search/">Search</a>
+            </li></ul>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">토글 메뉴</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="https://schema.org/Person" class="h-card">
+
+  
+    <div class="author__avatar">
+      <a href="http://localhost:4000/">
+        <img src="/assets/images/blue_lego_ver.1.png" alt="HyangGon Jin" itemprop="image" class="u-photo">
+      </a>
+    </div>
+  
+
+  <div class="author__content">
+    <h3 class="author__name p-name" itemprop="name">
+      <a class="u-url" rel="me" href="http://localhost:4000/" itemprop="url">HyangGon Jin</a>
+    </h3>
+    
+      <div class="author__bio p-note" itemprop="description">
+        <p>#Statistics #ML #Python #R</p>
+
+      </div>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">팔로우</button>
+    <ul class="author__urls social-icons">
+      
+        <li itemprop="homeLocation" itemscope itemtype="https://schema.org/Place">
+          <i class="fas fa-fw fa-map-marker-alt" aria-hidden="true"></i> <span itemprop="name" class="p-locality">Seoul</span>
+        </li>
+      
+
+      
+        
+          
+            <li><a href="mailto:nike3616@gmail.com" rel="nofollow noopener noreferrer me"><i class="fas fa-fw fa-envelope-square" aria-hidden="true"></i><span class="label">Email</span></a></li>
+          
+        
+          
+        
+          
+        
+          
+            <li><a href="https://github.com/hyanggonjin" rel="nofollow noopener noreferrer me"><i class="fab fa-fw fa-github" aria-hidden="true"></i><span class="label">GitHub</span></a></li>
+          
+        
+          
+        
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs" rel="nofollow noopener noreferrer me">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+  
+  </div>
+
+
+
+  <article class="page h-entry" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="Airflow - Custom operator">
+    <meta itemprop="description" content="Airflow는 다양한 Operator를 지원하지만, 필요한 Operator를 직접 만들 수도 있습니다. airflow.models.baseoperator.BaseOperator를 통해 이러한 확장성을 지원합니다.Custom Operator 생성BaseOperator에 2가지를 override하는 것으로 Custom Operator를 생성할 수 있습니다.  Constructor - 생성할 Operator의 parameter를 정의합니다.  Execute - Operator가 실행할 코드를 작성합니다.Operator 생성생성할 operator 파일을 만들어 ‘plugins-operators’ 폴더(‘custom-operator’ 등 폴더명을 다르게 하여 operator를 관리할 수 있음)에 생성합니다.# hello_operator.pyfrom airflow.models.baseoperator import BaseOperatorclass HelloOperator(BaseOperator):    def __init__(self, name: str, **kwargs) -&gt; None:        super().__init__(**kwargs)        self.name = name    def execute(self, context):        message = f&quot;Hello {self.name}&quot;        print(message)        return messageDAG 생성다음과 같이 DAG을 만듭니다.# hello_dag.pyfrom datetime import datetime, timedeltafrom airflow import DAGfrom operators.hello_operator import HelloOperatorwith DAG(    dag_id=&quot;example_hello&quot;,    schedule_interval=timedelta(minutes=5),    start_date=datetime(2021, 1, 1),    catchup=False,    dagrun_timeout=timedelta(minutes=60),    tags=[&quot;example&quot;],) as dag:    hello_task = HelloOperator(task_id=&quot;sample-task&quot;, name=&quot;foo_bar&quot;, dag=dag)    hello_taskif __name__ == &quot;__main__&quot;:    dag.cli()MongoDB Operator 생성위와 같은 방법을 이용해 MongoDB에 데이터를 쌓는 DAG를 만들 수 있습니다.test collection 생성test_coll이라는 collection에 Date()함수를 이용해 현재 날짜와 시간을 저장합니다db.createCollection(&quot;test_coll&quot;)db.test_coll.insertOne({date:Date()})Operator 생성우선, BaseOperator를 이용해 ‘mongo_operator’ 파일을 ‘plugins - operators’ 폴더에 생성합니다.from airflow.models import BaseOperatorfrom pymongo import MongoClientclass MongoCreateDocumentOperator(BaseOperator):    def __init__(self, host, database, collection, data, *args, **kwargs):        self.host = host        self.database = database        self.collection = collection        self.data = data        super().__init__(*args, **kwargs)    def execute(self, context):        mongo = MongoClient(host=self.host, port=27017)        mongo[self.database][self.collection].insert_one(self.data)DAG 생성위에서 만든 MongoCreateDocumentOperator를 이용하여 쿼리를 실행하는 DAG을 만듭니다.#test_mongo_dag.pyfrom datetime import datetime, timedeltafrom airflow import DAGfrom operators.mongo_operator import MongoCreateDocumentOperatorwith DAG(    dag_id=&quot;example_mongo&quot;,    schedule_interval=timedelta(minutes=5),    start_date=datetime(2022, 2, 27),    catchup=False,    tags=[&quot;example&quot;],) as dag:    mongo_task = MongoCreateDocumentOperator(        task_id=&quot;insert_data&quot;,        host=&quot;127.0.0.1&quot;,        database=&quot;test&quot;,        collection=&quot;test_coll&quot;,        data={&quot;date&quot;: datetime.today().strftime(&quot;%Y/%m/%d %H:%M:%S&quot;)},        dag=dag,    )    mongo_taskif __name__ == &quot;__main__&quot;:    dag.cli()HooksHook을 통해 외부 resource에 연결할 수 있습니다. 또한, Airflow의 connection 정보를 이용하기 때문에 비밀번호와 같은 인증 정보를 파일에 작성하지 않아도 된다는 장점이 있습니다.먼저, 터미널 창에서 mongo-provider를 설치합니다.pip install apache-airflow-providers-mongo그리고 Airflow 메뉴 중 ‘admin → connections → mongo_default’에서 아래 정보를 입력합니다.  Connection Type : MongoDB Host : your host (e.g. localhost) Schema : your schema (e.g. test) Port : your port (e.g. 27017)마지막으로 아래와 같이 Operator와 DAG을 구성하면 위에서 만든 MongoCreateDocumentOperator와 동일하게 현재 날짜와 시간을 document에 저장할 수 있습니다.### mongodb_operator.pyfrom datetime import datetimefrom airflow.models.baseoperator import BaseOperatorfrom airflow.providers.mongo.hooks.mongo import MongoHookclass MongoDBOperator(BaseOperator):    def __init__(self, conn_id: str, **kwargs) -&gt; None:        super().__init__(**kwargs)        self.conn_id = conn_id    def execute(self, context):        hook = MongoHook(conn_id=self.conn_id)        query = {&quot;date&quot;: datetime.today().strftime(&quot;%Y/%m/%d %H:%M:%S&quot;)}        result = hook.insert_one(            mongo_collection=&quot;test_coll&quot;, doc=query, mongo_db=&quot;test&quot;        )        message = f&quot;result: {result}&quot;        print(message)        return message### test2_mongo_dag.pyfrom datetime import datetime, timedeltafrom airflow import DAGfrom operators.mongodb_operator import MongoDBOperatorwith DAG(    dag_id=&quot;example_mongodb&quot;,    schedule_interval=timedelta(minutes=5),    start_date=datetime(2021, 1, 1),    catchup=False,    dagrun_timeout=timedelta(minutes=60),    tags=[&quot;example&quot;],) as dag:    mongo_task = MongoDBOperator(        task_id=&quot;sample-task&quot;,        conn_id=&quot;mongo_default&quot;,        dag=dag,    )    mongo_taskif __name__ == &quot;__main__&quot;:    dag.cli()      참고자료          Airflow 공식문서 - Creating a custom Operator      Airflow 공식문서 - MongoHook      블로그 - Airflow에서 MongoDB 사용하기      ">
+    <meta itemprop="datePublished" content="2022-03-01T00:00:00+09:00">
+    <meta itemprop="dateModified" content="2022-03-01T00:00:00+09:00">
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <h1 id="page-title" class="page__title p-name" itemprop="headline">
+            <a href="http://localhost:4000/de/airflow_custom_operator/" class="u-url" itemprop="url">Airflow - Custom operator
+</a>
+          </h1>
+          
+
+
+        </header>
+      
+
+      <section class="page__content e-content" itemprop="text">
+        
+          <aside class="sidebar__right sticky">
+            <nav class="toc">
+              <header><h4 class="nav__title"><i class="fas fa-file-alt"></i> On This Page</h4></header>
+              <ul class="toc__menu"><li><a href="#custom-operator-생성">Custom Operator 생성</a><ul><li><a href="#operator-생성">Operator 생성</a></li><li><a href="#dag-생성">DAG 생성</a></li></ul></li><li><a href="#mongodb-operator-생성">MongoDB Operator 생성</a><ul><li><a href="#test-collection-생성">test collection 생성</a></li><li><a href="#operator-생성-1">Operator 생성</a></li><li><a href="#dag-생성-1">DAG 생성</a></li><li><a href="#hooks">Hooks</a></li></ul></li></ul>
+
+            </nav>
+          </aside>
+        
+        <p>Airflow는 다양한 Operator를 지원하지만, 필요한 Operator를 직접 만들 수도 있습니다. <code class="language-plaintext highlighter-rouge">airflow.models.baseoperator.BaseOperator</code>를 통해 이러한 확장성을 지원합니다.</p>
+
+<h1 id="custom-operator-생성">Custom Operator 생성</h1>
+<p><code class="language-plaintext highlighter-rouge">BaseOperator</code>에 2가지를 override하는 것으로 Custom Operator를 생성할 수 있습니다.</p>
+
+<ul>
+  <li>Constructor - 생성할 Operator의 parameter를 정의합니다.</li>
+  <li>Execute - Operator가 실행할 코드를 작성합니다.</li>
+</ul>
+
+<h2 id="operator-생성">Operator 생성</h2>
+<p>생성할 operator 파일을 만들어 ‘plugins-operators’ 폴더(‘custom-operator’ 등 폴더명을 다르게 하여 operator를 관리할 수 있음)에 생성합니다.</p>
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># hello_operator.py
+</span><span class="kn">from</span> <span class="nn">airflow.models.baseoperator</span> <span class="kn">import</span> <span class="n">BaseOperator</span>
+
+
+<span class="k">class</span> <span class="nc">HelloOperator</span><span class="p">(</span><span class="n">BaseOperator</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="nb">super</span><span class="p">().</span><span class="n">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+
+    <span class="k">def</span> <span class="nf">execute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">):</span>
+        <span class="n">message</span> <span class="o">=</span> <span class="sa">f</span><span class="s">"Hello </span><span class="si">{</span><span class="bp">self</span><span class="p">.</span><span class="n">name</span><span class="si">}</span><span class="s">"</span>
+        <span class="k">print</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">message</span>
+</code></pre></div></div>
+
+<h2 id="dag-생성">DAG 생성</h2>
+<p>다음과 같이 DAG을 만듭니다.</p>
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># hello_dag.py
+</span><span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span><span class="p">,</span> <span class="n">timedelta</span>
+
+<span class="kn">from</span> <span class="nn">airflow</span> <span class="kn">import</span> <span class="n">DAG</span>
+<span class="kn">from</span> <span class="nn">operators.hello_operator</span> <span class="kn">import</span> <span class="n">HelloOperator</span>
+
+<span class="k">with</span> <span class="n">DAG</span><span class="p">(</span>
+    <span class="n">dag_id</span><span class="o">=</span><span class="s">"example_hello"</span><span class="p">,</span>
+    <span class="n">schedule_interval</span><span class="o">=</span><span class="n">timedelta</span><span class="p">(</span><span class="n">minutes</span><span class="o">=</span><span class="mi">5</span><span class="p">),</span>
+    <span class="n">start_date</span><span class="o">=</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2021</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+    <span class="n">catchup</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
+    <span class="n">dagrun_timeout</span><span class="o">=</span><span class="n">timedelta</span><span class="p">(</span><span class="n">minutes</span><span class="o">=</span><span class="mi">60</span><span class="p">),</span>
+    <span class="n">tags</span><span class="o">=</span><span class="p">[</span><span class="s">"example"</span><span class="p">],</span>
+<span class="p">)</span> <span class="k">as</span> <span class="n">dag</span><span class="p">:</span>
+    <span class="n">hello_task</span> <span class="o">=</span> <span class="n">HelloOperator</span><span class="p">(</span><span class="n">task_id</span><span class="o">=</span><span class="s">"sample-task"</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s">"foo_bar"</span><span class="p">,</span> <span class="n">dag</span><span class="o">=</span><span class="n">dag</span><span class="p">)</span>
+
+    <span class="n">hello_task</span>
+
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">"__main__"</span><span class="p">:</span>
+    <span class="n">dag</span><span class="p">.</span><span class="n">cli</span><span class="p">()</span>
+</code></pre></div></div>
+
+<h1 id="mongodb-operator-생성">MongoDB Operator 생성</h1>
+<p>위와 같은 방법을 이용해 MongoDB에 데이터를 쌓는 DAG를 만들 수 있습니다.</p>
+
+<h2 id="test-collection-생성">test collection 생성</h2>
+<p><code class="language-plaintext highlighter-rouge">test_coll</code>이라는 collection에 <code class="language-plaintext highlighter-rouge">Date()</code>함수를 이용해 현재 날짜와 시간을 저장합니다</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>db.createCollection("test_coll")
+
+db.test_coll.insertOne({date:Date()})
+</code></pre></div></div>
+
+<h2 id="operator-생성-1">Operator 생성</h2>
+<p>우선, <code class="language-plaintext highlighter-rouge">BaseOperator</code>를 이용해 ‘mongo_operator’ 파일을 ‘plugins - operators’ 폴더에 생성합니다.</p>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">airflow.models</span> <span class="kn">import</span> <span class="n">BaseOperator</span>
+<span class="kn">from</span> <span class="nn">pymongo</span> <span class="kn">import</span> <span class="n">MongoClient</span>
+
+
+<span class="k">class</span> <span class="nc">MongoCreateDocumentOperator</span><span class="p">(</span><span class="n">BaseOperator</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">host</span><span class="p">,</span> <span class="n">database</span><span class="p">,</span> <span class="n">collection</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">host</span> <span class="o">=</span> <span class="n">host</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">database</span> <span class="o">=</span> <span class="n">database</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">collection</span> <span class="o">=</span> <span class="n">collection</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">data</span>
+        <span class="nb">super</span><span class="p">().</span><span class="n">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">execute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">):</span>
+        <span class="n">mongo</span> <span class="o">=</span> <span class="n">MongoClient</span><span class="p">(</span><span class="n">host</span><span class="o">=</span><span class="bp">self</span><span class="p">.</span><span class="n">host</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="mi">27017</span><span class="p">)</span>
+        <span class="n">mongo</span><span class="p">[</span><span class="bp">self</span><span class="p">.</span><span class="n">database</span><span class="p">][</span><span class="bp">self</span><span class="p">.</span><span class="n">collection</span><span class="p">].</span><span class="n">insert_one</span><span class="p">(</span><span class="bp">self</span><span class="p">.</span><span class="n">data</span><span class="p">)</span>
+</code></pre></div></div>
+
+<h2 id="dag-생성-1">DAG 생성</h2>
+<p>위에서 만든 <code class="language-plaintext highlighter-rouge">MongoCreateDocumentOperator</code>를 이용하여 쿼리를 실행하는 DAG을 만듭니다.</p>
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">#test_mongo_dag.py
+</span><span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span><span class="p">,</span> <span class="n">timedelta</span>
+
+<span class="kn">from</span> <span class="nn">airflow</span> <span class="kn">import</span> <span class="n">DAG</span>
+<span class="kn">from</span> <span class="nn">operators.mongo_operator</span> <span class="kn">import</span> <span class="n">MongoCreateDocumentOperator</span>
+
+<span class="k">with</span> <span class="n">DAG</span><span class="p">(</span>
+    <span class="n">dag_id</span><span class="o">=</span><span class="s">"example_mongo"</span><span class="p">,</span>
+    <span class="n">schedule_interval</span><span class="o">=</span><span class="n">timedelta</span><span class="p">(</span><span class="n">minutes</span><span class="o">=</span><span class="mi">5</span><span class="p">),</span>
+    <span class="n">start_date</span><span class="o">=</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2022</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">27</span><span class="p">),</span>
+    <span class="n">catchup</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
+    <span class="n">tags</span><span class="o">=</span><span class="p">[</span><span class="s">"example"</span><span class="p">],</span>
+<span class="p">)</span> <span class="k">as</span> <span class="n">dag</span><span class="p">:</span>
+    <span class="n">mongo_task</span> <span class="o">=</span> <span class="n">MongoCreateDocumentOperator</span><span class="p">(</span>
+        <span class="n">task_id</span><span class="o">=</span><span class="s">"insert_data"</span><span class="p">,</span>
+        <span class="n">host</span><span class="o">=</span><span class="s">"127.0.0.1"</span><span class="p">,</span>
+        <span class="n">database</span><span class="o">=</span><span class="s">"test"</span><span class="p">,</span>
+        <span class="n">collection</span><span class="o">=</span><span class="s">"test_coll"</span><span class="p">,</span>
+        <span class="n">data</span><span class="o">=</span><span class="p">{</span><span class="s">"date"</span><span class="p">:</span> <span class="n">datetime</span><span class="p">.</span><span class="n">today</span><span class="p">().</span><span class="n">strftime</span><span class="p">(</span><span class="s">"%Y/%m/%d %H:%M:%S"</span><span class="p">)},</span>
+        <span class="n">dag</span><span class="o">=</span><span class="n">dag</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">mongo_task</span>
+
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">"__main__"</span><span class="p">:</span>
+    <span class="n">dag</span><span class="p">.</span><span class="n">cli</span><span class="p">()</span>
+</code></pre></div></div>
+
+<h2 id="hooks">Hooks</h2>
+<p>Hook을 통해 외부 resource에 연결할 수 있습니다. 또한, Airflow의 connection 정보를 이용하기 때문에 비밀번호와 같은 인증 정보를 파일에 작성하지 않아도 된다는 장점이 있습니다.</p>
+
+<p>먼저, 터미널 창에서 <code class="language-plaintext highlighter-rouge">mongo-provider</code>를 설치합니다.</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>pip install apache-airflow-providers-mongo
+</code></pre></div></div>
+<p>그리고 Airflow 메뉴 중 ‘admin → connections → mongo_default’에서 아래 정보를 입력합니다.</p>
+
+<blockquote>
+  <p>Connection Type : MongoDB <br />
+Host : your host (e.g. localhost) <br />
+Schema : your schema (e.g. test) <br />
+Port : your port (e.g. 27017)</p>
+</blockquote>
+
+<p>마지막으로 아래와 같이 Operator와 DAG을 구성하면 위에서 만든 <code class="language-plaintext highlighter-rouge">MongoCreateDocumentOperator</code>와 동일하게 현재 날짜와 시간을 document에 저장할 수 있습니다.</p>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">### mongodb_operator.py
+</span><span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
+
+<span class="kn">from</span> <span class="nn">airflow.models.baseoperator</span> <span class="kn">import</span> <span class="n">BaseOperator</span>
+<span class="kn">from</span> <span class="nn">airflow.providers.mongo.hooks.mongo</span> <span class="kn">import</span> <span class="n">MongoHook</span>
+
+
+<span class="k">class</span> <span class="nc">MongoDBOperator</span><span class="p">(</span><span class="n">BaseOperator</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">conn_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="nb">super</span><span class="p">().</span><span class="n">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">conn_id</span> <span class="o">=</span> <span class="n">conn_id</span>
+
+    <span class="k">def</span> <span class="nf">execute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">):</span>
+        <span class="n">hook</span> <span class="o">=</span> <span class="n">MongoHook</span><span class="p">(</span><span class="n">conn_id</span><span class="o">=</span><span class="bp">self</span><span class="p">.</span><span class="n">conn_id</span><span class="p">)</span>
+        <span class="n">query</span> <span class="o">=</span> <span class="p">{</span><span class="s">"date"</span><span class="p">:</span> <span class="n">datetime</span><span class="p">.</span><span class="n">today</span><span class="p">().</span><span class="n">strftime</span><span class="p">(</span><span class="s">"%Y/%m/%d %H:%M:%S"</span><span class="p">)}</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">hook</span><span class="p">.</span><span class="n">insert_one</span><span class="p">(</span>
+            <span class="n">mongo_collection</span><span class="o">=</span><span class="s">"test_coll"</span><span class="p">,</span> <span class="n">doc</span><span class="o">=</span><span class="n">query</span><span class="p">,</span> <span class="n">mongo_db</span><span class="o">=</span><span class="s">"test"</span>
+        <span class="p">)</span>
+        <span class="n">message</span> <span class="o">=</span> <span class="sa">f</span><span class="s">"result: </span><span class="si">{</span><span class="n">result</span><span class="si">}</span><span class="s">"</span>
+        <span class="k">print</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">message</span>
+</code></pre></div></div>
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">### test2_mongo_dag.py
+</span><span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span><span class="p">,</span> <span class="n">timedelta</span>
+
+<span class="kn">from</span> <span class="nn">airflow</span> <span class="kn">import</span> <span class="n">DAG</span>
+<span class="kn">from</span> <span class="nn">operators.mongodb_operator</span> <span class="kn">import</span> <span class="n">MongoDBOperator</span>
+
+<span class="k">with</span> <span class="n">DAG</span><span class="p">(</span>
+    <span class="n">dag_id</span><span class="o">=</span><span class="s">"example_mongodb"</span><span class="p">,</span>
+    <span class="n">schedule_interval</span><span class="o">=</span><span class="n">timedelta</span><span class="p">(</span><span class="n">minutes</span><span class="o">=</span><span class="mi">5</span><span class="p">),</span>
+    <span class="n">start_date</span><span class="o">=</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2021</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+    <span class="n">catchup</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
+    <span class="n">dagrun_timeout</span><span class="o">=</span><span class="n">timedelta</span><span class="p">(</span><span class="n">minutes</span><span class="o">=</span><span class="mi">60</span><span class="p">),</span>
+    <span class="n">tags</span><span class="o">=</span><span class="p">[</span><span class="s">"example"</span><span class="p">],</span>
+<span class="p">)</span> <span class="k">as</span> <span class="n">dag</span><span class="p">:</span>
+    <span class="n">mongo_task</span> <span class="o">=</span> <span class="n">MongoDBOperator</span><span class="p">(</span>
+        <span class="n">task_id</span><span class="o">=</span><span class="s">"sample-task"</span><span class="p">,</span>
+        <span class="n">conn_id</span><span class="o">=</span><span class="s">"mongo_default"</span><span class="p">,</span>
+        <span class="n">dag</span><span class="o">=</span><span class="n">dag</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="n">mongo_task</span>
+
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">"__main__"</span><span class="p">:</span>
+    <span class="n">dag</span><span class="p">.</span><span class="n">cli</span><span class="p">()</span>
+</code></pre></div></div>
+
+<ul>
+  <li>
+    <p>참고자료</p>
+
+    <ul>
+      <li><a href="https://airflow.apache.org/docs/apache-airflow/stable/howto/custom-operator.html#custom-operator">Airflow 공식문서 - Creating a custom Operator</a></li>
+      <li><a href="https://airflow.apache.org/docs/apache-airflow-providers-mongo/stable/_api/airflow/providers/mongo/hooks/mongo/index.html#airflow.providers.mongo.hooks.mongo.MongoHook">Airflow 공식문서 - MongoHook</a></li>
+      <li><a href="https://hyungjung-lee.github.io/python/Python-Airflow-MongoDB/">블로그 - Airflow에서 MongoDB 사용하기</a></li>
+    </ul>
+  </li>
+</ul>
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> 태그: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/tags/#airflow" class="page__taxonomy-item p-category" rel="tag">airflow</a><span class="sep">, </span>
+    
+      <a href="/tags/#de" class="page__taxonomy-item p-category" rel="tag">de</a><span class="sep">, </span>
+    
+      <a href="/tags/#mongodb" class="page__taxonomy-item p-category" rel="tag">mongodb</a>
+    
+    </span>
+  </p>
+
+
+
+
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-folder-open" aria-hidden="true"></i> 카테고리: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/categories/#de" class="page__taxonomy-item p-category" rel="tag">DE</a>
+    
+    </span>
+  </p>
+
+
+        
+
+  <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> 업데이트:</strong> <time class="dt-published" datetime="2022-03-01">March 1, 2022</time></p>
+
+      </footer>
+
+      <section class="page__share">
+  
+    <h4 class="page__share-title">공유하기</h4>
+  
+
+  <a href="https://twitter.com/intent/tweet?text=Airflow+-+Custom+operator%20http%3A%2F%2Flocalhost%3A4000%2Fde%2Fairflow_custom_operator%2F" class="btn btn--twitter" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="공유하기 Twitter"><i class="fab fa-fw fa-twitter" aria-hidden="true"></i><span> Twitter</span></a>
+
+  <a href="https://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Flocalhost%3A4000%2Fde%2Fairflow_custom_operator%2F" class="btn btn--facebook" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="공유하기 Facebook"><i class="fab fa-fw fa-facebook" aria-hidden="true"></i><span> Facebook</span></a>
+
+  <a href="https://www.linkedin.com/shareArticle?mini=true&url=http%3A%2F%2Flocalhost%3A4000%2Fde%2Fairflow_custom_operator%2F" class="btn btn--linkedin" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="공유하기 LinkedIn"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i><span> LinkedIn</span></a>
+</section>
+
+
+      
+  <nav class="pagination">
+    
+      <a href="/de/airflow/" class="pagination--pager" title="Airflow - MySQL operator
+">이전</a>
+    
+    
+      <a href="#" class="pagination--pager disabled">다음</a>
+    
+  </nav>
+
+    </div>
+
+    
+  </article>
+
+  
+  
+    <div class="page__related">
+      <h2 class="page__related-title">참고</h2>
+      <div class="grid__wrapper">
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/de/airflow/" rel="permalink">Airflow - MySQL operator
+</a>
+      
+    </h2>
+    
+
+
+    <p class="archive__item-excerpt" itemprop="description">Apache Airflow는 워크플로우 스케쥴을 작성하고, 모니터링하기 위한 오픈 소스 워크플로우 관리 플랫폼입니다. 파이썬을 이용하여 보다 쉽고, 복잡한 파이프라인을 구성할 수 있게 합니다. Airflow를 이용해 MySQL에 데이터를 쌓는 작업을 자동화할 수 있습니다.
+
+
+
+0...</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/de/import-the-py-file/" rel="permalink">모듈 import
+</a>
+      
+    </h2>
+    
+
+
+    <p class="archive__item-excerpt" itemprop="description">Python에서는 다양한 함수, 패키지 등이 존재하지만 부득이하게 직접 함수 등을 만들어서 사용해야하는 경우가 있습니다. 이때 import하는 파일을 모듈(module)이라고 합니다. 작성한 모듈을 어떤 식으로 불러오는지 간단한 예제를 통해서 알아보겠습니다.
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/da/visualization_of_tabular_data_using_styler/" rel="permalink">DataFrame Style 적용하기 (2)
+</a>
+      
+    </h2>
+    
+
+
+    <p class="archive__item-excerpt" itemprop="description">이전 글을 통해 pandas의 데이터프레임의 셀들의 배경과 텍스트에 스타일을 설정하는 방법에 대해서 알아보았습니다. 이번에는 index나 header 등 다른 요소들에 스타일을 설정하는 방법과 더불어 유용한 기능을 알아보고자 합니다. 본문은 pandas 공식문서에 있는 ‘Table...</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/da/pandas-data-frame-styler/" rel="permalink">DataFrame Style 적용하기 (1)
+</a>
+      
+    </h2>
+    
+
+
+    <p class="archive__item-excerpt" itemprop="description">pandas의 DataFrame에서는 format, highlighting 등 여러 가지 style을 지정할 수 있습니다. (경험에 의하면) style의 지정은 단순히 이쁘게 보여주는 기능 외에도 하나의 column 내에서 값을 비교하거나, 관심있는 수치 구간을 확인할 때 직관적으...</p>
+  </article>
+</div>
+
+        
+      </div>
+    </div>
+  
+  
+</div>
+    </div>
+
+    
+
+    <div id="footer" class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+
+<!-- end custom footer snippets -->
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+      <li><strong>팔로우:</strong></li>
+    
+
+    
+      
+        
+      
+        
+          <li><a href="https://github.com/hyanggonjin" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+        
+      
+        
+      
+    
+
+    
+      <li><a href="/feed.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> 피드</a></li>
+    
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2022 HyangGon Jin. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script src="/assets/js/main.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+  </body>
+</html>

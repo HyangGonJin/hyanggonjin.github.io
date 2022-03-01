@@ -42,7 +42,7 @@ var store = [{
         "teaser": null
       },{
         "title": "Airflow - MySQL operator",
-        "excerpt":"Apache Airflow는 워크플로우 스케쥴을 작성하고, 모니터링하기 위한 오픈 소스 워크플로우 관리 플랫폼입니다. 파이썬을 이용하여 보다 쉽고, 복잡한 파이프라인을 구성할 수 있게 합니다. Airflow를 이용해 MySQL에 데이터를 쌓는 작업을 자동화할 수 있습니다. 0. test DB 생성 test_airflow DB를 생성한 후, 현재 날짜와 시간을 업데이트 해주는 간단한 쿼리를 작성합니다. # test_airflow.sql --...","categories": ["DE","de"],
+        "excerpt":"Apache Airflow는 워크플로우 스케쥴을 작성하고, 모니터링하기 위한 오픈 소스 워크플로우 관리 플랫폼입니다. 파이썬을 이용하여 보다 쉽고, 복잡한 파이프라인을 구성할 수 있게 합니다. Airflow를 이용해 MySQL에 데이터를 쌓는 작업을 자동화할 수 있습니다. 0. test DB 생성 test_airflow DB를 생성한 후, 현재 날짜와 시간을 업데이트 해주는 간단한 쿼리를 작성합니다. # test_airflow.sql --...","categories": ["DE"],
         "tags": ["de","airflow","mysql"],
         "url": "/de/airflow/",
         "teaser": null

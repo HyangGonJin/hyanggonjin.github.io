@@ -37,19 +37,25 @@ var store = [{
       },{
         "title": "모듈 import",
         "excerpt":"Python에서는 다양한 함수, 패키지 등이 존재하지만 부득이하게 직접 함수 등을 만들어서 사용해야하는 경우가 있습니다. 이때 import하는 파일을 모듈(module)이라고 합니다. 작성한 모듈을 어떤 식으로 불러오는지 간단한 예제를 통해서 알아보겠습니다. 먼저, 모듈에 대한 간단한 정의입니다. 모듈이란 함수나 변수 또는 클래스를 모아 놓은 파일이다. 모듈은 다른 파이썬 프로그램에서 불러와 사용할 수 있게끔 만든...","categories": ["DE"],
-        "tags": ["de","python"],
+        "tags": ["data engineering","python"],
         "url": "/de/import-the-py-file/",
         "teaser": null
       },{
         "title": "Airflow - MySQL operator",
         "excerpt":"Apache Airflow는 워크플로우 스케쥴을 작성하고, 모니터링하기 위한 오픈 소스 워크플로우 관리 플랫폼입니다. 파이썬을 이용하여 보다 쉽고, 복잡한 파이프라인을 구성할 수 있게 합니다. Airflow를 이용해 MySQL에 데이터를 쌓는 작업을 자동화할 수 있습니다. 0. test DB 생성 test_airflow DB를 생성한 후, 현재 날짜와 시간을 업데이트 해주는 간단한 쿼리를 작성합니다. # test_airflow.sql --...","categories": ["DE"],
-        "tags": ["de","airflow","mysql"],
+        "tags": ["data engineering","airflow","mysql"],
         "url": "/de/airflow/",
         "teaser": null
       },{
         "title": "Airflow - Custom operator",
         "excerpt":"Airflow는 다양한 Operator를 지원하지만, 필요한 Operator를 직접 만들 수도 있습니다. airflow.models.baseoperator.BaseOperator를 통해 이러한 확장성을 지원합니다. Custom Operator 생성 BaseOperator에 2가지를 override하는 것으로 Custom Operator를 생성할 수 있습니다. Constructor - 생성할 Operator의 parameter를 정의합니다. Execute - Operator가 실행할 코드를 작성합니다. Operator 생성 생성할 operator 파일을 만들어 ‘plugins-operators’ 폴더(‘custom-operator’ 등 폴더명을 다르게...","categories": ["DE"],
-        "tags": ["de","mongodb","airflow"],
+        "tags": ["data engineering","mongodb","airflow"],
         "url": "/de/airflow_custom_operator/",
+        "teaser": null
+      },{
+        "title": "Airflow - Slack 알림 받기",
+        "excerpt":"Airflow에서 task의 성공 여부에 따라 slack으로 알림을 받는 방법을 알아보겠습니다. Operator kobis_operator 전체 코드는 아래와 같습니다. # plugins/operators/kobis_operator.py import sys import warnings import logging warnings.filterwarnings(\"ignore\") import numpy as np import pandas as pd import requests from datetime import datetime, timedelta import pymysql from airflow.models import BaseOperator class KobisOperator(BaseOperator): def __init__(self,...","categories": ["DE"],
+        "tags": ["data engineering","airflow"],
+        "url": "/de/slack_operator/",
         "teaser": null
       }]

@@ -3,7 +3,7 @@ title: "모듈 import"
 categories:
   - DE
 tags:
-  - de
+  - data engineering
   - python
 toc : True
 toc_sticky: true

@@ -3,7 +3,7 @@ title: "Airflow - Custom operator"
 categories:
   - DE
 tags:
-  - de
+  - data engineering
   - mongodb
   - airflow
 toc : True

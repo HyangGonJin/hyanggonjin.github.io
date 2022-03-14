@@ -1,0 +1,901 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.24.0 by Michael Rose
+  Copyright 2013-2020 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="ko" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>Airflow - Slack 알림 받기 - Lego</title>
+<meta name="description" content="Airflow에서 task의 성공 여부에 따라 slack으로 알림을 받는 방법을 알아보겠습니다.  Operator  kobis_operator 전체 코드는 아래와 같습니다.  # plugins/operators/kobis_operator.py import sys import warnings import logging  warnings.filterwarnings(&quot;ignore&quot;)  import numpy as np import pandas as pd import requests from datetime import datetime, timedelta import pymysql  from airflow.models import BaseOperator   class KobisOperator(BaseOperator):     def __init__(self, host, user, password, database, needCommit, *args, **kwargs):         self.host = host         self.user = user         self.password = password         self.database = database         self.needCommit = needCommit         super().__init__(*args, **kwargs)      def execute(self, context):         conn = pymysql.connect(             user=self.user,             passwd=self.password,             host=self.host,             db=self.database,             charset=&quot;utf8&quot;,         )          # Target 날짜 설정         date = (context.get(&quot;execution_date&quot;) - timedelta(days=1)).strftime(&quot;%Y%m%d&quot;)          # API 호출         rdict = {&quot;key&quot;: &quot;Your API Key&quot;, &quot;targetDt&quot;: date}          url = &quot;http://www.kobis.or.kr/kobisopenapi/webservice/rest/boxoffice/searchDailyBoxOfficeList.json&quot;         r = requests.get(             url,             params=rdict,         )         tmp = r.json()          # MySQL DB 연결         try:             conn = pymysql.connect(                 user=self.user,                 passwd=self.password,                 host=self.host,                 db=self.database,                 charset=&quot;utf8&quot;,             )             cursor = conn.cursor(pymysql.cursors.DictCursor)             print(&quot;Successfully connected.&quot;)         except:             logging.error(&quot;Could not connected&quot;)             sys.exit(1)          # Data 수집         boxoffice_json = tmp[&quot;boxOfficeResult&quot;][&quot;dailyBoxOfficeList&quot;]          boxoffice_dict = {}         for i in range(len(boxoffice_json)):              boxoffice_dict.update(                 {                     &quot;id&quot;: &quot;a&quot; + boxoffice_json[i][&quot;movieCd&quot;] + date[-2:],                     &quot;_name&quot;: boxoffice_json[i][&quot;movieNm&quot;].replace(&quot;\t&quot;, &quot;&quot;),                     &quot;target_date&quot;: datetime.strptime(date, &quot;%Y%m%d&quot;).strftime(                         &quot;%Y-%m-%d&quot;                     ),                     &quot;open_date&quot;: np.where(                         boxoffice_json[i][&quot;openDt&quot;] == &quot; &quot;,  # 개봉일이 &quot; &quot;로 되어있는 경우 존재.                         &quot;9999-01-01&quot;,                         boxoffice_json[i][&quot;openDt&quot;],                     ),                     &quot;_rank&quot;: boxoffice_json[i][&quot;rank&quot;],                     &quot;rank_inten&quot;: boxoffice_json[i][&quot;rankInten&quot;],                     &quot;rank_oldnew&quot;: boxoffice_json[i][&quot;rankOldAndNew&quot;],                     &quot;sales_amt&quot;: boxoffice_json[i][&quot;salesAmt&quot;],                     &quot;sales_inten&quot;: boxoffice_json[i][&quot;salesInten&quot;],                     &quot;sales_change&quot;: boxoffice_json[i][&quot;salesChange&quot;],                     &quot;sales_acc&quot;: boxoffice_json[i][&quot;salesAcc&quot;],                     &quot;audi_cnt&quot;: boxoffice_json[i][&quot;audiCnt&quot;],                     &quot;audi_inten&quot;: boxoffice_json[i][&quot;audiInten&quot;],                     &quot;audi_change&quot;: boxoffice_json[i][&quot;audiChange&quot;],                     &quot;audi_acc&quot;: boxoffice_json[i][&quot;audiAcc&quot;],                     &quot;scrn_cnt&quot;: boxoffice_json[i][&quot;scrnCnt&quot;],                     &quot;show_cnt&quot;: boxoffice_json[i][&quot;showCnt&quot;],                 }             )              table = &quot;daily_boxoffice&quot;             data = boxoffice_dict              placeholders = &quot;, &quot;.join([&quot;%s&quot;] * len(data))             columns = &quot;, &quot;.join(data.keys())             key_placeholders = &quot;, &quot;.join([&quot;{0}=%s&quot;.format(k) for k in data.keys()])              query = (                 &quot;INSERT INTO %s ( %s ) VALUES ( %s ) ON DUPLICATE KEY UPDATE %s ;&quot;                 % (                     table,                     columns,                     placeholders,                     key_placeholders,                 )             )              cursor.execute(query, list(data.values()) * 2)          if self.needCommit:             conn.commit()   일별 박스오피스 API 서비스 Kofic 영화진흥위원회의 API 서비스를 이용해 데이터를 수집합니다. 제공하는 서비스로는 ‘일별 박스오피스’, ‘주간/주말 박스오피스’, ‘영화 상세정보’ 등 영화와 관련된 정보들을 제공합니다. 그 중 ‘일별 박스오피스’ 정보를 json으로 받아서 이용하였으며, 조회하고자 하는 날짜는 ‘yyyymmdd’형식으로 입력해야 합니다.  # Target 날짜 설정 date = (context.get(&quot;execution_date&quot;) - timedelta(days=1)).strftime(&quot;%Y%m%d&quot;)  # API 호출 rdict = {&quot;key&quot;: &quot;Your API Key&quot;, &quot;targetDt&quot;: date}  url = &quot;http://www.kobis.or.kr/kobisopenapi/webservice/rest/boxoffice/searchDailyBoxOfficeList.json&quot; r = requests.get(     url,     params=rdict, ) tmp = r.json()   MySQL DB 연결 pymysql 라이브러리를 이용해 미리 만들어 놓은 테이블에 연결합니다.  try:     conn = pymysql.connect(         user=self.user,         passwd=self.password,         host=self.host,         db=self.database,         charset=&quot;utf8&quot;,     )     cursor = conn.cursor(pymysql.cursors.DictCursor)     print(&quot;Successfully connected.&quot;) except:     logging.error(&quot;Could not connected&quot;)     sys.exit(1)   Data 수집 response에는 해당 일자의 ‘박스오피스 순위’, ‘매출액’, ‘관객수’, ‘상영관’과 관련된 정보들이 있습니다. 개봉일 중 “ “로 되어있는 경우가 존재했는데, 이러한 경우 “9999-01-01”로 치환합니다. 해당 일자의 박스오피스 순위 및 필요한 정보들을 insert 합니다.  boxoffice_json = tmp[&quot;boxOfficeResult&quot;][&quot;dailyBoxOfficeList&quot;]  boxoffice_dict = {} for i in range(len(boxoffice_json)):      boxoffice_dict.update(         {             &quot;id&quot;: &quot;a&quot; + boxoffice_json[i][&quot;movieCd&quot;] + date[-2:],             &quot;_name&quot;: boxoffice_json[i][&quot;movieNm&quot;].replace(&quot;\t&quot;, &quot;&quot;),             &quot;target_date&quot;: datetime.strptime(date, &quot;%Y%m%d&quot;).strftime(                 &quot;%Y-%m-%d&quot;             ),             &quot;open_date&quot;: np.where(                 boxoffice_json[i][&quot;openDt&quot;] == &quot; &quot;,  # 개봉일이 &quot; &quot;로 되어있는 경우 존재.                 &quot;9999-01-01&quot;,                 boxoffice_json[i][&quot;openDt&quot;],             ),             &quot;_rank&quot;: boxoffice_json[i][&quot;rank&quot;],             &quot;rank_inten&quot;: boxoffice_json[i][&quot;rankInten&quot;],             &quot;rank_oldnew&quot;: boxoffice_json[i][&quot;rankOldAndNew&quot;],             &quot;sales_amt&quot;: boxoffice_json[i][&quot;salesAmt&quot;],             &quot;sales_inten&quot;: boxoffice_json[i][&quot;salesInten&quot;],             &quot;sales_change&quot;: boxoffice_json[i][&quot;salesChange&quot;],             &quot;sales_acc&quot;: boxoffice_json[i][&quot;salesAcc&quot;],             &quot;audi_cnt&quot;: boxoffice_json[i][&quot;audiCnt&quot;],             &quot;audi_inten&quot;: boxoffice_json[i][&quot;audiInten&quot;],             &quot;audi_change&quot;: boxoffice_json[i][&quot;audiChange&quot;],             &quot;audi_acc&quot;: boxoffice_json[i][&quot;audiAcc&quot;],             &quot;scrn_cnt&quot;: boxoffice_json[i][&quot;scrnCnt&quot;],             &quot;show_cnt&quot;: boxoffice_json[i][&quot;showCnt&quot;],         }     )      table = &quot;daily_boxoffice&quot;     data = boxoffice_dict      placeholders = &quot;, &quot;.join([&quot;%s&quot;] * len(data))     columns = &quot;, &quot;.join(data.keys())     key_placeholders = &quot;, &quot;.join([&quot;{0}=%s&quot;.format(k) for k in data.keys()])      query = (         &quot;INSERT INTO %s ( %s ) VALUES ( %s ) ON DUPLICATE KEY UPDATE %s ;&quot;         % (             table,             columns,             placeholders,             key_placeholders,         )     )      cursor.execute(query, list(data.values()) * 2)  if self.needCommit:     conn.commit()   slack_operator slack sdk ‘Slack’과 연동하기 위해서 slack_sdk 라이브러리를 이용합니다. 해당 라이브러리를 통해 ‘slack api’와 연결할 수 있습니다. API 이용에 필요한 token 값은 slack api 사이트에서 어플리케이션을 만든 후 확인할 수 있습니다.  slack_bot_operator slack_sdk를 이용해 봇이 메세지를 보내는 operator를 만들 수 있습니다. 메시지를 받길 원하는 채널에 봇을 초대하여, 아래와 같은 operator를 이용해 원하는 메시지를 전송할 수 있습니다.  # plugins/operators/slack_bot_operator.py from airflow.models import BaseOperator from slack_sdk import WebClient   class SlackBotOperator(BaseOperator):     def __init__(self, message, *args, **kwargs):         self.message = message         self.token = &quot;your token!&quot;         self.channel = &quot;your channel&quot;         super().__init__(*args, **kwargs)      def execute(self, context):         client = WebClient(token=self.token)         response = client.chat_postMessage(channel=self.channel, text=self.message)   그리고 다음과 같은 두 함수를 이용하면 Task의 성공/실패에 따라 어떤 메시지를 전송할 것인지를 설정할 수 있습니다.  # plugins/utils/slack.py from slack_sdk import WebClient from operators.slack_bot_operator import SlackBotOperator   def slack_success_alert(context):     alert = SlackBotOperator(         task_id=&quot;slack_success&quot;,         message=&quot;&quot;&quot;         :large_green_circle: Task success.         *Task*: {task}           *Dag*: {dag}         *Execution Time*: {exec_date}           *Log Url*: {log_url}         &quot;&quot;&quot;.format(             task=context.get(&quot;task_instance&quot;).task_id,             dag=context.get(&quot;task_instance&quot;).dag_id,             exec_date=context.get(&quot;execution_date&quot;),             log_url=context.get(&quot;task_instance&quot;).log_url,         ),     )     return alert.execute(context=context)   def slack_fail_alert(context):     alert = SlackBotOperator(         task_id=&quot;slack_failed&quot;,         message=&quot;&quot;&quot;             :red_circle: Task Failed.             *Task*: {task}               *Dag*: {dag}             *Execution Time*: {exec_date}               *Log Url*: {log_url}             &quot;&quot;&quot;.format(             task=context.get(&quot;task_instance&quot;).task_id,             dag=context.get(&quot;task_instance&quot;).dag_id,             exec_date=context.get(&quot;execution_date&quot;),             log_url=context.get(&quot;task_instance&quot;).log_url,         ),     )     return alert.execute(context=context)   DAG on_success_callback과 on_failure_callback에 위에서 만든 함수를 각각 지정해주어 task의 성공 여부에 따라 어떤 알림을 받을 것인지 설정할 수 있습니다.  # dags/kobis_dag.py import pendulum from datetime import datetime, timedelta  from airflow import DAG from operators.kobis_operator import KobisOperator  from utils.slack import slack_success_alert from utils.slack import slack_fail_alert   with DAG(     dag_id=&quot;example_slack_operator&quot;,     schedule_interval=&quot;0 20 * * *&quot;,     start_date=pendulum.datetime(2022, 3, 1, tz=&quot;Asia/Seoul&quot;),     catchup=False,     dagrun_timeout=timedelta(minutes=60),     tags=[&quot;example&quot;],     default_args={         &quot;on_success_callback&quot;: slack_success_alert,         &quot;on_failure_callback&quot;: slack_fail_alert,     },     params={}, ) as dag:     t1 = KobisOperator(         task_id=&quot;insert_data&quot;,         host=&quot;your host&quot;,         user=&quot;your username&quot;,         password=&quot;your password!&quot;,         database=&quot;your db&quot;,         needCommit=True,         dag=dag,     )      t1  if __name__ == &quot;__main__&quot;:     dag.cli()           참고자료             kofic 영화진흥위원회 - 일별 박스오피스 API 서비스       ‘slack_sdk.web.client’ 모듈       ‘chat.postMessage’ method       Airflow 공식문서 - callback       블로그 - Airflow 에서 Slack 사용하기">
+
+
+  <meta name="author" content="HyangGon Jin">
+  
+  <meta property="article:author" content="HyangGon Jin">
+  
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="ko_KR">
+<meta property="og:site_name" content="Lego">
+<meta property="og:title" content="Airflow - Slack 알림 받기">
+<meta property="og:url" content="http://localhost:4000/de/slack_operator/">
+
+
+  <meta property="og:description" content="Airflow에서 task의 성공 여부에 따라 slack으로 알림을 받는 방법을 알아보겠습니다.  Operator  kobis_operator 전체 코드는 아래와 같습니다.  # plugins/operators/kobis_operator.py import sys import warnings import logging  warnings.filterwarnings(&quot;ignore&quot;)  import numpy as np import pandas as pd import requests from datetime import datetime, timedelta import pymysql  from airflow.models import BaseOperator   class KobisOperator(BaseOperator):     def __init__(self, host, user, password, database, needCommit, *args, **kwargs):         self.host = host         self.user = user         self.password = password         self.database = database         self.needCommit = needCommit         super().__init__(*args, **kwargs)      def execute(self, context):         conn = pymysql.connect(             user=self.user,             passwd=self.password,             host=self.host,             db=self.database,             charset=&quot;utf8&quot;,         )          # Target 날짜 설정         date = (context.get(&quot;execution_date&quot;) - timedelta(days=1)).strftime(&quot;%Y%m%d&quot;)          # API 호출         rdict = {&quot;key&quot;: &quot;Your API Key&quot;, &quot;targetDt&quot;: date}          url = &quot;http://www.kobis.or.kr/kobisopenapi/webservice/rest/boxoffice/searchDailyBoxOfficeList.json&quot;         r = requests.get(             url,             params=rdict,         )         tmp = r.json()          # MySQL DB 연결         try:             conn = pymysql.connect(                 user=self.user,                 passwd=self.password,                 host=self.host,                 db=self.database,                 charset=&quot;utf8&quot;,             )             cursor = conn.cursor(pymysql.cursors.DictCursor)             print(&quot;Successfully connected.&quot;)         except:             logging.error(&quot;Could not connected&quot;)             sys.exit(1)          # Data 수집         boxoffice_json = tmp[&quot;boxOfficeResult&quot;][&quot;dailyBoxOfficeList&quot;]          boxoffice_dict = {}         for i in range(len(boxoffice_json)):              boxoffice_dict.update(                 {                     &quot;id&quot;: &quot;a&quot; + boxoffice_json[i][&quot;movieCd&quot;] + date[-2:],                     &quot;_name&quot;: boxoffice_json[i][&quot;movieNm&quot;].replace(&quot;\t&quot;, &quot;&quot;),                     &quot;target_date&quot;: datetime.strptime(date, &quot;%Y%m%d&quot;).strftime(                         &quot;%Y-%m-%d&quot;                     ),                     &quot;open_date&quot;: np.where(                         boxoffice_json[i][&quot;openDt&quot;] == &quot; &quot;,  # 개봉일이 &quot; &quot;로 되어있는 경우 존재.                         &quot;9999-01-01&quot;,                         boxoffice_json[i][&quot;openDt&quot;],                     ),                     &quot;_rank&quot;: boxoffice_json[i][&quot;rank&quot;],                     &quot;rank_inten&quot;: boxoffice_json[i][&quot;rankInten&quot;],                     &quot;rank_oldnew&quot;: boxoffice_json[i][&quot;rankOldAndNew&quot;],                     &quot;sales_amt&quot;: boxoffice_json[i][&quot;salesAmt&quot;],                     &quot;sales_inten&quot;: boxoffice_json[i][&quot;salesInten&quot;],                     &quot;sales_change&quot;: boxoffice_json[i][&quot;salesChange&quot;],                     &quot;sales_acc&quot;: boxoffice_json[i][&quot;salesAcc&quot;],                     &quot;audi_cnt&quot;: boxoffice_json[i][&quot;audiCnt&quot;],                     &quot;audi_inten&quot;: boxoffice_json[i][&quot;audiInten&quot;],                     &quot;audi_change&quot;: boxoffice_json[i][&quot;audiChange&quot;],                     &quot;audi_acc&quot;: boxoffice_json[i][&quot;audiAcc&quot;],                     &quot;scrn_cnt&quot;: boxoffice_json[i][&quot;scrnCnt&quot;],                     &quot;show_cnt&quot;: boxoffice_json[i][&quot;showCnt&quot;],                 }             )              table = &quot;daily_boxoffice&quot;             data = boxoffice_dict              placeholders = &quot;, &quot;.join([&quot;%s&quot;] * len(data))             columns = &quot;, &quot;.join(data.keys())             key_placeholders = &quot;, &quot;.join([&quot;{0}=%s&quot;.format(k) for k in data.keys()])              query = (                 &quot;INSERT INTO %s ( %s ) VALUES ( %s ) ON DUPLICATE KEY UPDATE %s ;&quot;                 % (                     table,                     columns,                     placeholders,                     key_placeholders,                 )             )              cursor.execute(query, list(data.values()) * 2)          if self.needCommit:             conn.commit()   일별 박스오피스 API 서비스 Kofic 영화진흥위원회의 API 서비스를 이용해 데이터를 수집합니다. 제공하는 서비스로는 ‘일별 박스오피스’, ‘주간/주말 박스오피스’, ‘영화 상세정보’ 등 영화와 관련된 정보들을 제공합니다. 그 중 ‘일별 박스오피스’ 정보를 json으로 받아서 이용하였으며, 조회하고자 하는 날짜는 ‘yyyymmdd’형식으로 입력해야 합니다.  # Target 날짜 설정 date = (context.get(&quot;execution_date&quot;) - timedelta(days=1)).strftime(&quot;%Y%m%d&quot;)  # API 호출 rdict = {&quot;key&quot;: &quot;Your API Key&quot;, &quot;targetDt&quot;: date}  url = &quot;http://www.kobis.or.kr/kobisopenapi/webservice/rest/boxoffice/searchDailyBoxOfficeList.json&quot; r = requests.get(     url,     params=rdict, ) tmp = r.json()   MySQL DB 연결 pymysql 라이브러리를 이용해 미리 만들어 놓은 테이블에 연결합니다.  try:     conn = pymysql.connect(         user=self.user,         passwd=self.password,         host=self.host,         db=self.database,         charset=&quot;utf8&quot;,     )     cursor = conn.cursor(pymysql.cursors.DictCursor)     print(&quot;Successfully connected.&quot;) except:     logging.error(&quot;Could not connected&quot;)     sys.exit(1)   Data 수집 response에는 해당 일자의 ‘박스오피스 순위’, ‘매출액’, ‘관객수’, ‘상영관’과 관련된 정보들이 있습니다. 개봉일 중 “ “로 되어있는 경우가 존재했는데, 이러한 경우 “9999-01-01”로 치환합니다. 해당 일자의 박스오피스 순위 및 필요한 정보들을 insert 합니다.  boxoffice_json = tmp[&quot;boxOfficeResult&quot;][&quot;dailyBoxOfficeList&quot;]  boxoffice_dict = {} for i in range(len(boxoffice_json)):      boxoffice_dict.update(         {             &quot;id&quot;: &quot;a&quot; + boxoffice_json[i][&quot;movieCd&quot;] + date[-2:],             &quot;_name&quot;: boxoffice_json[i][&quot;movieNm&quot;].replace(&quot;\t&quot;, &quot;&quot;),             &quot;target_date&quot;: datetime.strptime(date, &quot;%Y%m%d&quot;).strftime(                 &quot;%Y-%m-%d&quot;             ),             &quot;open_date&quot;: np.where(                 boxoffice_json[i][&quot;openDt&quot;] == &quot; &quot;,  # 개봉일이 &quot; &quot;로 되어있는 경우 존재.                 &quot;9999-01-01&quot;,                 boxoffice_json[i][&quot;openDt&quot;],             ),             &quot;_rank&quot;: boxoffice_json[i][&quot;rank&quot;],             &quot;rank_inten&quot;: boxoffice_json[i][&quot;rankInten&quot;],             &quot;rank_oldnew&quot;: boxoffice_json[i][&quot;rankOldAndNew&quot;],             &quot;sales_amt&quot;: boxoffice_json[i][&quot;salesAmt&quot;],             &quot;sales_inten&quot;: boxoffice_json[i][&quot;salesInten&quot;],             &quot;sales_change&quot;: boxoffice_json[i][&quot;salesChange&quot;],             &quot;sales_acc&quot;: boxoffice_json[i][&quot;salesAcc&quot;],             &quot;audi_cnt&quot;: boxoffice_json[i][&quot;audiCnt&quot;],             &quot;audi_inten&quot;: boxoffice_json[i][&quot;audiInten&quot;],             &quot;audi_change&quot;: boxoffice_json[i][&quot;audiChange&quot;],             &quot;audi_acc&quot;: boxoffice_json[i][&quot;audiAcc&quot;],             &quot;scrn_cnt&quot;: boxoffice_json[i][&quot;scrnCnt&quot;],             &quot;show_cnt&quot;: boxoffice_json[i][&quot;showCnt&quot;],         }     )      table = &quot;daily_boxoffice&quot;     data = boxoffice_dict      placeholders = &quot;, &quot;.join([&quot;%s&quot;] * len(data))     columns = &quot;, &quot;.join(data.keys())     key_placeholders = &quot;, &quot;.join([&quot;{0}=%s&quot;.format(k) for k in data.keys()])      query = (         &quot;INSERT INTO %s ( %s ) VALUES ( %s ) ON DUPLICATE KEY UPDATE %s ;&quot;         % (             table,             columns,             placeholders,             key_placeholders,         )     )      cursor.execute(query, list(data.values()) * 2)  if self.needCommit:     conn.commit()   slack_operator slack sdk ‘Slack’과 연동하기 위해서 slack_sdk 라이브러리를 이용합니다. 해당 라이브러리를 통해 ‘slack api’와 연결할 수 있습니다. API 이용에 필요한 token 값은 slack api 사이트에서 어플리케이션을 만든 후 확인할 수 있습니다.  slack_bot_operator slack_sdk를 이용해 봇이 메세지를 보내는 operator를 만들 수 있습니다. 메시지를 받길 원하는 채널에 봇을 초대하여, 아래와 같은 operator를 이용해 원하는 메시지를 전송할 수 있습니다.  # plugins/operators/slack_bot_operator.py from airflow.models import BaseOperator from slack_sdk import WebClient   class SlackBotOperator(BaseOperator):     def __init__(self, message, *args, **kwargs):         self.message = message         self.token = &quot;your token!&quot;         self.channel = &quot;your channel&quot;         super().__init__(*args, **kwargs)      def execute(self, context):         client = WebClient(token=self.token)         response = client.chat_postMessage(channel=self.channel, text=self.message)   그리고 다음과 같은 두 함수를 이용하면 Task의 성공/실패에 따라 어떤 메시지를 전송할 것인지를 설정할 수 있습니다.  # plugins/utils/slack.py from slack_sdk import WebClient from operators.slack_bot_operator import SlackBotOperator   def slack_success_alert(context):     alert = SlackBotOperator(         task_id=&quot;slack_success&quot;,         message=&quot;&quot;&quot;         :large_green_circle: Task success.         *Task*: {task}           *Dag*: {dag}         *Execution Time*: {exec_date}           *Log Url*: {log_url}         &quot;&quot;&quot;.format(             task=context.get(&quot;task_instance&quot;).task_id,             dag=context.get(&quot;task_instance&quot;).dag_id,             exec_date=context.get(&quot;execution_date&quot;),             log_url=context.get(&quot;task_instance&quot;).log_url,         ),     )     return alert.execute(context=context)   def slack_fail_alert(context):     alert = SlackBotOperator(         task_id=&quot;slack_failed&quot;,         message=&quot;&quot;&quot;             :red_circle: Task Failed.             *Task*: {task}               *Dag*: {dag}             *Execution Time*: {exec_date}               *Log Url*: {log_url}             &quot;&quot;&quot;.format(             task=context.get(&quot;task_instance&quot;).task_id,             dag=context.get(&quot;task_instance&quot;).dag_id,             exec_date=context.get(&quot;execution_date&quot;),             log_url=context.get(&quot;task_instance&quot;).log_url,         ),     )     return alert.execute(context=context)   DAG on_success_callback과 on_failure_callback에 위에서 만든 함수를 각각 지정해주어 task의 성공 여부에 따라 어떤 알림을 받을 것인지 설정할 수 있습니다.  # dags/kobis_dag.py import pendulum from datetime import datetime, timedelta  from airflow import DAG from operators.kobis_operator import KobisOperator  from utils.slack import slack_success_alert from utils.slack import slack_fail_alert   with DAG(     dag_id=&quot;example_slack_operator&quot;,     schedule_interval=&quot;0 20 * * *&quot;,     start_date=pendulum.datetime(2022, 3, 1, tz=&quot;Asia/Seoul&quot;),     catchup=False,     dagrun_timeout=timedelta(minutes=60),     tags=[&quot;example&quot;],     default_args={         &quot;on_success_callback&quot;: slack_success_alert,         &quot;on_failure_callback&quot;: slack_fail_alert,     },     params={}, ) as dag:     t1 = KobisOperator(         task_id=&quot;insert_data&quot;,         host=&quot;your host&quot;,         user=&quot;your username&quot;,         password=&quot;your password!&quot;,         database=&quot;your db&quot;,         needCommit=True,         dag=dag,     )      t1  if __name__ == &quot;__main__&quot;:     dag.cli()           참고자료             kofic 영화진흥위원회 - 일별 박스오피스 API 서비스       ‘slack_sdk.web.client’ 모듈       ‘chat.postMessage’ method       Airflow 공식문서 - callback       블로그 - Airflow 에서 Slack 사용하기">
+
+
+
+
+
+
+
+  <meta property="article:published_time" content="2022-03-14T00:00:00+09:00">
+
+
+
+  <meta property="article:modified_time" content="2022-03-14T00:00:00+09:00">
+
+
+
+  
+
+  
+
+
+<link rel="canonical" href="http://localhost:4000/de/slack_operator/">
+
+
+
+
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    
+      "@type": "Person",
+      "name": "HyangGon Jin",
+      "url": "http://localhost:4000/"
+    
+  }
+</script>
+
+
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+
+  <link href="/feed.xml" type="application/atom+xml" rel="alternate" title="Lego Feed">
+
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css"></noscript>
+
+
+
+    <!-- start custom head snippets -->
+
+<!-- insert favicons. use https://realfavicongenerator.net/ -->
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body class="layout--single">
+    <nav class="skip-links">
+  <ul>
+    <li><a href="#site-nav" class="screen-reader-shortcut">Skip to primary navigation</a></li>
+    <li><a href="#main" class="screen-reader-shortcut">Skip to content</a></li>
+    <li><a href="#footer" class="screen-reader-shortcut">Skip to footer</a></li>
+  </ul>
+</nav>
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+        <a class="site-title" href="/">
+          Lego
+          <span class="site-subtitle"></span>
+        </a>
+        <ul class="visible-links">
+<li class="masthead__menu-item">
+              <a href="/categories/">Category</a>
+            </li>
+<li class="masthead__menu-item">
+              <a href="/tags/">Tag</a>
+            </li>
+<li class="masthead__menu-item">
+              <a href="/about/">About</a>
+            </li>
+<li class="masthead__menu-item">
+              <a href="/search/">Search</a>
+            </li>
+</ul>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">토글 메뉴</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="https://schema.org/Person" class="h-card">
+
+  
+    <div class="author__avatar">
+      <a href="http://localhost:4000/">
+        <img src="/assets/images/blue_lego_ver.1.png" alt="HyangGon Jin" itemprop="image" class="u-photo">
+      </a>
+    </div>
+  
+
+  <div class="author__content">
+    <h3 class="author__name p-name" itemprop="name">
+      <a class="u-url" rel="me" href="http://localhost:4000/" itemprop="url">HyangGon Jin</a>
+    </h3>
+    
+      <div class="author__bio p-note" itemprop="description">
+        <p>#Statistics #ML #Python #R</p>
+
+      </div>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">팔로우</button>
+    <ul class="author__urls social-icons">
+      
+        <li itemprop="homeLocation" itemscope itemtype="https://schema.org/Place">
+          <i class="fas fa-fw fa-map-marker-alt" aria-hidden="true"></i> <span itemprop="name" class="p-locality">Seoul</span>
+        </li>
+      
+
+      
+        
+          
+            <li><a href="mailto:nike3616@gmail.com" rel="nofollow noopener noreferrer me"><i class="fas fa-fw fa-envelope-square" aria-hidden="true"></i><span class="label">Email</span></a></li>
+          
+        
+          
+        
+          
+        
+          
+            <li><a href="https://github.com/hyanggonjin" rel="nofollow noopener noreferrer me"><i class="fab fa-fw fa-github" aria-hidden="true"></i><span class="label">GitHub</span></a></li>
+          
+        
+          
+        
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs" rel="nofollow noopener noreferrer me">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+  
+  </div>
+
+
+
+  <article class="page h-entry" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="Airflow - Slack 알림 받기">
+    <meta itemprop="description" content='Airflow에서 task의 성공 여부에 따라 slack으로 알림을 받는 방법을 알아보겠습니다.Operatorkobis_operator전체 코드는 아래와 같습니다.# plugins/operators/kobis_operator.pyimport sysimport warningsimport loggingwarnings.filterwarnings("ignore")import numpy as npimport pandas as pdimport requestsfrom datetime import datetime, timedeltaimport pymysqlfrom airflow.models import BaseOperatorclass KobisOperator(BaseOperator):    def __init__(self, host, user, password, database, needCommit, *args, **kwargs):        self.host = host        self.user = user        self.password = password        self.database = database        self.needCommit = needCommit        super().__init__(*args, **kwargs)    def execute(self, context):        conn = pymysql.connect(            user=self.user,            passwd=self.password,            host=self.host,            db=self.database,            charset="utf8",        )        # Target 날짜 설정        date = (context.get("execution_date") - timedelta(days=1)).strftime("%Y%m%d")        # API 호출        rdict = {"key": "Your API Key", "targetDt": date}        url = "http://www.kobis.or.kr/kobisopenapi/webservice/rest/boxoffice/searchDailyBoxOfficeList.json"        r = requests.get(            url,            params=rdict,        )        tmp = r.json()        # MySQL DB 연결        try:            conn = pymysql.connect(                user=self.user,                passwd=self.password,                host=self.host,                db=self.database,                charset="utf8",            )            cursor = conn.cursor(pymysql.cursors.DictCursor)            print("Successfully connected.")        except:            logging.error("Could not connected")            sys.exit(1)        # Data 수집        boxoffice_json = tmp["boxOfficeResult"]["dailyBoxOfficeList"]        boxoffice_dict = {}        for i in range(len(boxoffice_json)):            boxoffice_dict.update(                {                    "id": "a" + boxoffice_json[i]["movieCd"] + date[-2:],                    "_name": boxoffice_json[i]["movieNm"].replace("\t", ""),                    "target_date": datetime.strptime(date, "%Y%m%d").strftime(                        "%Y-%m-%d"                    ),                    "open_date": np.where(                        boxoffice_json[i]["openDt"] == " ",  # 개봉일이 " "로 되어있는 경우 존재.                        "9999-01-01",                        boxoffice_json[i]["openDt"],                    ),                    "_rank": boxoffice_json[i]["rank"],                    "rank_inten": boxoffice_json[i]["rankInten"],                    "rank_oldnew": boxoffice_json[i]["rankOldAndNew"],                    "sales_amt": boxoffice_json[i]["salesAmt"],                    "sales_inten": boxoffice_json[i]["salesInten"],                    "sales_change": boxoffice_json[i]["salesChange"],                    "sales_acc": boxoffice_json[i]["salesAcc"],                    "audi_cnt": boxoffice_json[i]["audiCnt"],                    "audi_inten": boxoffice_json[i]["audiInten"],                    "audi_change": boxoffice_json[i]["audiChange"],                    "audi_acc": boxoffice_json[i]["audiAcc"],                    "scrn_cnt": boxoffice_json[i]["scrnCnt"],                    "show_cnt": boxoffice_json[i]["showCnt"],                }            )            table = "daily_boxoffice"            data = boxoffice_dict            placeholders = ", ".join(["%s"] * len(data))            columns = ", ".join(data.keys())            key_placeholders = ", ".join(["{0}=%s".format(k) for k in data.keys()])            query = (                "INSERT INTO %s ( %s ) VALUES ( %s ) ON DUPLICATE KEY UPDATE %s ;"                % (                    table,                    columns,                    placeholders,                    key_placeholders,                )            )            cursor.execute(query, list(data.values()) * 2)        if self.needCommit:            conn.commit()일별 박스오피스 API 서비스Kofic 영화진흥위원회의 API 서비스를 이용해 데이터를 수집합니다. 제공하는 서비스로는 ‘일별 박스오피스’, ‘주간/주말 박스오피스’, ‘영화 상세정보’ 등 영화와 관련된 정보들을 제공합니다. 그 중 ‘일별 박스오피스’ 정보를 json으로 받아서 이용하였으며, 조회하고자 하는 날짜는 ‘yyyymmdd’형식으로 입력해야 합니다.# Target 날짜 설정date = (context.get("execution_date") - timedelta(days=1)).strftime("%Y%m%d")# API 호출rdict = {"key": "Your API Key", "targetDt": date}url = "http://www.kobis.or.kr/kobisopenapi/webservice/rest/boxoffice/searchDailyBoxOfficeList.json"r = requests.get(    url,    params=rdict,)tmp = r.json()MySQL DB 연결pymysql 라이브러리를 이용해 미리 만들어 놓은 테이블에 연결합니다.try:    conn = pymysql.connect(        user=self.user,        passwd=self.password,        host=self.host,        db=self.database,        charset="utf8",    )    cursor = conn.cursor(pymysql.cursors.DictCursor)    print("Successfully connected.")except:    logging.error("Could not connected")    sys.exit(1)Data 수집response에는 해당 일자의 ‘박스오피스 순위’, ‘매출액’, ‘관객수’, ‘상영관’과 관련된 정보들이 있습니다. 개봉일 중 “ “로 되어있는 경우가 존재했는데, 이러한 경우 “9999-01-01”로 치환합니다. 해당 일자의 박스오피스 순위 및 필요한 정보들을 insert 합니다.boxoffice_json = tmp["boxOfficeResult"]["dailyBoxOfficeList"]boxoffice_dict = {}for i in range(len(boxoffice_json)):    boxoffice_dict.update(        {            "id": "a" + boxoffice_json[i]["movieCd"] + date[-2:],            "_name": boxoffice_json[i]["movieNm"].replace("\t", ""),            "target_date": datetime.strptime(date, "%Y%m%d").strftime(                "%Y-%m-%d"            ),            "open_date": np.where(                boxoffice_json[i]["openDt"] == " ",  # 개봉일이 " "로 되어있는 경우 존재.                "9999-01-01",                boxoffice_json[i]["openDt"],            ),            "_rank": boxoffice_json[i]["rank"],            "rank_inten": boxoffice_json[i]["rankInten"],            "rank_oldnew": boxoffice_json[i]["rankOldAndNew"],            "sales_amt": boxoffice_json[i]["salesAmt"],            "sales_inten": boxoffice_json[i]["salesInten"],            "sales_change": boxoffice_json[i]["salesChange"],            "sales_acc": boxoffice_json[i]["salesAcc"],            "audi_cnt": boxoffice_json[i]["audiCnt"],            "audi_inten": boxoffice_json[i]["audiInten"],            "audi_change": boxoffice_json[i]["audiChange"],            "audi_acc": boxoffice_json[i]["audiAcc"],            "scrn_cnt": boxoffice_json[i]["scrnCnt"],            "show_cnt": boxoffice_json[i]["showCnt"],        }    )    table = "daily_boxoffice"    data = boxoffice_dict    placeholders = ", ".join(["%s"] * len(data))    columns = ", ".join(data.keys())    key_placeholders = ", ".join(["{0}=%s".format(k) for k in data.keys()])    query = (        "INSERT INTO %s ( %s ) VALUES ( %s ) ON DUPLICATE KEY UPDATE %s ;"        % (            table,            columns,            placeholders,            key_placeholders,        )    )    cursor.execute(query, list(data.values()) * 2)if self.needCommit:    conn.commit()slack_operatorslack sdk‘Slack’과 연동하기 위해서 slack_sdk 라이브러리를 이용합니다. 해당 라이브러리를 통해 ‘slack api’와 연결할 수 있습니다. API 이용에 필요한 token 값은 slack api 사이트에서 어플리케이션을 만든 후 확인할 수 있습니다.slack_bot_operatorslack_sdk를 이용해 봇이 메세지를 보내는 operator를 만들 수 있습니다. 메시지를 받길 원하는 채널에 봇을 초대하여, 아래와 같은 operator를 이용해 원하는 메시지를 전송할 수 있습니다.# plugins/operators/slack_bot_operator.pyfrom airflow.models import BaseOperatorfrom slack_sdk import WebClientclass SlackBotOperator(BaseOperator):    def __init__(self, message, *args, **kwargs):        self.message = message        self.token = "your token!"        self.channel = "your channel"        super().__init__(*args, **kwargs)    def execute(self, context):        client = WebClient(token=self.token)        response = client.chat_postMessage(channel=self.channel, text=self.message)그리고 다음과 같은 두 함수를 이용하면 Task의 성공/실패에 따라 어떤 메시지를 전송할 것인지를 설정할 수 있습니다.# plugins/utils/slack.pyfrom slack_sdk import WebClientfrom operators.slack_bot_operator import SlackBotOperatordef slack_success_alert(context):    alert = SlackBotOperator(        task_id="slack_success",        message="""        :large_green_circle: Task success.        *Task*: {task}          *Dag*: {dag}        *Execution Time*: {exec_date}          *Log Url*: {log_url}        """.format(            task=context.get("task_instance").task_id,            dag=context.get("task_instance").dag_id,            exec_date=context.get("execution_date"),            log_url=context.get("task_instance").log_url,        ),    )    return alert.execute(context=context)def slack_fail_alert(context):    alert = SlackBotOperator(        task_id="slack_failed",        message="""            :red_circle: Task Failed.            *Task*: {task}              *Dag*: {dag}            *Execution Time*: {exec_date}              *Log Url*: {log_url}            """.format(            task=context.get("task_instance").task_id,            dag=context.get("task_instance").dag_id,            exec_date=context.get("execution_date"),            log_url=context.get("task_instance").log_url,        ),    )    return alert.execute(context=context)DAGon_success_callback과 on_failure_callback에 위에서 만든 함수를 각각 지정해주어 task의 성공 여부에 따라 어떤 알림을 받을 것인지 설정할 수 있습니다.# dags/kobis_dag.pyimport pendulumfrom datetime import datetime, timedeltafrom airflow import DAGfrom operators.kobis_operator import KobisOperatorfrom utils.slack import slack_success_alertfrom utils.slack import slack_fail_alertwith DAG(    dag_id="example_slack_operator",    schedule_interval="0 20 * * *",    start_date=pendulum.datetime(2022, 3, 1, tz="Asia/Seoul"),    catchup=False,    dagrun_timeout=timedelta(minutes=60),    tags=["example"],    default_args={        "on_success_callback": slack_success_alert,        "on_failure_callback": slack_fail_alert,    },    params={},) as dag:    t1 = KobisOperator(        task_id="insert_data",        host="your host",        user="your username",        password="your password!",        database="your db",        needCommit=True,        dag=dag,    )    t1if __name__ == "__main__":    dag.cli()      참고자료          kofic 영화진흥위원회 - 일별 박스오피스 API 서비스      ‘slack_sdk.web.client’ 모듈      ‘chat.postMessage’ method      Airflow 공식문서 - callback      블로그 - Airflow 에서 Slack 사용하기      '>
+    <meta itemprop="datePublished" content="2022-03-14T00:00:00+09:00">
+    <meta itemprop="dateModified" content="2022-03-14T00:00:00+09:00">
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <h1 id="page-title" class="page__title p-name" itemprop="headline">
+            <a href="http://localhost:4000/de/slack_operator/" class="u-url" itemprop="url">Airflow - Slack 알림 받기
+</a>
+          </h1>
+          
+
+
+        </header>
+      
+
+      <section class="page__content e-content" itemprop="text">
+        
+          <aside class="sidebar__right sticky">
+            <nav class="toc">
+              <header><h4 class="nav__title">
+<i class="fas fa-file-alt"></i> On This Page</h4></header>
+              <ul class="toc__menu">
+<li>
+<a href="#operator">Operator</a><ul>
+<li>
+<a href="#kobis_operator">kobis_operator</a><ul>
+<li><a href="#%EC%9D%BC%EB%B3%84-%EB%B0%95%EC%8A%A4%EC%98%A4%ED%94%BC%EC%8A%A4-api-%EC%84%9C%EB%B9%84%EC%8A%A4">일별 박스오피스 API 서비스</a></li>
+<li><a href="#mysql-db-%EC%97%B0%EA%B2%B0">MySQL DB 연결</a></li>
+<li><a href="#data-%EC%88%98%EC%A7%91">Data 수집</a></li>
+</ul>
+</li>
+<li>
+<a href="#slack_operator">slack_operator</a><ul>
+<li><a href="#slack-sdk">slack sdk</a></li>
+<li><a href="#slack_bot_operator">slack_bot_operator</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#dag">DAG</a></li>
+</ul>
+
+            </nav>
+          </aside>
+        
+        <p>Airflow에서 task의 성공 여부에 따라 slack으로 알림을 받는 방법을 알아보겠습니다.</p>
+
+<h1 id="operator">Operator</h1>
+
+<h2 id="kobis_operator">kobis_operator</h2>
+<p>전체 코드는 아래와 같습니다.</p>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># plugins/operators/kobis_operator.py
+</span><span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+
+<span class="n">warnings</span><span class="p">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s">"ignore"</span><span class="p">)</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="n">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="n">pd</span>
+<span class="kn">import</span> <span class="nn">requests</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span><span class="p">,</span> <span class="n">timedelta</span>
+<span class="kn">import</span> <span class="nn">pymysql</span>
+
+<span class="kn">from</span> <span class="nn">airflow.models</span> <span class="kn">import</span> <span class="n">BaseOperator</span>
+
+
+<span class="k">class</span> <span class="nc">KobisOperator</span><span class="p">(</span><span class="n">BaseOperator</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">host</span><span class="p">,</span> <span class="n">user</span><span class="p">,</span> <span class="n">password</span><span class="p">,</span> <span class="n">database</span><span class="p">,</span> <span class="n">needCommit</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">host</span> <span class="o">=</span> <span class="n">host</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">user</span> <span class="o">=</span> <span class="n">user</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">password</span> <span class="o">=</span> <span class="n">password</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">database</span> <span class="o">=</span> <span class="n">database</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">needCommit</span> <span class="o">=</span> <span class="n">needCommit</span>
+        <span class="nb">super</span><span class="p">().</span><span class="n">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">execute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">):</span>
+        <span class="n">conn</span> <span class="o">=</span> <span class="n">pymysql</span><span class="p">.</span><span class="n">connect</span><span class="p">(</span>
+            <span class="n">user</span><span class="o">=</span><span class="bp">self</span><span class="p">.</span><span class="n">user</span><span class="p">,</span>
+            <span class="n">passwd</span><span class="o">=</span><span class="bp">self</span><span class="p">.</span><span class="n">password</span><span class="p">,</span>
+            <span class="n">host</span><span class="o">=</span><span class="bp">self</span><span class="p">.</span><span class="n">host</span><span class="p">,</span>
+            <span class="n">db</span><span class="o">=</span><span class="bp">self</span><span class="p">.</span><span class="n">database</span><span class="p">,</span>
+            <span class="n">charset</span><span class="o">=</span><span class="s">"utf8"</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Target 날짜 설정
+</span>        <span class="n">date</span> <span class="o">=</span> <span class="p">(</span><span class="n">context</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="s">"execution_date"</span><span class="p">)</span> <span class="o">-</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">days</span><span class="o">=</span><span class="mi">1</span><span class="p">)).</span><span class="n">strftime</span><span class="p">(</span><span class="s">"%Y%m%d"</span><span class="p">)</span>
+
+        <span class="c1"># API 호출
+</span>        <span class="n">rdict</span> <span class="o">=</span> <span class="p">{</span><span class="s">"key"</span><span class="p">:</span> <span class="s">"Your API Key"</span><span class="p">,</span> <span class="s">"targetDt"</span><span class="p">:</span> <span class="n">date</span><span class="p">}</span>
+
+        <span class="n">url</span> <span class="o">=</span> <span class="s">"http://www.kobis.or.kr/kobisopenapi/webservice/rest/boxoffice/searchDailyBoxOfficeList.json"</span>
+        <span class="n">r</span> <span class="o">=</span> <span class="n">requests</span><span class="p">.</span><span class="n">get</span><span class="p">(</span>
+            <span class="n">url</span><span class="p">,</span>
+            <span class="n">params</span><span class="o">=</span><span class="n">rdict</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">tmp</span> <span class="o">=</span> <span class="n">r</span><span class="p">.</span><span class="n">json</span><span class="p">()</span>
+
+        <span class="c1"># MySQL DB 연결
+</span>        <span class="k">try</span><span class="p">:</span>
+            <span class="n">conn</span> <span class="o">=</span> <span class="n">pymysql</span><span class="p">.</span><span class="n">connect</span><span class="p">(</span>
+                <span class="n">user</span><span class="o">=</span><span class="bp">self</span><span class="p">.</span><span class="n">user</span><span class="p">,</span>
+                <span class="n">passwd</span><span class="o">=</span><span class="bp">self</span><span class="p">.</span><span class="n">password</span><span class="p">,</span>
+                <span class="n">host</span><span class="o">=</span><span class="bp">self</span><span class="p">.</span><span class="n">host</span><span class="p">,</span>
+                <span class="n">db</span><span class="o">=</span><span class="bp">self</span><span class="p">.</span><span class="n">database</span><span class="p">,</span>
+                <span class="n">charset</span><span class="o">=</span><span class="s">"utf8"</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">cursor</span> <span class="o">=</span> <span class="n">conn</span><span class="p">.</span><span class="n">cursor</span><span class="p">(</span><span class="n">pymysql</span><span class="p">.</span><span class="n">cursors</span><span class="p">.</span><span class="n">DictCursor</span><span class="p">)</span>
+            <span class="k">print</span><span class="p">(</span><span class="s">"Successfully connected."</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="n">logging</span><span class="p">.</span><span class="n">error</span><span class="p">(</span><span class="s">"Could not connected"</span><span class="p">)</span>
+            <span class="n">sys</span><span class="p">.</span><span class="nb">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="c1"># Data 수집
+</span>        <span class="n">boxoffice_json</span> <span class="o">=</span> <span class="n">tmp</span><span class="p">[</span><span class="s">"boxOfficeResult"</span><span class="p">][</span><span class="s">"dailyBoxOfficeList"</span><span class="p">]</span>
+
+        <span class="n">boxoffice_dict</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">boxoffice_json</span><span class="p">)):</span>
+
+            <span class="n">boxoffice_dict</span><span class="p">.</span><span class="n">update</span><span class="p">(</span>
+                <span class="p">{</span>
+                    <span class="s">"id"</span><span class="p">:</span> <span class="s">"a"</span> <span class="o">+</span> <span class="n">boxoffice_json</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="s">"movieCd"</span><span class="p">]</span> <span class="o">+</span> <span class="n">date</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">:],</span>
+                    <span class="s">"_name"</span><span class="p">:</span> <span class="n">boxoffice_json</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="s">"movieNm"</span><span class="p">].</span><span class="n">replace</span><span class="p">(</span><span class="s">"</span><span class="se">\t</span><span class="s">"</span><span class="p">,</span> <span class="s">""</span><span class="p">),</span>
+                    <span class="s">"target_date"</span><span class="p">:</span> <span class="n">datetime</span><span class="p">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">date</span><span class="p">,</span> <span class="s">"%Y%m%d"</span><span class="p">).</span><span class="n">strftime</span><span class="p">(</span>
+                        <span class="s">"%Y-%m-%d"</span>
+                    <span class="p">),</span>
+                    <span class="s">"open_date"</span><span class="p">:</span> <span class="n">np</span><span class="p">.</span><span class="n">where</span><span class="p">(</span>
+                        <span class="n">boxoffice_json</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="s">"openDt"</span><span class="p">]</span> <span class="o">==</span> <span class="s">" "</span><span class="p">,</span>  <span class="c1"># 개봉일이 " "로 되어있는 경우 존재.
+</span>                        <span class="s">"9999-01-01"</span><span class="p">,</span>
+                        <span class="n">boxoffice_json</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="s">"openDt"</span><span class="p">],</span>
+                    <span class="p">),</span>
+                    <span class="s">"_rank"</span><span class="p">:</span> <span class="n">boxoffice_json</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="s">"rank"</span><span class="p">],</span>
+                    <span class="s">"rank_inten"</span><span class="p">:</span> <span class="n">boxoffice_json</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="s">"rankInten"</span><span class="p">],</span>
+                    <span class="s">"rank_oldnew"</span><span class="p">:</span> <span class="n">boxoffice_json</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="s">"rankOldAndNew"</span><span class="p">],</span>
+                    <span class="s">"sales_amt"</span><span class="p">:</span> <span class="n">boxoffice_json</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="s">"salesAmt"</span><span class="p">],</span>
+                    <span class="s">"sales_inten"</span><span class="p">:</span> <span class="n">boxoffice_json</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="s">"salesInten"</span><span class="p">],</span>
+                    <span class="s">"sales_change"</span><span class="p">:</span> <span class="n">boxoffice_json</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="s">"salesChange"</span><span class="p">],</span>
+                    <span class="s">"sales_acc"</span><span class="p">:</span> <span class="n">boxoffice_json</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="s">"salesAcc"</span><span class="p">],</span>
+                    <span class="s">"audi_cnt"</span><span class="p">:</span> <span class="n">boxoffice_json</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="s">"audiCnt"</span><span class="p">],</span>
+                    <span class="s">"audi_inten"</span><span class="p">:</span> <span class="n">boxoffice_json</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="s">"audiInten"</span><span class="p">],</span>
+                    <span class="s">"audi_change"</span><span class="p">:</span> <span class="n">boxoffice_json</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="s">"audiChange"</span><span class="p">],</span>
+                    <span class="s">"audi_acc"</span><span class="p">:</span> <span class="n">boxoffice_json</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="s">"audiAcc"</span><span class="p">],</span>
+                    <span class="s">"scrn_cnt"</span><span class="p">:</span> <span class="n">boxoffice_json</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="s">"scrnCnt"</span><span class="p">],</span>
+                    <span class="s">"show_cnt"</span><span class="p">:</span> <span class="n">boxoffice_json</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="s">"showCnt"</span><span class="p">],</span>
+                <span class="p">}</span>
+            <span class="p">)</span>
+
+            <span class="n">table</span> <span class="o">=</span> <span class="s">"daily_boxoffice"</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">boxoffice_dict</span>
+
+            <span class="n">placeholders</span> <span class="o">=</span> <span class="s">", "</span><span class="p">.</span><span class="n">join</span><span class="p">([</span><span class="s">"%s"</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">))</span>
+            <span class="n">columns</span> <span class="o">=</span> <span class="s">", "</span><span class="p">.</span><span class="n">join</span><span class="p">(</span><span class="n">data</span><span class="p">.</span><span class="n">keys</span><span class="p">())</span>
+            <span class="n">key_placeholders</span> <span class="o">=</span> <span class="s">", "</span><span class="p">.</span><span class="n">join</span><span class="p">([</span><span class="s">"{0}=%s"</span><span class="p">.</span><span class="nb">format</span><span class="p">(</span><span class="n">k</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">data</span><span class="p">.</span><span class="n">keys</span><span class="p">()])</span>
+
+            <span class="n">query</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="s">"INSERT INTO %s ( %s ) VALUES ( %s ) ON DUPLICATE KEY UPDATE %s ;"</span>
+                <span class="o">%</span> <span class="p">(</span>
+                    <span class="n">table</span><span class="p">,</span>
+                    <span class="n">columns</span><span class="p">,</span>
+                    <span class="n">placeholders</span><span class="p">,</span>
+                    <span class="n">key_placeholders</span><span class="p">,</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
+
+            <span class="n">cursor</span><span class="p">.</span><span class="n">execute</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="nb">list</span><span class="p">(</span><span class="n">data</span><span class="p">.</span><span class="n">values</span><span class="p">())</span> <span class="o">*</span> <span class="mi">2</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="p">.</span><span class="n">needCommit</span><span class="p">:</span>
+            <span class="n">conn</span><span class="p">.</span><span class="n">commit</span><span class="p">()</span>
+</code></pre></div></div>
+
+<h3 id="일별-박스오피스-api-서비스">일별 박스오피스 API 서비스</h3>
+<p><a href="http://www.kobis.or.kr/kobisopenapi/homepg/main/main.do">Kofic 영화진흥위원회</a>의 API 서비스를 이용해 데이터를 수집합니다. 제공하는 서비스로는 ‘일별 박스오피스’, ‘주간/주말 박스오피스’, ‘영화 상세정보’ 등 영화와 관련된 정보들을 제공합니다. 그 중 ‘일별 박스오피스’ 정보를 json으로 받아서 이용하였으며, 조회하고자 하는 날짜는 ‘yyyymmdd’형식으로 입력해야 합니다.</p>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># Target 날짜 설정
+</span><span class="n">date</span> <span class="o">=</span> <span class="p">(</span><span class="n">context</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="s">"execution_date"</span><span class="p">)</span> <span class="o">-</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">days</span><span class="o">=</span><span class="mi">1</span><span class="p">)).</span><span class="n">strftime</span><span class="p">(</span><span class="s">"%Y%m%d"</span><span class="p">)</span>
+
+<span class="c1"># API 호출
+</span><span class="n">rdict</span> <span class="o">=</span> <span class="p">{</span><span class="s">"key"</span><span class="p">:</span> <span class="s">"Your API Key"</span><span class="p">,</span> <span class="s">"targetDt"</span><span class="p">:</span> <span class="n">date</span><span class="p">}</span>
+
+<span class="n">url</span> <span class="o">=</span> <span class="s">"http://www.kobis.or.kr/kobisopenapi/webservice/rest/boxoffice/searchDailyBoxOfficeList.json"</span>
+<span class="n">r</span> <span class="o">=</span> <span class="n">requests</span><span class="p">.</span><span class="n">get</span><span class="p">(</span>
+    <span class="n">url</span><span class="p">,</span>
+    <span class="n">params</span><span class="o">=</span><span class="n">rdict</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">tmp</span> <span class="o">=</span> <span class="n">r</span><span class="p">.</span><span class="n">json</span><span class="p">()</span>
+</code></pre></div></div>
+
+<h3 id="mysql-db-연결">MySQL DB 연결</h3>
+<p><code class="language-plaintext highlighter-rouge">pymysql</code> 라이브러리를 이용해 미리 만들어 놓은 테이블에 연결합니다.</p>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">try</span><span class="p">:</span>
+    <span class="n">conn</span> <span class="o">=</span> <span class="n">pymysql</span><span class="p">.</span><span class="n">connect</span><span class="p">(</span>
+        <span class="n">user</span><span class="o">=</span><span class="bp">self</span><span class="p">.</span><span class="n">user</span><span class="p">,</span>
+        <span class="n">passwd</span><span class="o">=</span><span class="bp">self</span><span class="p">.</span><span class="n">password</span><span class="p">,</span>
+        <span class="n">host</span><span class="o">=</span><span class="bp">self</span><span class="p">.</span><span class="n">host</span><span class="p">,</span>
+        <span class="n">db</span><span class="o">=</span><span class="bp">self</span><span class="p">.</span><span class="n">database</span><span class="p">,</span>
+        <span class="n">charset</span><span class="o">=</span><span class="s">"utf8"</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">cursor</span> <span class="o">=</span> <span class="n">conn</span><span class="p">.</span><span class="n">cursor</span><span class="p">(</span><span class="n">pymysql</span><span class="p">.</span><span class="n">cursors</span><span class="p">.</span><span class="n">DictCursor</span><span class="p">)</span>
+    <span class="k">print</span><span class="p">(</span><span class="s">"Successfully connected."</span><span class="p">)</span>
+<span class="k">except</span><span class="p">:</span>
+    <span class="n">logging</span><span class="p">.</span><span class="n">error</span><span class="p">(</span><span class="s">"Could not connected"</span><span class="p">)</span>
+    <span class="n">sys</span><span class="p">.</span><span class="nb">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+</code></pre></div></div>
+
+<h3 id="data-수집">Data 수집</h3>
+<p>response에는 해당 일자의 ‘박스오피스 순위’, ‘매출액’, ‘관객수’, ‘상영관’과 관련된 정보들이 있습니다. 개봉일 중 “ “로 되어있는 경우가 존재했는데, 이러한 경우 “9999-01-01”로 치환합니다. 해당 일자의 박스오피스 순위 및 필요한 정보들을 insert 합니다.</p>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">boxoffice_json</span> <span class="o">=</span> <span class="n">tmp</span><span class="p">[</span><span class="s">"boxOfficeResult"</span><span class="p">][</span><span class="s">"dailyBoxOfficeList"</span><span class="p">]</span>
+
+<span class="n">boxoffice_dict</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">boxoffice_json</span><span class="p">)):</span>
+
+    <span class="n">boxoffice_dict</span><span class="p">.</span><span class="n">update</span><span class="p">(</span>
+        <span class="p">{</span>
+            <span class="s">"id"</span><span class="p">:</span> <span class="s">"a"</span> <span class="o">+</span> <span class="n">boxoffice_json</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="s">"movieCd"</span><span class="p">]</span> <span class="o">+</span> <span class="n">date</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">:],</span>
+            <span class="s">"_name"</span><span class="p">:</span> <span class="n">boxoffice_json</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="s">"movieNm"</span><span class="p">].</span><span class="n">replace</span><span class="p">(</span><span class="s">"</span><span class="se">\t</span><span class="s">"</span><span class="p">,</span> <span class="s">""</span><span class="p">),</span>
+            <span class="s">"target_date"</span><span class="p">:</span> <span class="n">datetime</span><span class="p">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">date</span><span class="p">,</span> <span class="s">"%Y%m%d"</span><span class="p">).</span><span class="n">strftime</span><span class="p">(</span>
+                <span class="s">"%Y-%m-%d"</span>
+            <span class="p">),</span>
+            <span class="s">"open_date"</span><span class="p">:</span> <span class="n">np</span><span class="p">.</span><span class="n">where</span><span class="p">(</span>
+                <span class="n">boxoffice_json</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="s">"openDt"</span><span class="p">]</span> <span class="o">==</span> <span class="s">" "</span><span class="p">,</span>  <span class="c1"># 개봉일이 " "로 되어있는 경우 존재.
+</span>                <span class="s">"9999-01-01"</span><span class="p">,</span>
+                <span class="n">boxoffice_json</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="s">"openDt"</span><span class="p">],</span>
+            <span class="p">),</span>
+            <span class="s">"_rank"</span><span class="p">:</span> <span class="n">boxoffice_json</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="s">"rank"</span><span class="p">],</span>
+            <span class="s">"rank_inten"</span><span class="p">:</span> <span class="n">boxoffice_json</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="s">"rankInten"</span><span class="p">],</span>
+            <span class="s">"rank_oldnew"</span><span class="p">:</span> <span class="n">boxoffice_json</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="s">"rankOldAndNew"</span><span class="p">],</span>
+            <span class="s">"sales_amt"</span><span class="p">:</span> <span class="n">boxoffice_json</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="s">"salesAmt"</span><span class="p">],</span>
+            <span class="s">"sales_inten"</span><span class="p">:</span> <span class="n">boxoffice_json</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="s">"salesInten"</span><span class="p">],</span>
+            <span class="s">"sales_change"</span><span class="p">:</span> <span class="n">boxoffice_json</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="s">"salesChange"</span><span class="p">],</span>
+            <span class="s">"sales_acc"</span><span class="p">:</span> <span class="n">boxoffice_json</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="s">"salesAcc"</span><span class="p">],</span>
+            <span class="s">"audi_cnt"</span><span class="p">:</span> <span class="n">boxoffice_json</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="s">"audiCnt"</span><span class="p">],</span>
+            <span class="s">"audi_inten"</span><span class="p">:</span> <span class="n">boxoffice_json</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="s">"audiInten"</span><span class="p">],</span>
+            <span class="s">"audi_change"</span><span class="p">:</span> <span class="n">boxoffice_json</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="s">"audiChange"</span><span class="p">],</span>
+            <span class="s">"audi_acc"</span><span class="p">:</span> <span class="n">boxoffice_json</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="s">"audiAcc"</span><span class="p">],</span>
+            <span class="s">"scrn_cnt"</span><span class="p">:</span> <span class="n">boxoffice_json</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="s">"scrnCnt"</span><span class="p">],</span>
+            <span class="s">"show_cnt"</span><span class="p">:</span> <span class="n">boxoffice_json</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="s">"showCnt"</span><span class="p">],</span>
+        <span class="p">}</span>
+    <span class="p">)</span>
+
+    <span class="n">table</span> <span class="o">=</span> <span class="s">"daily_boxoffice"</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">boxoffice_dict</span>
+
+    <span class="n">placeholders</span> <span class="o">=</span> <span class="s">", "</span><span class="p">.</span><span class="n">join</span><span class="p">([</span><span class="s">"%s"</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">))</span>
+    <span class="n">columns</span> <span class="o">=</span> <span class="s">", "</span><span class="p">.</span><span class="n">join</span><span class="p">(</span><span class="n">data</span><span class="p">.</span><span class="n">keys</span><span class="p">())</span>
+    <span class="n">key_placeholders</span> <span class="o">=</span> <span class="s">", "</span><span class="p">.</span><span class="n">join</span><span class="p">([</span><span class="s">"{0}=%s"</span><span class="p">.</span><span class="nb">format</span><span class="p">(</span><span class="n">k</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">data</span><span class="p">.</span><span class="n">keys</span><span class="p">()])</span>
+
+    <span class="n">query</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="s">"INSERT INTO %s ( %s ) VALUES ( %s ) ON DUPLICATE KEY UPDATE %s ;"</span>
+        <span class="o">%</span> <span class="p">(</span>
+            <span class="n">table</span><span class="p">,</span>
+            <span class="n">columns</span><span class="p">,</span>
+            <span class="n">placeholders</span><span class="p">,</span>
+            <span class="n">key_placeholders</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="p">)</span>
+
+    <span class="n">cursor</span><span class="p">.</span><span class="n">execute</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="nb">list</span><span class="p">(</span><span class="n">data</span><span class="p">.</span><span class="n">values</span><span class="p">())</span> <span class="o">*</span> <span class="mi">2</span><span class="p">)</span>
+
+<span class="k">if</span> <span class="bp">self</span><span class="p">.</span><span class="n">needCommit</span><span class="p">:</span>
+    <span class="n">conn</span><span class="p">.</span><span class="n">commit</span><span class="p">()</span>
+</code></pre></div></div>
+
+<h2 id="slack_operator">slack_operator</h2>
+<h3 id="slack-sdk">slack sdk</h3>
+<p>‘Slack’과 연동하기 위해서 <code class="language-plaintext highlighter-rouge">slack_sdk</code> 라이브러리를 이용합니다. 해당 라이브러리를 통해 ‘slack api’와 연결할 수 있습니다. API 이용에 필요한 token 값은 <a href="https://api.slack.com">slack api</a> 사이트에서 어플리케이션을 만든 후 확인할 수 있습니다.</p>
+
+<h3 id="slack_bot_operator">slack_bot_operator</h3>
+<p><code class="language-plaintext highlighter-rouge">slack_sdk</code>를 이용해 봇이 메세지를 보내는 operator를 만들 수 있습니다. 메시지를 받길 원하는 채널에 봇을 초대하여, 아래와 같은 operator를 이용해 원하는 메시지를 전송할 수 있습니다.</p>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># plugins/operators/slack_bot_operator.py
+</span><span class="kn">from</span> <span class="nn">airflow.models</span> <span class="kn">import</span> <span class="n">BaseOperator</span>
+<span class="kn">from</span> <span class="nn">slack_sdk</span> <span class="kn">import</span> <span class="n">WebClient</span>
+
+
+<span class="k">class</span> <span class="nc">SlackBotOperator</span><span class="p">(</span><span class="n">BaseOperator</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">message</span> <span class="o">=</span> <span class="n">message</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">token</span> <span class="o">=</span> <span class="s">"your token!"</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">channel</span> <span class="o">=</span> <span class="s">"your channel"</span>
+        <span class="nb">super</span><span class="p">().</span><span class="n">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">execute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">):</span>
+        <span class="n">client</span> <span class="o">=</span> <span class="n">WebClient</span><span class="p">(</span><span class="n">token</span><span class="o">=</span><span class="bp">self</span><span class="p">.</span><span class="n">token</span><span class="p">)</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">client</span><span class="p">.</span><span class="n">chat_postMessage</span><span class="p">(</span><span class="n">channel</span><span class="o">=</span><span class="bp">self</span><span class="p">.</span><span class="n">channel</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="bp">self</span><span class="p">.</span><span class="n">message</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>그리고 다음과 같은 두 함수를 이용하면 Task의 성공/실패에 따라 어떤 메시지를 전송할 것인지를 설정할 수 있습니다.</p>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># plugins/utils/slack.py
+</span><span class="kn">from</span> <span class="nn">slack_sdk</span> <span class="kn">import</span> <span class="n">WebClient</span>
+<span class="kn">from</span> <span class="nn">operators.slack_bot_operator</span> <span class="kn">import</span> <span class="n">SlackBotOperator</span>
+
+
+<span class="k">def</span> <span class="nf">slack_success_alert</span><span class="p">(</span><span class="n">context</span><span class="p">):</span>
+    <span class="n">alert</span> <span class="o">=</span> <span class="n">SlackBotOperator</span><span class="p">(</span>
+        <span class="n">task_id</span><span class="o">=</span><span class="s">"slack_success"</span><span class="p">,</span>
+        <span class="n">message</span><span class="o">=</span><span class="s">"""
+        :large_green_circle: Task success.
+        *Task*: {task}  
+        *Dag*: {dag}
+        *Execution Time*: {exec_date}  
+        *Log Url*: {log_url}
+        """</span><span class="p">.</span><span class="nb">format</span><span class="p">(</span>
+            <span class="n">task</span><span class="o">=</span><span class="n">context</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="s">"task_instance"</span><span class="p">).</span><span class="n">task_id</span><span class="p">,</span>
+            <span class="n">dag</span><span class="o">=</span><span class="n">context</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="s">"task_instance"</span><span class="p">).</span><span class="n">dag_id</span><span class="p">,</span>
+            <span class="n">exec_date</span><span class="o">=</span><span class="n">context</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="s">"execution_date"</span><span class="p">),</span>
+            <span class="n">log_url</span><span class="o">=</span><span class="n">context</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="s">"task_instance"</span><span class="p">).</span><span class="n">log_url</span><span class="p">,</span>
+        <span class="p">),</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">alert</span><span class="p">.</span><span class="n">execute</span><span class="p">(</span><span class="n">context</span><span class="o">=</span><span class="n">context</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">slack_fail_alert</span><span class="p">(</span><span class="n">context</span><span class="p">):</span>
+    <span class="n">alert</span> <span class="o">=</span> <span class="n">SlackBotOperator</span><span class="p">(</span>
+        <span class="n">task_id</span><span class="o">=</span><span class="s">"slack_failed"</span><span class="p">,</span>
+        <span class="n">message</span><span class="o">=</span><span class="s">"""
+            :red_circle: Task Failed.
+            *Task*: {task}  
+            *Dag*: {dag}
+            *Execution Time*: {exec_date}  
+            *Log Url*: {log_url}
+            """</span><span class="p">.</span><span class="nb">format</span><span class="p">(</span>
+            <span class="n">task</span><span class="o">=</span><span class="n">context</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="s">"task_instance"</span><span class="p">).</span><span class="n">task_id</span><span class="p">,</span>
+            <span class="n">dag</span><span class="o">=</span><span class="n">context</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="s">"task_instance"</span><span class="p">).</span><span class="n">dag_id</span><span class="p">,</span>
+            <span class="n">exec_date</span><span class="o">=</span><span class="n">context</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="s">"execution_date"</span><span class="p">),</span>
+            <span class="n">log_url</span><span class="o">=</span><span class="n">context</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="s">"task_instance"</span><span class="p">).</span><span class="n">log_url</span><span class="p">,</span>
+        <span class="p">),</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">alert</span><span class="p">.</span><span class="n">execute</span><span class="p">(</span><span class="n">context</span><span class="o">=</span><span class="n">context</span><span class="p">)</span>
+</code></pre></div></div>
+
+<h1 id="dag">DAG</h1>
+<p><code class="language-plaintext highlighter-rouge">on_success_callback</code>과 <code class="language-plaintext highlighter-rouge">on_failure_callback</code>에 위에서 만든 함수를 각각 지정해주어 task의 성공 여부에 따라 어떤 알림을 받을 것인지 설정할 수 있습니다.</p>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># dags/kobis_dag.py
+</span><span class="kn">import</span> <span class="nn">pendulum</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span><span class="p">,</span> <span class="n">timedelta</span>
+
+<span class="kn">from</span> <span class="nn">airflow</span> <span class="kn">import</span> <span class="n">DAG</span>
+<span class="kn">from</span> <span class="nn">operators.kobis_operator</span> <span class="kn">import</span> <span class="n">KobisOperator</span>
+
+<span class="kn">from</span> <span class="nn">utils.slack</span> <span class="kn">import</span> <span class="n">slack_success_alert</span>
+<span class="kn">from</span> <span class="nn">utils.slack</span> <span class="kn">import</span> <span class="n">slack_fail_alert</span>
+
+
+<span class="k">with</span> <span class="n">DAG</span><span class="p">(</span>
+    <span class="n">dag_id</span><span class="o">=</span><span class="s">"example_slack_operator"</span><span class="p">,</span>
+    <span class="n">schedule_interval</span><span class="o">=</span><span class="s">"0 20 * * *"</span><span class="p">,</span>
+    <span class="n">start_date</span><span class="o">=</span><span class="n">pendulum</span><span class="p">.</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2022</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">tz</span><span class="o">=</span><span class="s">"Asia/Seoul"</span><span class="p">),</span>
+    <span class="n">catchup</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
+    <span class="n">dagrun_timeout</span><span class="o">=</span><span class="n">timedelta</span><span class="p">(</span><span class="n">minutes</span><span class="o">=</span><span class="mi">60</span><span class="p">),</span>
+    <span class="n">tags</span><span class="o">=</span><span class="p">[</span><span class="s">"example"</span><span class="p">],</span>
+    <span class="n">default_args</span><span class="o">=</span><span class="p">{</span>
+        <span class="s">"on_success_callback"</span><span class="p">:</span> <span class="n">slack_success_alert</span><span class="p">,</span>
+        <span class="s">"on_failure_callback"</span><span class="p">:</span> <span class="n">slack_fail_alert</span><span class="p">,</span>
+    <span class="p">},</span>
+    <span class="n">params</span><span class="o">=</span><span class="p">{},</span>
+<span class="p">)</span> <span class="k">as</span> <span class="n">dag</span><span class="p">:</span>
+    <span class="n">t1</span> <span class="o">=</span> <span class="n">KobisOperator</span><span class="p">(</span>
+        <span class="n">task_id</span><span class="o">=</span><span class="s">"insert_data"</span><span class="p">,</span>
+        <span class="n">host</span><span class="o">=</span><span class="s">"your host"</span><span class="p">,</span>
+        <span class="n">user</span><span class="o">=</span><span class="s">"your username"</span><span class="p">,</span>
+        <span class="n">password</span><span class="o">=</span><span class="s">"your password!"</span><span class="p">,</span>
+        <span class="n">database</span><span class="o">=</span><span class="s">"your db"</span><span class="p">,</span>
+        <span class="n">needCommit</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+        <span class="n">dag</span><span class="o">=</span><span class="n">dag</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="n">t1</span>
+
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">"__main__"</span><span class="p">:</span>
+    <span class="n">dag</span><span class="p">.</span><span class="n">cli</span><span class="p">()</span>
+</code></pre></div></div>
+
+<ul>
+  <li>
+    <p>참고자료</p>
+
+    <ul>
+      <li><a href="http://www.kobis.or.kr/kobisopenapi/homepg/apiservice/searchServiceInfo.do?serviceId=searchDailyBoxOffice">kofic 영화진흥위원회 - 일별 박스오피스 API 서비스</a></li>
+      <li><a href="https://slack.dev/python-slack-sdk/api-docs/slack_sdk/web/client.html">‘slack_sdk.web.client’ 모듈</a></li>
+      <li><a href="https://api.slack.com/methods/chat.postMessage">‘chat.postMessage’ method</a></li>
+      <li><a href="https://airflow.apache.org/docs/apache-airflow/stable/logging-monitoring/callbacks.html?highlight=callback">Airflow 공식문서 - callback</a></li>
+      <li><a href="https://hyungjung-lee.github.io/python/Python-Airflow-Slack/">블로그 - Airflow 에서 Slack 사용하기</a></li>
+    </ul>
+  </li>
+</ul>
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> 태그: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/tags/#airflow" class="page__taxonomy-item p-category" rel="tag">airflow</a><span class="sep">, </span>
+    
+      <a href="/tags/#data-engineering" class="page__taxonomy-item p-category" rel="tag">data engineering</a>
+    
+    </span>
+  </p>
+
+
+
+
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-folder-open" aria-hidden="true"></i> 카테고리: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/categories/#de" class="page__taxonomy-item p-category" rel="tag">DE</a>
+    
+    </span>
+  </p>
+
+
+        
+
+  <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> 업데이트:</strong> <time class="dt-published" datetime="2022-03-14">March 14, 2022</time></p>
+
+      </footer>
+
+      <section class="page__share">
+  
+    <h4 class="page__share-title">공유하기</h4>
+  
+
+  <a href="https://twitter.com/intent/tweet?text=Airflow+-+Slack+%EC%95%8C%EB%A6%BC+%EB%B0%9B%EA%B8%B0%20http%3A%2F%2Flocalhost%3A4000%2Fde%2Fslack_operator%2F" class="btn btn--twitter" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="공유하기 Twitter"><i class="fab fa-fw fa-twitter" aria-hidden="true"></i><span> Twitter</span></a>
+
+  <a href="https://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Flocalhost%3A4000%2Fde%2Fslack_operator%2F" class="btn btn--facebook" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="공유하기 Facebook"><i class="fab fa-fw fa-facebook" aria-hidden="true"></i><span> Facebook</span></a>
+
+  <a href="https://www.linkedin.com/shareArticle?mini=true&amp;url=http%3A%2F%2Flocalhost%3A4000%2Fde%2Fslack_operator%2F" class="btn btn--linkedin" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="공유하기 LinkedIn"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i><span> LinkedIn</span></a>
+</section>
+
+
+      
+  <nav class="pagination">
+    
+      <a href="/de/airflow_custom_operator/" class="pagination--pager" title="Airflow - Custom operator
+">이전</a>
+    
+    
+      <a href="#" class="pagination--pager disabled">다음</a>
+    
+  </nav>
+
+    </div>
+
+    
+  </article>
+
+  
+  
+    <div class="page__related">
+      <h2 class="page__related-title">참고</h2>
+      <div class="grid__wrapper">
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/de/airflow_custom_operator/" rel="permalink">Airflow - Custom operator
+</a>
+      
+    </h2>
+    
+
+
+    <p class="archive__item-excerpt" itemprop="description">Airflow는 다양한 Operator를 지원하지만, 필요한 Operator를 직접 만들 수도 있습니다. airflow.models.baseoperator.BaseOperator를 통해 이러한 확장성을 지원합니다.
+
+Custom Operator 생성
+BaseOperator에 2가지...</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/de/airflow/" rel="permalink">Airflow - MySQL operator
+</a>
+      
+    </h2>
+    
+
+
+    <p class="archive__item-excerpt" itemprop="description">Apache Airflow는 워크플로우 스케쥴을 작성하고, 모니터링하기 위한 오픈 소스 워크플로우 관리 플랫폼입니다. 파이썬을 이용하여 보다 쉽고, 복잡한 파이프라인을 구성할 수 있게 합니다. Airflow를 이용해 MySQL에 데이터를 쌓는 작업을 자동화할 수 있습니다.
+
+
+
+0...</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/de/import-the-py-file/" rel="permalink">모듈 import
+</a>
+      
+    </h2>
+    
+
+
+    <p class="archive__item-excerpt" itemprop="description">Python에서는 다양한 함수, 패키지 등이 존재하지만 부득이하게 직접 함수 등을 만들어서 사용해야하는 경우가 있습니다. 이때 import하는 파일을 모듈(module)이라고 합니다. 작성한 모듈을 어떤 식으로 불러오는지 간단한 예제를 통해서 알아보겠습니다.
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/da/visualization_of_tabular_data_using_styler/" rel="permalink">DataFrame Style 적용하기 (2)
+</a>
+      
+    </h2>
+    
+
+
+    <p class="archive__item-excerpt" itemprop="description">이전 글을 통해 pandas의 데이터프레임의 셀들의 배경과 텍스트에 스타일을 설정하는 방법에 대해서 알아보았습니다. 이번에는 index나 header 등 다른 요소들에 스타일을 설정하는 방법과 더불어 유용한 기능을 알아보고자 합니다. 본문은 pandas 공식문서에 있는 ‘Table...</p>
+  </article>
+</div>
+
+        
+      </div>
+    </div>
+  
+  
+</div>
+    </div>
+
+    
+
+    <div id="footer" class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+
+<!-- end custom footer snippets -->
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+      <li><strong>팔로우:</strong></li>
+    
+
+    
+      
+        
+      
+        
+          <li><a href="https://github.com/hyanggonjin" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+        
+      
+        
+      
+    
+
+    
+      <li><a href="/feed.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> 피드</a></li>
+    
+  </ul>
+</div>
+
+<div class="page__footer-copyright">© 2022 HyangGon Jin. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script src="/assets/js/main.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+  </body>
+</html>

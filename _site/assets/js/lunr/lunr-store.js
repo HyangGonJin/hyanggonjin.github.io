@@ -58,4 +58,10 @@ var store = [{
         "tags": ["data engineering","airflow"],
         "url": "/de/slack_operator/",
         "teaser": null
+      },{
+        "title": "pendulum - datetime 다루기",
+        "excerpt":"Python에서 datetime 객체를 다루는 라이브러리 중 하나인 pendulum에 대해서 간단히 알아보겠습니다. Instantiation pendulum의 default timezone은 ‘UTC’입니다. import pendulum dt = pendulum.datetime(2022, 3, 1) dt # DateTime(2022, 3, 1, 0, 0, 0, tzinfo=Timezone('UTC')) local() 함수를 이용해 로컬 timezone 정보를 이용하는 것이 가능합니다. dt1 = pendulum.local(2022, 3, 1) dt1 # DateTime(2022, 3,...","categories": ["DA"],
+        "tags": ["python"],
+        "url": "/da/pendulum_manipulation_datetimes/",
+        "teaser": null
       }]

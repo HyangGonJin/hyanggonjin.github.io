@@ -1,0 +1,653 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.24.0 by Michael Rose
+  Copyright 2013-2020 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="ko" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>JSON 데이터 다루기 - Lego</title>
+<meta name="description" content="JSON 데이터와 관련된 함수를 알아봅니다.">
+
+
+  <meta name="author" content="HyangGon Jin">
+  
+  <meta property="article:author" content="HyangGon Jin">
+  
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="ko_KR">
+<meta property="og:site_name" content="Lego">
+<meta property="og:title" content="JSON 데이터 다루기">
+<meta property="og:url" content="http://localhost:4000/da/handle_to_json/">
+
+
+  <meta property="og:description" content="JSON 데이터와 관련된 함수를 알아봅니다.">
+
+
+
+
+
+
+
+  <meta property="article:published_time" content="2022-05-04T00:00:00+09:00">
+
+
+
+  <meta property="article:modified_time" content="2022-05-04T00:00:00+09:00">
+
+
+
+  
+
+  
+
+
+<link rel="canonical" href="http://localhost:4000/da/handle_to_json/">
+
+
+
+
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    
+      "@type": "Person",
+      "name": "HyangGon Jin",
+      "url": "http://localhost:4000/"
+    
+  }
+</script>
+
+
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+
+  <link href="/feed.xml" type="application/atom+xml" rel="alternate" title="Lego Feed">
+
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css"></noscript>
+
+
+
+    <!-- start custom head snippets -->
+
+<!-- insert favicons. use https://realfavicongenerator.net/ -->
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body class="layout--single">
+    <nav class="skip-links">
+  <ul>
+    <li><a href="#site-nav" class="screen-reader-shortcut">Skip to primary navigation</a></li>
+    <li><a href="#main" class="screen-reader-shortcut">Skip to content</a></li>
+    <li><a href="#footer" class="screen-reader-shortcut">Skip to footer</a></li>
+  </ul>
+</nav>
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+        <a class="site-title" href="/">
+          Lego
+          <span class="site-subtitle"></span>
+        </a>
+        <ul class="visible-links"><li class="masthead__menu-item">
+              <a href="/categories/">Category</a>
+            </li><li class="masthead__menu-item">
+              <a href="/tags/">Tag</a>
+            </li><li class="masthead__menu-item">
+              <a href="/about/">About</a>
+            </li><li class="masthead__menu-item">
+              <a href="/search/">Search</a>
+            </li></ul>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">토글 메뉴</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="https://schema.org/Person" class="h-card">
+
+  
+    <div class="author__avatar">
+      <a href="http://localhost:4000/">
+        <img src="/assets/images/blue_lego_ver.1.png" alt="HyangGon Jin" itemprop="image" class="u-photo">
+      </a>
+    </div>
+  
+
+  <div class="author__content">
+    <h3 class="author__name p-name" itemprop="name">
+      <a class="u-url" rel="me" href="http://localhost:4000/" itemprop="url">HyangGon Jin</a>
+    </h3>
+    
+      <div class="author__bio p-note" itemprop="description">
+        <p>#Statistics #ML #Python #R</p>
+
+      </div>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">팔로우</button>
+    <ul class="author__urls social-icons">
+      
+        <li itemprop="homeLocation" itemscope itemtype="https://schema.org/Place">
+          <i class="fas fa-fw fa-map-marker-alt" aria-hidden="true"></i> <span itemprop="name" class="p-locality">Seoul</span>
+        </li>
+      
+
+      
+        
+          
+            <li><a href="mailto:nike3616@gmail.com" rel="nofollow noopener noreferrer me"><i class="fas fa-fw fa-envelope-square" aria-hidden="true"></i><span class="label">Email</span></a></li>
+          
+        
+          
+        
+          
+        
+          
+            <li><a href="https://github.com/hyanggonjin" rel="nofollow noopener noreferrer me"><i class="fab fa-fw fa-github" aria-hidden="true"></i><span class="label">GitHub</span></a></li>
+          
+        
+          
+        
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs" rel="nofollow noopener noreferrer me">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+  
+  </div>
+
+
+
+  <article class="page h-entry" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="JSON 데이터 다루기">
+    <meta itemprop="description" content="JSON 데이터와 관련된 함수를 알아봅니다.">
+    <meta itemprop="datePublished" content="2022-05-04T00:00:00+09:00">
+    <meta itemprop="dateModified" content="2022-05-04T00:00:00+09:00">
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <h1 id="page-title" class="page__title p-name" itemprop="headline">
+            <a href="http://localhost:4000/da/handle_to_json/" class="u-url" itemprop="url">JSON 데이터 다루기
+</a>
+          </h1>
+          
+
+
+        </header>
+      
+
+      <section class="page__content e-content" itemprop="text">
+        
+          <aside class="sidebar__right sticky">
+            <nav class="toc">
+              <header><h4 class="nav__title"><i class="fas fa-file-alt"></i> On This Page</h4></header>
+              <ul class="toc__menu"><li><a href="#to_json">to_json</a></li><li><a href="#json_normalize">json_normalize</a></li></ul>
+
+            </nav>
+          </aside>
+        
+        <p>JSON 데이터와 관련된 함수를 알아봅니다.</p>
+
+<h1 id="to_json">to_json</h1>
+<p><code class="language-plaintext highlighter-rouge">to_json()</code> 함수를 통해 데이터프레임을 json으로 변경할 수 있습니다. 먼저, 간단한 <code class="language-plaintext highlighter-rouge">pandas</code> 데이터프레임을 생성합니다.</p>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="n">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="n">pd</span>
+<span class="kn">import</span> <span class="nn">json</span>
+
+<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="p">.</span><span class="n">DataFrame</span><span class="p">([[</span><span class="s">"a"</span><span class="p">,</span> <span class="s">"b"</span><span class="p">],</span> <span class="p">[</span><span class="s">"c"</span><span class="p">,</span> <span class="s">"d"</span><span class="p">]],</span> <span class="n">index</span><span class="o">=</span><span class="p">[</span><span class="s">"row 1"</span><span class="p">,</span> <span class="s">"row 2"</span><span class="p">],</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s">"col 1"</span><span class="p">,</span> <span class="s">"col 2"</span><span class="p">],)</span>
+<span class="n">df</span>
+</code></pre></div></div>
+
+<p><img src="../../assets/images/1_json_data.png" alt="image" />
+<!-- <p align="center">
+<img src = '../../assets/images/1_json_data.png' width="900" height="300">
+</p>  --></p>
+
+<p><code class="language-plaintext highlighter-rouge">to_json()</code> 함수를 통해 데이터프레임을 json 문자열로 변경할 수 있습니다. <code class="language-plaintext highlighter-rouge">orient</code> 옵션(‘split’, ‘index’, ‘columns’, ‘values’ 등)을 통해 json string 포맷을 지정할 수 있습니다. 참고로, <code class="language-plaintext highlighter-rouge">json.loads()</code> 함수는 json 문자열을 python 객체로(json 디코딩), <code class="language-plaintext highlighter-rouge">json.dumps()</code>는 python 객체를 json 문자열로(json 인코딩) 변경시켜줍니다.</p>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">result</span> <span class="o">=</span> <span class="n">df</span><span class="p">.</span><span class="n">to_json</span><span class="p">(</span><span class="n">orient</span><span class="o">=</span><span class="s">"split"</span><span class="p">)</span>
+<span class="n">parsed</span> <span class="o">=</span> <span class="n">json</span><span class="p">.</span><span class="n">loads</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="n">json</span><span class="p">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">parsed</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">))</span>
+</code></pre></div></div>
+
+<p><img src="../../assets/images/2_json_to_json.png" alt="image" />
+<!-- <p align="center">
+<img src = '../../assets/images/2_json_to_json.png' width="900" height="500">
+</p>  --></p>
+
+<h1 id="json_normalize">json_normalize</h1>
+<p><code class="language-plaintext highlighter-rouge">json_normalize()</code> 함수를 통해 python 객체(dict)를 쉽게 데이터프레임으로 변경할 수 있습니다. 참고로, json 형식을 다룰 때는 ‘json 문자열’인지 ‘python 객체’인지 확인하는 것이 중요합니다. <code class="language-plaintext highlighter-rouge">json_normalize()</code>는 ‘json 문자열’을 입력으로 사용할 경우 <code class="language-plaintext highlighter-rouge">NotImplementedError</code>가 발생합니다.</p>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">data</span> <span class="o">=</span> <span class="p">[</span>
+     <span class="p">{</span><span class="s">"id"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s">"name"</span><span class="p">:</span> <span class="p">{</span><span class="s">"first"</span><span class="p">:</span> <span class="s">"Coleen"</span><span class="p">,</span> <span class="s">"last"</span><span class="p">:</span> <span class="s">"Volk"</span><span class="p">}},</span>
+     <span class="p">{</span><span class="s">"name"</span><span class="p">:</span> <span class="p">{</span><span class="s">"given"</span><span class="p">:</span> <span class="s">"Mark"</span><span class="p">,</span> <span class="s">"family"</span><span class="p">:</span> <span class="s">"Regner"</span><span class="p">}},</span>
+     <span class="p">{</span><span class="s">"id"</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="s">"name"</span><span class="p">:</span> <span class="s">"Faye Raker"</span><span class="p">},</span>
+<span class="p">]</span>
+
+<span class="n">data</span>
+<span class="n">pd</span><span class="p">.</span><span class="n">json_normalize</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+<span class="n">pd</span><span class="p">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p><img src="../../assets/images/3_json_normalize1.png" alt="image" />
+<!-- <p align="center">
+<img src = '../../assets/images/3_json_normalize1.png' width="900" height="1000">
+</p>  --></p>
+
+<p><code class="language-plaintext highlighter-rouge">max_level</code> 옵션을 통해 지정한 level까지 데이퍼프레임으로 변환할 수 있습니다.</p>
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">data</span> <span class="o">=</span> <span class="p">[</span>
+             <span class="p">{</span>
+                 <span class="s">"id"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+                 <span class="s">"name"</span><span class="p">:</span> <span class="s">"Cole Volk"</span><span class="p">,</span>
+                 <span class="s">"fitness"</span><span class="p">:</span> <span class="p">{</span><span class="s">"height"</span><span class="p">:</span> <span class="mi">130</span><span class="p">,</span> <span class="s">"weight"</span><span class="p">:</span> <span class="mi">60</span><span class="p">},</span>
+             <span class="p">},</span>
+             <span class="p">{</span><span class="s">"name"</span><span class="p">:</span> <span class="s">"Mark Reg"</span><span class="p">,</span> <span class="s">"fitness"</span><span class="p">:</span> <span class="p">{</span><span class="s">"height"</span><span class="p">:</span> <span class="mi">130</span><span class="p">,</span> <span class="s">"weight"</span><span class="p">:</span> <span class="mi">60</span><span class="p">}},</span>
+             <span class="p">{</span>
+                 <span class="s">"id"</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+                 <span class="s">"name"</span><span class="p">:</span> <span class="s">"Faye Raker"</span><span class="p">,</span>
+                 <span class="s">"fitness"</span><span class="p">:</span> <span class="p">{</span><span class="s">"height"</span><span class="p">:</span> <span class="mi">130</span><span class="p">,</span> <span class="s">"weight"</span><span class="p">:</span> <span class="mi">60</span><span class="p">},</span>
+             <span class="p">},</span>
+         <span class="p">]</span>
+
+<span class="n">data</span>
+<span class="n">pd</span><span class="p">.</span><span class="n">json_normalize</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">max_level</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">pd</span><span class="p">.</span><span class="n">json_normalize</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">max_level</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p><img src="../../assets/images/4_json_normalize2.png" alt="image" /></p>
+
+<p><code class="language-plaintext highlighter-rouge">meta</code> 옵션을 통해 데이터프레임으로 변환할 필드를 지정해줄 수 있습니다.</p>
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">data</span> <span class="o">=</span> <span class="p">[</span>
+             <span class="p">{</span>
+                 <span class="s">"state"</span><span class="p">:</span> <span class="s">"Florida"</span><span class="p">,</span>
+                 <span class="s">"shortname"</span><span class="p">:</span> <span class="s">"FL"</span><span class="p">,</span>
+                 <span class="s">"info"</span><span class="p">:</span> <span class="p">{</span><span class="s">"governor"</span><span class="p">:</span> <span class="s">"Rick Scott"</span><span class="p">},</span>
+                 <span class="s">"counties"</span><span class="p">:</span> <span class="p">[</span>
+                     <span class="p">{</span><span class="s">"name"</span><span class="p">:</span> <span class="s">"Dade"</span><span class="p">,</span> <span class="s">"population"</span><span class="p">:</span> <span class="mi">12345</span><span class="p">},</span>
+                     <span class="p">{</span><span class="s">"name"</span><span class="p">:</span> <span class="s">"Broward"</span><span class="p">,</span> <span class="s">"population"</span><span class="p">:</span> <span class="mi">40000</span><span class="p">},</span>
+                     <span class="p">{</span><span class="s">"name"</span><span class="p">:</span> <span class="s">"Palm Beach"</span><span class="p">,</span> <span class="s">"population"</span><span class="p">:</span> <span class="mi">60000</span><span class="p">},</span>
+                 <span class="p">],</span>
+             <span class="p">},</span>
+             <span class="p">{</span>
+                 <span class="s">"state"</span><span class="p">:</span> <span class="s">"Ohio"</span><span class="p">,</span>
+                 <span class="s">"shortname"</span><span class="p">:</span> <span class="s">"OH"</span><span class="p">,</span>
+                 <span class="s">"info"</span><span class="p">:</span> <span class="p">{</span><span class="s">"governor"</span><span class="p">:</span> <span class="s">"John Kasich"</span><span class="p">},</span>
+                 <span class="s">"counties"</span><span class="p">:</span> <span class="p">[</span>
+                     <span class="p">{</span><span class="s">"name"</span><span class="p">:</span> <span class="s">"Summit"</span><span class="p">,</span> <span class="s">"population"</span><span class="p">:</span> <span class="mi">1234</span><span class="p">},</span>
+                     <span class="p">{</span><span class="s">"name"</span><span class="p">:</span> <span class="s">"Cuyahoga"</span><span class="p">,</span> <span class="s">"population"</span><span class="p">:</span> <span class="mi">1337</span><span class="p">},</span>
+                 <span class="p">],</span>
+             <span class="p">},</span>
+         <span class="p">]</span>
+
+<span class="n">data</span>
+<span class="n">pd</span><span class="p">.</span><span class="n">json_normalize</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="s">"counties"</span><span class="p">)</span>
+<span class="n">pd</span><span class="p">.</span><span class="n">json_normalize</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="s">"counties"</span><span class="p">,</span> <span class="p">[</span><span class="s">"state"</span><span class="p">,</span> <span class="s">"shortname"</span><span class="p">,</span> <span class="p">[</span><span class="s">"info"</span><span class="p">,</span> <span class="s">"governor"</span><span class="p">]])</span>
+</code></pre></div></div>
+
+<p><img src="../../assets/images/5_json_normalize3.png" alt="image" /></p>
+
+<ul>
+  <li>참고자료
+    <ul>
+      <li><a href="https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.to_json.html">pandas 공식문서 - to_json</a></li>
+      <li><a href="https://pandas.pydata.org/docs/reference/api/pandas.json_normalize.html">pandas 공식문서 - json_normalize</a></li>
+      <li><a href="https://docs.python.org/ko/3/library/json.html">json 공식문서 - json 인코더와 디코더</a></li>
+    </ul>
+  </li>
+</ul>
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> 태그: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/tags/#python" class="page__taxonomy-item p-category" rel="tag">python</a>
+    
+    </span>
+  </p>
+
+
+
+
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-folder-open" aria-hidden="true"></i> 카테고리: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/categories/#da" class="page__taxonomy-item p-category" rel="tag">DA</a>
+    
+    </span>
+  </p>
+
+
+        
+
+  <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> 업데이트:</strong> <time class="dt-published" datetime="2022-05-04">May 4, 2022</time></p>
+
+      </footer>
+
+      <section class="page__share">
+  
+    <h4 class="page__share-title">공유하기</h4>
+  
+
+  <a href="https://twitter.com/intent/tweet?text=JSON+%EB%8D%B0%EC%9D%B4%ED%84%B0+%EB%8B%A4%EB%A3%A8%EA%B8%B0%20http%3A%2F%2Flocalhost%3A4000%2Fda%2Fhandle_to_json%2F" class="btn btn--twitter" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="공유하기 Twitter"><i class="fab fa-fw fa-twitter" aria-hidden="true"></i><span> Twitter</span></a>
+
+  <a href="https://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Flocalhost%3A4000%2Fda%2Fhandle_to_json%2F" class="btn btn--facebook" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="공유하기 Facebook"><i class="fab fa-fw fa-facebook" aria-hidden="true"></i><span> Facebook</span></a>
+
+  <a href="https://www.linkedin.com/shareArticle?mini=true&url=http%3A%2F%2Flocalhost%3A4000%2Fda%2Fhandle_to_json%2F" class="btn btn--linkedin" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="공유하기 LinkedIn"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i><span> LinkedIn</span></a>
+</section>
+
+
+      
+  <nav class="pagination">
+    
+      <a href="/da/pendulum_manipulation_datetimes/" class="pagination--pager" title="pendulum - datetime 다루기
+">이전</a>
+    
+    
+      <a href="#" class="pagination--pager disabled">다음</a>
+    
+  </nav>
+
+    </div>
+
+    
+  </article>
+
+  
+  
+    <div class="page__related">
+      <h2 class="page__related-title">참고</h2>
+      <div class="grid__wrapper">
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/da/pendulum_manipulation_datetimes/" rel="permalink">pendulum - datetime 다루기
+</a>
+      
+    </h2>
+    
+
+
+    <p class="archive__item-excerpt" itemprop="description">Python에서 datetime 객체를 다루는 라이브러리 중 하나인 pendulum에 대해서 간단히 알아보겠습니다.
+
+Instantiation
+pendulum의 default timezone은 ‘UTC’입니다.
+
+import pendulum
+
+dt = pendulum.datetim...</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/de/slack_operator/" rel="permalink">Airflow - Slack 알림 받기
+</a>
+      
+    </h2>
+    
+
+
+    <p class="archive__item-excerpt" itemprop="description">Airflow에서 task의 성공 여부에 따라 slack으로 알림을 받는 방법을 알아보겠습니다.
+
+Operator
+
+kobis_operator
+전체 코드는 아래와 같습니다.
+
+# plugins/operators/kobis_operator.py
+import sys
+import war...</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/de/airflow_custom_operator/" rel="permalink">Airflow - Custom operator
+</a>
+      
+    </h2>
+    
+
+
+    <p class="archive__item-excerpt" itemprop="description">Airflow는 다양한 Operator를 지원하지만, 필요한 Operator를 직접 만들 수도 있습니다. airflow.models.baseoperator.BaseOperator를 통해 이러한 확장성을 지원합니다.
+
+Custom Operator 생성
+BaseOperator에 2가지...</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/de/airflow/" rel="permalink">Airflow - MySQL operator
+</a>
+      
+    </h2>
+    
+
+
+    <p class="archive__item-excerpt" itemprop="description">Apache Airflow는 워크플로우 스케쥴을 작성하고, 모니터링하기 위한 오픈 소스 워크플로우 관리 플랫폼입니다. 파이썬을 이용하여 보다 쉽고, 복잡한 파이프라인을 구성할 수 있게 합니다. Airflow를 이용해 MySQL에 데이터를 쌓는 작업을 자동화할 수 있습니다.
+
+
+
+0...</p>
+  </article>
+</div>
+
+        
+      </div>
+    </div>
+  
+  
+</div>
+    </div>
+
+    
+
+    <div id="footer" class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+
+<!-- end custom footer snippets -->
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+      <li><strong>팔로우:</strong></li>
+    
+
+    
+      
+        
+      
+        
+          <li><a href="https://github.com/hyanggonjin" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+        
+      
+        
+      
+    
+
+    
+      <li><a href="/feed.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> 피드</a></li>
+    
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2022 HyangGon Jin. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script src="/assets/js/main.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+  </body>
+</html>

@@ -64,4 +64,10 @@ var store = [{
         "tags": ["python"],
         "url": "/da/pendulum_manipulation_datetimes/",
         "teaser": null
+      },{
+        "title": "JSON 데이터 다루기",
+        "excerpt":"JSON 데이터와 관련된 함수를 알아봅니다. to_json to_json() 함수를 통해 데이터프레임을 json으로 변경할 수 있습니다. 먼저, 간단한 pandas 데이터프레임을 생성합니다. import numpy as np import pandas as pd import json df = pd.DataFrame([[\"a\", \"b\"], [\"c\", \"d\"]], index=[\"row 1\", \"row 2\"],columns=[\"col 1\", \"col 2\"],) df to_json() 함수를 통해 데이터프레임을 json 문자열로 변경할...","categories": ["DA"],
+        "tags": ["python"],
+        "url": "/da/handle_to_json/",
+        "teaser": null
       }]

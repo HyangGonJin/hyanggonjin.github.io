@@ -1,0 +1,641 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.24.0 by Michael Rose
+  Copyright 2013-2020 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="ko" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>22년 4월의 공부 - Lego</title>
+<meta name="description" content="2022년 4월 동안 검색하고 공부한 것들을 정리한 내용입니다.  1. dataclasses    참고: dataclasses 공식문서   __init__() 나 __repr__() 과 같은 생성된 특수 메서드를 사용자 정의 클래스에 자동으로 추가하는 데코레이터와 함수를 제공합니다. @dataclass 데코레이터를 통해 사용할 수 있습니다. 아래와 같이 __init__과 __repr__을 명시하지 않았지만 자동으로 설정이 된 것을 확인할 수 있습니다.   from dataclasses import dataclass  @dataclass class account:     name: object     password: int     balance: int      random.seed(1234)     _id = &quot;x&quot;+str(int(round(random.random(),6)*1E6))       def print1(self):         print(self.name, self.password, self._id, self.balance)      def deposit(self,amount):         self.balance += amount         return &quot;입급 완료.&quot;           acc1 = account(name=&#39;lego&#39;, password=1234, balance=100000) print(acc1) # account(name=&#39;\x08lego&#39;, password=1234, balance=100000) acc1.deposit(3000) print(acc1.balance) # 103000     2. 중복레코드 처리 - MySQL    참고:            블로그 - INSERT IGNORE       블로그 - INSERT ON DUPLICATE UPDATE           MySQL에서 중복레코드를 처리할 때 사용하는 방법 중 2가지를 비교합니다.            INSERT IGNORE       INSERT INTO ON DUPLICATE UPDATE           INSERT IGNORE 중복레코드 오류가 발생하면 (이를 무시하고) 처음에 기록된 데이터가 남습니다.  INSERT IGNORE INTO table (column_list)  VALUES (value_list);  # 출처: https://www.mysqltutorial.org/mysql-insert-ignore/   INSERT INTO ON DUPLICATE UPDATE 중복레코드 오류가 발생했을 때 업데이트할 값을 지정할 수 있습니다.  INSERT INTO table (column_list) VALUES (value_list) ON DUPLICATE KEY UPDATE    c1 = v1,     c2 = v2,    ...;  # 출처: https://www.mysqltutorial.org/mysql-insert-or-update-on-duplicate-key-update/     3. Data Leakage    참고: Data Leakage - Find and fix this problem that ruins your model in subtle ways.   Data leakage의 유형    Target leakage   Train-Test contamination   Target leakage    feature가 모델 개발을 할 때는 사용이 가능하지만, 예측을 할 때는 활용이 불가능한 경우.   사용하고자 하는 feature가 있는 경우, 단순히 ‘예측에 도움이 되는지’ 뿐만이 아니라 ‘예측 시점에 활용 가능한지‘도 생각하는 것이 중요.   Train-Test contamination    Data preprocessing 또는 Feature engineering을 할 때, validation(또는 test) data의 정보를 이용하는 경우.">
+
+
+  <meta name="author" content="HyangGon Jin">
+  
+  <meta property="article:author" content="HyangGon Jin">
+  
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="ko_KR">
+<meta property="og:site_name" content="Lego">
+<meta property="og:title" content="22년 4월의 공부">
+<meta property="og:url" content="http://localhost:4000/til/TIL_2204/">
+
+
+  <meta property="og:description" content="2022년 4월 동안 검색하고 공부한 것들을 정리한 내용입니다.  1. dataclasses    참고: dataclasses 공식문서   __init__() 나 __repr__() 과 같은 생성된 특수 메서드를 사용자 정의 클래스에 자동으로 추가하는 데코레이터와 함수를 제공합니다. @dataclass 데코레이터를 통해 사용할 수 있습니다. 아래와 같이 __init__과 __repr__을 명시하지 않았지만 자동으로 설정이 된 것을 확인할 수 있습니다.   from dataclasses import dataclass  @dataclass class account:     name: object     password: int     balance: int      random.seed(1234)     _id = &quot;x&quot;+str(int(round(random.random(),6)*1E6))       def print1(self):         print(self.name, self.password, self._id, self.balance)      def deposit(self,amount):         self.balance += amount         return &quot;입급 완료.&quot;           acc1 = account(name=&#39;lego&#39;, password=1234, balance=100000) print(acc1) # account(name=&#39;\x08lego&#39;, password=1234, balance=100000) acc1.deposit(3000) print(acc1.balance) # 103000     2. 중복레코드 처리 - MySQL    참고:            블로그 - INSERT IGNORE       블로그 - INSERT ON DUPLICATE UPDATE           MySQL에서 중복레코드를 처리할 때 사용하는 방법 중 2가지를 비교합니다.            INSERT IGNORE       INSERT INTO ON DUPLICATE UPDATE           INSERT IGNORE 중복레코드 오류가 발생하면 (이를 무시하고) 처음에 기록된 데이터가 남습니다.  INSERT IGNORE INTO table (column_list)  VALUES (value_list);  # 출처: https://www.mysqltutorial.org/mysql-insert-ignore/   INSERT INTO ON DUPLICATE UPDATE 중복레코드 오류가 발생했을 때 업데이트할 값을 지정할 수 있습니다.  INSERT INTO table (column_list) VALUES (value_list) ON DUPLICATE KEY UPDATE    c1 = v1,     c2 = v2,    ...;  # 출처: https://www.mysqltutorial.org/mysql-insert-or-update-on-duplicate-key-update/     3. Data Leakage    참고: Data Leakage - Find and fix this problem that ruins your model in subtle ways.   Data leakage의 유형    Target leakage   Train-Test contamination   Target leakage    feature가 모델 개발을 할 때는 사용이 가능하지만, 예측을 할 때는 활용이 불가능한 경우.   사용하고자 하는 feature가 있는 경우, 단순히 ‘예측에 도움이 되는지’ 뿐만이 아니라 ‘예측 시점에 활용 가능한지‘도 생각하는 것이 중요.   Train-Test contamination    Data preprocessing 또는 Feature engineering을 할 때, validation(또는 test) data의 정보를 이용하는 경우.">
+
+
+
+
+
+
+
+  <meta property="article:published_time" content="2022-05-04T00:00:00+09:00">
+
+
+
+  <meta property="article:modified_time" content="2022-05-04T00:00:00+09:00">
+
+
+
+  
+
+  
+
+
+<link rel="canonical" href="http://localhost:4000/til/TIL_2204/">
+
+
+
+
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    
+      "@type": "Person",
+      "name": "HyangGon Jin",
+      "url": "http://localhost:4000/"
+    
+  }
+</script>
+
+
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+
+  <link href="/feed.xml" type="application/atom+xml" rel="alternate" title="Lego Feed">
+
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css"></noscript>
+
+
+
+    <!-- start custom head snippets -->
+
+<!-- insert favicons. use https://realfavicongenerator.net/ -->
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body class="layout--single">
+    <nav class="skip-links">
+  <ul>
+    <li><a href="#site-nav" class="screen-reader-shortcut">Skip to primary navigation</a></li>
+    <li><a href="#main" class="screen-reader-shortcut">Skip to content</a></li>
+    <li><a href="#footer" class="screen-reader-shortcut">Skip to footer</a></li>
+  </ul>
+</nav>
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+        <a class="site-title" href="/">
+          Lego
+          <span class="site-subtitle"></span>
+        </a>
+        <ul class="visible-links"><li class="masthead__menu-item">
+              <a href="/categories/">Category</a>
+            </li><li class="masthead__menu-item">
+              <a href="/tags/">Tag</a>
+            </li><li class="masthead__menu-item">
+              <a href="/about/">About</a>
+            </li><li class="masthead__menu-item">
+              <a href="/search/">Search</a>
+            </li></ul>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">토글 메뉴</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="https://schema.org/Person" class="h-card">
+
+  
+    <div class="author__avatar">
+      <a href="http://localhost:4000/">
+        <img src="/assets/images/blue_lego_ver.1.png" alt="HyangGon Jin" itemprop="image" class="u-photo">
+      </a>
+    </div>
+  
+
+  <div class="author__content">
+    <h3 class="author__name p-name" itemprop="name">
+      <a class="u-url" rel="me" href="http://localhost:4000/" itemprop="url">HyangGon Jin</a>
+    </h3>
+    
+      <div class="author__bio p-note" itemprop="description">
+        <p>#Statistics #ML #Python #R</p>
+
+      </div>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">팔로우</button>
+    <ul class="author__urls social-icons">
+      
+        <li itemprop="homeLocation" itemscope itemtype="https://schema.org/Place">
+          <i class="fas fa-fw fa-map-marker-alt" aria-hidden="true"></i> <span itemprop="name" class="p-locality">Seoul</span>
+        </li>
+      
+
+      
+        
+          
+            <li><a href="mailto:nike3616@gmail.com" rel="nofollow noopener noreferrer me"><i class="fas fa-fw fa-envelope-square" aria-hidden="true"></i><span class="label">Email</span></a></li>
+          
+        
+          
+        
+          
+        
+          
+            <li><a href="https://github.com/hyanggonjin" rel="nofollow noopener noreferrer me"><i class="fab fa-fw fa-github" aria-hidden="true"></i><span class="label">GitHub</span></a></li>
+          
+        
+          
+        
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs" rel="nofollow noopener noreferrer me">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+  
+  </div>
+
+
+
+  <article class="page h-entry" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="22년 4월의 공부">
+    <meta itemprop="description" content="2022년 4월 동안 검색하고 공부한 것들을 정리한 내용입니다.1. dataclasses  참고: dataclasses 공식문서  __init__() 나 __repr__() 과 같은 생성된 특수 메서드를 사용자 정의 클래스에 자동으로 추가하는 데코레이터와 함수를 제공합니다. @dataclass 데코레이터를 통해 사용할 수 있습니다. 아래와 같이 __init__과 __repr__을 명시하지 않았지만 자동으로 설정이 된 것을 확인할 수 있습니다.from dataclasses import dataclass@dataclassclass account:    name: object    password: int    balance: int    random.seed(1234)    _id = &quot;x&quot;+str(int(round(random.random(),6)*1E6))    def print1(self):        print(self.name, self.password, self._id, self.balance)    def deposit(self,amount):        self.balance += amount        return &quot;입급 완료.&quot;        acc1 = account(name=&#39;lego&#39;, password=1234, balance=100000)print(acc1) # account(name=&#39;\x08lego&#39;, password=1234, balance=100000)acc1.deposit(3000)print(acc1.balance) # 1030002. 중복레코드 처리 - MySQL  참고:          블로그 - INSERT IGNORE      블로그 - INSERT ON DUPLICATE UPDATE        MySQL에서 중복레코드를 처리할 때 사용하는 방법 중 2가지를 비교합니다.          INSERT IGNORE      INSERT INTO ON DUPLICATE UPDATE      INSERT IGNORE중복레코드 오류가 발생하면 (이를 무시하고) 처음에 기록된 데이터가 남습니다.INSERT IGNORE INTO table (column_list) VALUES (value_list);# 출처: https://www.mysqltutorial.org/mysql-insert-ignore/INSERT INTO ON DUPLICATE UPDATE중복레코드 오류가 발생했을 때 업데이트할 값을 지정할 수 있습니다.INSERT INTO table (column_list)VALUES (value_list)ON DUPLICATE KEY UPDATE   c1 = v1,    c2 = v2,   ...;# 출처: https://www.mysqltutorial.org/mysql-insert-or-update-on-duplicate-key-update/3. Data Leakage  참고: Data Leakage - Find and fix this problem that ruins your model in subtle ways.Data leakage의 유형  Target leakage  Train-Test contaminationTarget leakage  feature가 모델 개발을 할 때는 사용이 가능하지만, 예측을 할 때는 활용이 불가능한 경우.  사용하고자 하는 feature가 있는 경우, 단순히 ‘예측에 도움이 되는지’ 뿐만이 아니라 ‘예측 시점에 활용 가능한지‘도 생각하는 것이 중요.Train-Test contamination  Data preprocessing 또는 Feature engineering을 할 때, validation(또는 test) data의 정보를 이용하는 경우.">
+    <meta itemprop="datePublished" content="2022-05-04T00:00:00+09:00">
+    <meta itemprop="dateModified" content="2022-05-04T00:00:00+09:00">
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <h1 id="page-title" class="page__title p-name" itemprop="headline">
+            <a href="http://localhost:4000/til/TIL_2204/" class="u-url" itemprop="url">22년 4월의 공부
+</a>
+          </h1>
+          
+
+
+        </header>
+      
+
+      <section class="page__content e-content" itemprop="text">
+        
+          <aside class="sidebar__right sticky">
+            <nav class="toc">
+              <header><h4 class="nav__title"><i class="fas fa-file-alt"></i> On This Page</h4></header>
+              <ul class="toc__menu"><li><a href="#1-dataclasses">1. dataclasses</a></li><li><a href="#2-중복레코드-처리---mysql">2. 중복레코드 처리 - MySQL</a><ul><li><a href="#insert-ignore">INSERT IGNORE</a></li><li><a href="#insert-into-on-duplicate-update">INSERT INTO ON DUPLICATE UPDATE</a></li></ul></li><li><a href="#3-data-leakage">3. Data Leakage</a><ul><li><a href="#data-leakage의-유형">Data leakage의 유형</a></li><li><a href="#target-leakage">Target leakage</a></li><li><a href="#train-test-contamination">Train-Test contamination</a></li></ul></li></ul>
+
+            </nav>
+          </aside>
+        
+        <p>2022년 4월 동안 검색하고 공부한 것들을 정리한 내용입니다.</p>
+
+<h1 id="1-dataclasses">1. dataclasses</h1>
+<ul>
+  <li>참고: <a href="https://docs.python.org/ko/3/library/dataclasses.html">dataclasses 공식문서</a></li>
+  <li><code class="language-plaintext highlighter-rouge">__init__()</code> 나 <code class="language-plaintext highlighter-rouge">__repr__()</code> 과 같은 생성된 특수 메서드를 사용자 정의 클래스에 자동으로 추가하는 데코레이터와 함수를 제공합니다. <code class="language-plaintext highlighter-rouge">@dataclass</code> 데코레이터를 통해 사용할 수 있습니다. 아래와 같이 <code class="language-plaintext highlighter-rouge">__init__</code>과 <code class="language-plaintext highlighter-rouge">__repr__</code>을 명시하지 않았지만 자동으로 설정이 된 것을 확인할 수 있습니다.</li>
+</ul>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span>
+
+<span class="o">@</span><span class="n">dataclass</span>
+<span class="k">class</span> <span class="nc">account</span><span class="p">:</span>
+    <span class="n">name</span><span class="p">:</span> <span class="nb">object</span>
+    <span class="n">password</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="n">balance</span><span class="p">:</span> <span class="nb">int</span>
+
+    <span class="n">random</span><span class="p">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">1234</span><span class="p">)</span>
+    <span class="n">_id</span> <span class="o">=</span> <span class="s">"x"</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">random</span><span class="p">.</span><span class="n">random</span><span class="p">(),</span><span class="mi">6</span><span class="p">)</span><span class="o">*</span><span class="mf">1E6</span><span class="p">))</span>
+
+
+    <span class="k">def</span> <span class="nf">print1</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">print</span><span class="p">(</span><span class="bp">self</span><span class="p">.</span><span class="n">name</span><span class="p">,</span> <span class="bp">self</span><span class="p">.</span><span class="n">password</span><span class="p">,</span> <span class="bp">self</span><span class="p">.</span><span class="n">_id</span><span class="p">,</span> <span class="bp">self</span><span class="p">.</span><span class="n">balance</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">deposit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">amount</span><span class="p">):</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">balance</span> <span class="o">+=</span> <span class="n">amount</span>
+        <span class="k">return</span> <span class="s">"입급 완료."</span>
+
+        
+<span class="n">acc1</span> <span class="o">=</span> <span class="n">account</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">'lego'</span><span class="p">,</span> <span class="n">password</span><span class="o">=</span><span class="mi">1234</span><span class="p">,</span> <span class="n">balance</span><span class="o">=</span><span class="mi">100000</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="n">acc1</span><span class="p">)</span> <span class="c1"># account(name='\x08lego', password=1234, balance=100000)
+</span><span class="n">acc1</span><span class="p">.</span><span class="n">deposit</span><span class="p">(</span><span class="mi">3000</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="n">acc1</span><span class="p">.</span><span class="n">balance</span><span class="p">)</span> <span class="c1"># 103000
+</span></code></pre></div></div>
+
+<hr />
+
+<h1 id="2-중복레코드-처리---mysql">2. 중복레코드 처리 - MySQL</h1>
+<ul>
+  <li>참고:
+    <ul>
+      <li><a href="https://www.mysqltutorial.org/mysql-insert-ignore/">블로그 - INSERT IGNORE</a></li>
+      <li><a href="https://www.mysqltutorial.org/mysql-insert-or-update-on-duplicate-key-update/">블로그 - INSERT ON DUPLICATE UPDATE</a></li>
+    </ul>
+  </li>
+  <li>MySQL에서 중복레코드를 처리할 때 사용하는 방법 중 2가지를 비교합니다.
+    <ol>
+      <li><code class="language-plaintext highlighter-rouge">INSERT IGNORE</code></li>
+      <li><code class="language-plaintext highlighter-rouge">INSERT INTO ON DUPLICATE UPDATE</code></li>
+    </ol>
+  </li>
+</ul>
+
+<h2 id="insert-ignore">INSERT IGNORE</h2>
+<p>중복레코드 오류가 발생하면 (이를 무시하고) 처음에 기록된 데이터가 남습니다.</p>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">INSERT</span> <span class="k">IGNORE</span> <span class="k">INTO</span> <span class="k">table</span> <span class="p">(</span><span class="n">column_list</span><span class="p">)</span> 
+<span class="k">VALUES</span> <span class="p">(</span><span class="n">value_list</span><span class="p">);</span>
+
+<span class="o">#</span> <span class="err">출처</span><span class="p">:</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">www</span><span class="p">.</span><span class="n">mysqltutorial</span><span class="p">.</span><span class="n">org</span><span class="o">/</span><span class="n">mysql</span><span class="o">-</span><span class="k">insert</span><span class="o">-</span><span class="k">ignore</span><span class="o">/</span>
+</code></pre></div></div>
+
+<h2 id="insert-into-on-duplicate-update">INSERT INTO ON DUPLICATE UPDATE</h2>
+<p>중복레코드 오류가 발생했을 때 업데이트할 값을 지정할 수 있습니다.</p>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">INSERT</span> <span class="k">INTO</span> <span class="k">table</span> <span class="p">(</span><span class="n">column_list</span><span class="p">)</span>
+<span class="k">VALUES</span> <span class="p">(</span><span class="n">value_list</span><span class="p">)</span>
+<span class="k">ON</span> <span class="n">DUPLICATE</span> <span class="k">KEY</span> <span class="k">UPDATE</span>
+   <span class="n">c1</span> <span class="o">=</span> <span class="n">v1</span><span class="p">,</span> 
+   <span class="n">c2</span> <span class="o">=</span> <span class="n">v2</span><span class="p">,</span>
+   <span class="p">...;</span>
+
+<span class="o">#</span> <span class="err">출처</span><span class="p">:</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">www</span><span class="p">.</span><span class="n">mysqltutorial</span><span class="p">.</span><span class="n">org</span><span class="o">/</span><span class="n">mysql</span><span class="o">-</span><span class="k">insert</span><span class="o">-</span><span class="k">or</span><span class="o">-</span><span class="k">update</span><span class="o">-</span><span class="k">on</span><span class="o">-</span><span class="n">duplicate</span><span class="o">-</span><span class="k">key</span><span class="o">-</span><span class="k">update</span><span class="o">/</span>
+</code></pre></div></div>
+
+<hr />
+
+<h1 id="3-data-leakage">3. Data Leakage</h1>
+<ul>
+  <li>참고: <a href="https://www.kaggle.com/alexisbcook/data-leakage">Data Leakage - Find and fix this problem that ruins your model in subtle ways.</a></li>
+</ul>
+
+<h2 id="data-leakage의-유형">Data leakage의 유형</h2>
+<ol>
+  <li>Target leakage</li>
+  <li>Train-Test contamination</li>
+</ol>
+
+<h2 id="target-leakage">Target leakage</h2>
+<ul>
+  <li>feature가 모델 개발을 할 때는 사용이 가능하지만, <u>예측을 할 때는 활용이 불가능한 경우</u>.</li>
+  <li>사용하고자 하는 feature가 있는 경우, 단순히 ‘<strong>예측에 도움이 되는지</strong>’ 뿐만이 아니라 ‘<strong>예측 시점에 활용 가능한지</strong>‘도 생각하는 것이 중요.</li>
+</ul>
+
+<h2 id="train-test-contamination">Train-Test contamination</h2>
+<ul>
+  <li>Data preprocessing 또는 Feature engineering을 할 때, validation(또는 test) data의 정보를 이용하는 경우.</li>
+</ul>
+
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> 태그: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/tags/#python" class="page__taxonomy-item p-category" rel="tag">python</a><span class="sep">, </span>
+    
+      <a href="/tags/#til" class="page__taxonomy-item p-category" rel="tag">TIL</a>
+    
+    </span>
+  </p>
+
+
+
+
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-folder-open" aria-hidden="true"></i> 카테고리: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/categories/#til" class="page__taxonomy-item p-category" rel="tag">TIL</a>
+    
+    </span>
+  </p>
+
+
+        
+
+  <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> 업데이트:</strong> <time class="dt-published" datetime="2022-05-04">May 4, 2022</time></p>
+
+      </footer>
+
+      <section class="page__share">
+  
+    <h4 class="page__share-title">공유하기</h4>
+  
+
+  <a href="https://twitter.com/intent/tweet?text=22%EB%85%84+4%EC%9B%94%EC%9D%98+%EA%B3%B5%EB%B6%80%20http%3A%2F%2Flocalhost%3A4000%2Ftil%2FTIL_2204%2F" class="btn btn--twitter" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="공유하기 Twitter"><i class="fab fa-fw fa-twitter" aria-hidden="true"></i><span> Twitter</span></a>
+
+  <a href="https://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Flocalhost%3A4000%2Ftil%2FTIL_2204%2F" class="btn btn--facebook" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="공유하기 Facebook"><i class="fab fa-fw fa-facebook" aria-hidden="true"></i><span> Facebook</span></a>
+
+  <a href="https://www.linkedin.com/shareArticle?mini=true&url=http%3A%2F%2Flocalhost%3A4000%2Ftil%2FTIL_2204%2F" class="btn btn--linkedin" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="공유하기 LinkedIn"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i><span> LinkedIn</span></a>
+</section>
+
+
+      
+  <nav class="pagination">
+    
+      <a href="/da/handle_to_json/" class="pagination--pager" title="JSON 데이터 다루기
+">이전</a>
+    
+    
+      <a href="#" class="pagination--pager disabled">다음</a>
+    
+  </nav>
+
+    </div>
+
+    
+  </article>
+
+  
+  
+    <div class="page__related">
+      <h2 class="page__related-title">참고</h2>
+      <div class="grid__wrapper">
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/da/handle_to_json/" rel="permalink">JSON 데이터 다루기
+</a>
+      
+    </h2>
+    
+
+
+    <p class="archive__item-excerpt" itemprop="description">JSON 데이터와 관련된 함수를 알아봅니다.
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/da/pendulum_manipulation_datetimes/" rel="permalink">pendulum - datetime 다루기
+</a>
+      
+    </h2>
+    
+
+
+    <p class="archive__item-excerpt" itemprop="description">Python에서 datetime 객체를 다루는 라이브러리 중 하나인 pendulum에 대해서 간단히 알아보겠습니다.
+
+Instantiation
+pendulum의 default timezone은 ‘UTC’입니다.
+
+import pendulum
+
+dt = pendulum.datetim...</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/de/slack_operator/" rel="permalink">Airflow - Slack 알림 받기
+</a>
+      
+    </h2>
+    
+
+
+    <p class="archive__item-excerpt" itemprop="description">Airflow에서 task의 성공 여부에 따라 slack으로 알림을 받는 방법을 알아보겠습니다.
+
+Operator
+
+kobis_operator
+전체 코드는 아래와 같습니다.
+
+# plugins/operators/kobis_operator.py
+import sys
+import war...</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/de/airflow_custom_operator/" rel="permalink">Airflow - Custom operator
+</a>
+      
+    </h2>
+    
+
+
+    <p class="archive__item-excerpt" itemprop="description">Airflow는 다양한 Operator를 지원하지만, 필요한 Operator를 직접 만들 수도 있습니다. airflow.models.baseoperator.BaseOperator를 통해 이러한 확장성을 지원합니다.
+
+Custom Operator 생성
+BaseOperator에 2가지...</p>
+  </article>
+</div>
+
+        
+      </div>
+    </div>
+  
+  
+</div>
+    </div>
+
+    
+
+    <div id="footer" class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+
+<!-- end custom footer snippets -->
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+      <li><strong>팔로우:</strong></li>
+    
+
+    
+      
+        
+      
+        
+          <li><a href="https://github.com/hyanggonjin" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+        
+      
+        
+      
+    
+
+    
+      <li><a href="/feed.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> 피드</a></li>
+    
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2022 HyangGon Jin. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script src="/assets/js/main.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+  </body>
+</html>

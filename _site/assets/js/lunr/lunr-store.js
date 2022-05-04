@@ -70,4 +70,10 @@ var store = [{
         "tags": ["python"],
         "url": "/da/handle_to_json/",
         "teaser": null
+      },{
+        "title": "22년 4월의 공부",
+        "excerpt":"2022년 4월 동안 검색하고 공부한 것들을 정리한 내용입니다. 1. dataclasses 참고: dataclasses 공식문서 __init__() 나 __repr__() 과 같은 생성된 특수 메서드를 사용자 정의 클래스에 자동으로 추가하는 데코레이터와 함수를 제공합니다. @dataclass 데코레이터를 통해 사용할 수 있습니다. 아래와 같이 __init__과 __repr__을 명시하지 않았지만 자동으로 설정이 된 것을 확인할 수 있습니다. from dataclasses...","categories": ["TIL"],
+        "tags": ["TIL","python"],
+        "url": "/til/TIL_2204/",
+        "teaser": null
       }]

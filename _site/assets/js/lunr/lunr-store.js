@@ -76,4 +76,10 @@ var store = [{
         "tags": ["TIL","python"],
         "url": "/til/TIL_2204/",
         "teaser": null
+      },{
+        "title": "Docker 시작하기",
+        "excerpt":"본 문서는 docker 공식문서 - Get Started를 바탕으로 작성된 자료입니다. 필요한 자료는 링크 에서 다운로드 할 수 있습니다. build docker build 명령어를 통해 작성된 Dockerfile을 바탕으로 도커 이미지(docker image)를 생성할 수 있습니다. 도커 이미지는 [registry명]/[image명]:[버전]을 기본으로 하며 각각 생략할 경우 ‘registry명’은 ‘dockerhub’, ‘버전’은 ‘latest’로 인식합니다. # Dockerfile FROM node:12-alpine RUN...","categories": ["DE"],
+        "tags": ["data engineering"],
+        "url": "/de/docker-tutorial/",
+        "teaser": null
       }]

@@ -1,0 +1,748 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.24.0 by Michael Rose
+  Copyright 2013-2020 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="ko" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>Docker 시작하기 - Lego</title>
+<meta name="description" content="본 문서는 docker 공식문서 - Get Started를 바탕으로 작성된 자료입니다.  필요한 자료는 링크 에서 다운로드 할 수 있습니다.  build    docker build 명령어를 통해 작성된 Dockerfile을 바탕으로 도커 이미지(docker image)를 생성할 수 있습니다.   도커 이미지는 [registry명]/[image명]:[버전]을 기본으로 하며 각각 생략할 경우 ‘registry명’은 ‘dockerhub’, ‘버전’은 ‘latest’로 인식합니다.   # Dockerfile FROM node:12-alpine RUN apk add --no-cache python2 g++ make WORKDIR /app COPY . . RUN yarn install --production CMD [&quot;node&quot;, &quot;src/index.js&quot;] EXPOSE 3000   # 이미지 생성 docker build -t getting-started .     -t: docker image의 이름 지정.   .: Dockerfile의 경로.   run docker run 명령어를 통해 ‘build’ 또는 ‘pull’한 도커 이미지를 컨테이너로 실행합니다. # 컨테이너 실행 docker run -d -p 80:80 --name tutorial docker/getting-started     -d: detached 모드(백그라운드에서 컨테이너 실행).   -p: [host-port]:[container-port]. 호스트의 포트 80을 컨테이너의 포트 80에 포트포워딩.   --name : 컨테이너 이름 설정.   docker/getting-started: 사용할 도커 이미지.   rm rm과 rmi 명령어를 통해 도커 컨테이너/이미지를 삭제할 수 있습니다. # 현재 실행 중인 컨테이너 확인 docker ps docker container ls (-al)  # 도커 이미지 확인 docker images docker image ls   # 실행 중인 컨테이너 중지 docker stop &lt;컨테이너 Id/Names&gt;  # 컨테이너 삭제 docker rm &lt;컨테이너 Id/Names&gt;  # 실행 중인 컨테이너 강제 삭제 docker rm -f &lt;컨테이너 Id/Names&gt;  # 이미지 삭제 docker rmi [image Id/Names] docker image rm [image Id/Names]   tag &amp; push    docker hub와 같은 registry를 사용하면 도커 이미지를 공유할 수 있습니다.   docker registry는 private과 public 환경으로 모두 생성 가능합니다.   docker tag 명령어를 통해 registry명을 변경해 도커 이미지를 ‘push’할 수 있습니다.   # docker 로그인 docker login  # registry명 변경 docker tag getting-started &lt;Your-dockerhub-id&gt;/getting-started  # 이미지 push docker push &lt;Your-dockerhub-id&gt;/getting-started   Volume    실행된 docker 컨테이너에 추가되는 데이터들은 별도의 RW(Read and Write) 레이어에 저장되게 됩니다. 그래서 컨테이너를 삭제하는 경우 데이터도 같이 삭제가 됩니다.   DB 관련 컨테이너의 경우 이러한 현상은 데이터가 없어지기 때문에 문제가 되는데, 이러한 문제는 DB 컨테이너가 동일한 host의 디렉토리를 바라보게 설정해서 데이터를 보존할 수 있습니다.   -v 옵션을 통해 volume을 지정한 container경로에 mount 할 수 있습니다.   # named volume # Volume 생성 docker volume create todo-db  # Volume 정보 확인 docker volume inspect todo-db  # DB 연결 docker run -dp 3000:3000 -v todo-db:/etc/todos getting-started   Networking    컨테이너 간 통신을 위해서는 network 작업이 필요합니다. 2가지의 방법을 통해 네트워크를 지정할 수 있습니다.            컨테이너 실행시 네트워크를 지정하는 방법.       만들어진 컨테이너에 네트워크를 연결하는 방법.           # network 생성 docker network create todo-app  # MySQL 컨테이너 시작 # amd-architecture docker run -d \      --network todo-app --network-alias mysql \      -v todo-mysql-data:/var/lib/mysql \      -e MYSQL_ROOT_PASSWORD=secret \      -e MYSQL_DATABASE=todos \      mysql:5.7  # arm-architecture docker run -d \      --network todo-app --network-alias mysql \      --platform &quot;linux/amd64&quot; \      -v todo-mysql-data:/var/lib/mysql \      -e MYSQL_ROOT_PASSWORD=secret \      -e MYSQL_DATABASE=todos \      mysql:5.7  # MySQL 접속 docker exec -it mysql -u root -p   # todos 데이터베이스 확인 SHOW DATABASES;   docker run -it --network todo-app nicolaka/netshoot   docker-compose    일반적으로 컨테이너를 실행할 때 (예제처럼) 여러 옵션을 줘야하는 경우가 많습니다. 이러한 옵션들을 커맨드라인으로 직접 입력하는 것은 매우 번거로우며, 컨테이너 관련 정보를 관리하는데도 불편한 점이 있습니다.   ‘docker-compose’는 커맨드라인으로 입력하던 컨테이너의 세부사항을 yml 파일을 통해 일괄적으로 정의하고 관리할 수 있게 지원합니다.   docker-compose 설치는 링크를 참조하시면 됩니다.   # docker-compose.yml version: &quot;3.7&quot;  services:   app:     image: node:12-alpine     command: sh -c &quot;yarn install &amp;&amp; yarn run dev&quot;     ports:       - 3000:3000     working_dir: /app     volumes:       - ./:/app     environment:       MYSQL_HOST: mysql       MYSQL_USER: root       MYSQL_PASSWORD: secret       MYSQL_DB: todos    mysql:     image: mysql:5.7     volumes:       - todo-mysql-data:/var/lib/mysql     environment:       MYSQL_ROOT_PASSWORD: secret       MYSQL_DATABASE: todos  volumes:   todo-mysql-data:   # docker-compose 실행 docker-compose up -d  # docker-compose 중지 docker-compose down   기타 # Security scanning docker scan getting-started   # Image layering docker image history getting-started   # Image Search docker search [image명]      참고자료            docker 공식문서 - get started">
+
+
+  <meta name="author" content="HyangGon Jin">
+  
+  <meta property="article:author" content="HyangGon Jin">
+  
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="ko_KR">
+<meta property="og:site_name" content="Lego">
+<meta property="og:title" content="Docker 시작하기">
+<meta property="og:url" content="http://localhost:4000/de/docker-tutorial/">
+
+
+  <meta property="og:description" content="본 문서는 docker 공식문서 - Get Started를 바탕으로 작성된 자료입니다.  필요한 자료는 링크 에서 다운로드 할 수 있습니다.  build    docker build 명령어를 통해 작성된 Dockerfile을 바탕으로 도커 이미지(docker image)를 생성할 수 있습니다.   도커 이미지는 [registry명]/[image명]:[버전]을 기본으로 하며 각각 생략할 경우 ‘registry명’은 ‘dockerhub’, ‘버전’은 ‘latest’로 인식합니다.   # Dockerfile FROM node:12-alpine RUN apk add --no-cache python2 g++ make WORKDIR /app COPY . . RUN yarn install --production CMD [&quot;node&quot;, &quot;src/index.js&quot;] EXPOSE 3000   # 이미지 생성 docker build -t getting-started .     -t: docker image의 이름 지정.   .: Dockerfile의 경로.   run docker run 명령어를 통해 ‘build’ 또는 ‘pull’한 도커 이미지를 컨테이너로 실행합니다. # 컨테이너 실행 docker run -d -p 80:80 --name tutorial docker/getting-started     -d: detached 모드(백그라운드에서 컨테이너 실행).   -p: [host-port]:[container-port]. 호스트의 포트 80을 컨테이너의 포트 80에 포트포워딩.   --name : 컨테이너 이름 설정.   docker/getting-started: 사용할 도커 이미지.   rm rm과 rmi 명령어를 통해 도커 컨테이너/이미지를 삭제할 수 있습니다. # 현재 실행 중인 컨테이너 확인 docker ps docker container ls (-al)  # 도커 이미지 확인 docker images docker image ls   # 실행 중인 컨테이너 중지 docker stop &lt;컨테이너 Id/Names&gt;  # 컨테이너 삭제 docker rm &lt;컨테이너 Id/Names&gt;  # 실행 중인 컨테이너 강제 삭제 docker rm -f &lt;컨테이너 Id/Names&gt;  # 이미지 삭제 docker rmi [image Id/Names] docker image rm [image Id/Names]   tag &amp; push    docker hub와 같은 registry를 사용하면 도커 이미지를 공유할 수 있습니다.   docker registry는 private과 public 환경으로 모두 생성 가능합니다.   docker tag 명령어를 통해 registry명을 변경해 도커 이미지를 ‘push’할 수 있습니다.   # docker 로그인 docker login  # registry명 변경 docker tag getting-started &lt;Your-dockerhub-id&gt;/getting-started  # 이미지 push docker push &lt;Your-dockerhub-id&gt;/getting-started   Volume    실행된 docker 컨테이너에 추가되는 데이터들은 별도의 RW(Read and Write) 레이어에 저장되게 됩니다. 그래서 컨테이너를 삭제하는 경우 데이터도 같이 삭제가 됩니다.   DB 관련 컨테이너의 경우 이러한 현상은 데이터가 없어지기 때문에 문제가 되는데, 이러한 문제는 DB 컨테이너가 동일한 host의 디렉토리를 바라보게 설정해서 데이터를 보존할 수 있습니다.   -v 옵션을 통해 volume을 지정한 container경로에 mount 할 수 있습니다.   # named volume # Volume 생성 docker volume create todo-db  # Volume 정보 확인 docker volume inspect todo-db  # DB 연결 docker run -dp 3000:3000 -v todo-db:/etc/todos getting-started   Networking    컨테이너 간 통신을 위해서는 network 작업이 필요합니다. 2가지의 방법을 통해 네트워크를 지정할 수 있습니다.            컨테이너 실행시 네트워크를 지정하는 방법.       만들어진 컨테이너에 네트워크를 연결하는 방법.           # network 생성 docker network create todo-app  # MySQL 컨테이너 시작 # amd-architecture docker run -d \      --network todo-app --network-alias mysql \      -v todo-mysql-data:/var/lib/mysql \      -e MYSQL_ROOT_PASSWORD=secret \      -e MYSQL_DATABASE=todos \      mysql:5.7  # arm-architecture docker run -d \      --network todo-app --network-alias mysql \      --platform &quot;linux/amd64&quot; \      -v todo-mysql-data:/var/lib/mysql \      -e MYSQL_ROOT_PASSWORD=secret \      -e MYSQL_DATABASE=todos \      mysql:5.7  # MySQL 접속 docker exec -it mysql -u root -p   # todos 데이터베이스 확인 SHOW DATABASES;   docker run -it --network todo-app nicolaka/netshoot   docker-compose    일반적으로 컨테이너를 실행할 때 (예제처럼) 여러 옵션을 줘야하는 경우가 많습니다. 이러한 옵션들을 커맨드라인으로 직접 입력하는 것은 매우 번거로우며, 컨테이너 관련 정보를 관리하는데도 불편한 점이 있습니다.   ‘docker-compose’는 커맨드라인으로 입력하던 컨테이너의 세부사항을 yml 파일을 통해 일괄적으로 정의하고 관리할 수 있게 지원합니다.   docker-compose 설치는 링크를 참조하시면 됩니다.   # docker-compose.yml version: &quot;3.7&quot;  services:   app:     image: node:12-alpine     command: sh -c &quot;yarn install &amp;&amp; yarn run dev&quot;     ports:       - 3000:3000     working_dir: /app     volumes:       - ./:/app     environment:       MYSQL_HOST: mysql       MYSQL_USER: root       MYSQL_PASSWORD: secret       MYSQL_DB: todos    mysql:     image: mysql:5.7     volumes:       - todo-mysql-data:/var/lib/mysql     environment:       MYSQL_ROOT_PASSWORD: secret       MYSQL_DATABASE: todos  volumes:   todo-mysql-data:   # docker-compose 실행 docker-compose up -d  # docker-compose 중지 docker-compose down   기타 # Security scanning docker scan getting-started   # Image layering docker image history getting-started   # Image Search docker search [image명]      참고자료            docker 공식문서 - get started">
+
+
+
+
+
+
+
+  <meta property="article:published_time" content="2022-05-23T00:00:00+09:00">
+
+
+
+  <meta property="article:modified_time" content="2022-05-23T00:00:00+09:00">
+
+
+
+  
+
+  
+
+
+<link rel="canonical" href="http://localhost:4000/de/docker-tutorial/">
+
+
+
+
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    
+      "@type": "Person",
+      "name": "HyangGon Jin",
+      "url": "http://localhost:4000/"
+    
+  }
+</script>
+
+
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+
+  <link href="/feed.xml" type="application/atom+xml" rel="alternate" title="Lego Feed">
+
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css"></noscript>
+
+
+
+    <!-- start custom head snippets -->
+
+<!-- insert favicons. use https://realfavicongenerator.net/ -->
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body class="layout--single">
+    <nav class="skip-links">
+  <ul>
+    <li><a href="#site-nav" class="screen-reader-shortcut">Skip to primary navigation</a></li>
+    <li><a href="#main" class="screen-reader-shortcut">Skip to content</a></li>
+    <li><a href="#footer" class="screen-reader-shortcut">Skip to footer</a></li>
+  </ul>
+</nav>
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+        <a class="site-title" href="/">
+          Lego
+          <span class="site-subtitle"></span>
+        </a>
+        <ul class="visible-links"><li class="masthead__menu-item">
+              <a href="/categories/">Category</a>
+            </li><li class="masthead__menu-item">
+              <a href="/tags/">Tag</a>
+            </li><li class="masthead__menu-item">
+              <a href="/about/">About</a>
+            </li><li class="masthead__menu-item">
+              <a href="/search/">Search</a>
+            </li></ul>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">토글 메뉴</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="https://schema.org/Person" class="h-card">
+
+  
+    <div class="author__avatar">
+      <a href="http://localhost:4000/">
+        <img src="/assets/images/blue_lego_ver.1.png" alt="HyangGon Jin" itemprop="image" class="u-photo">
+      </a>
+    </div>
+  
+
+  <div class="author__content">
+    <h3 class="author__name p-name" itemprop="name">
+      <a class="u-url" rel="me" href="http://localhost:4000/" itemprop="url">HyangGon Jin</a>
+    </h3>
+    
+      <div class="author__bio p-note" itemprop="description">
+        <p>#Statistics #ML #Python #R</p>
+
+      </div>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">팔로우</button>
+    <ul class="author__urls social-icons">
+      
+        <li itemprop="homeLocation" itemscope itemtype="https://schema.org/Place">
+          <i class="fas fa-fw fa-map-marker-alt" aria-hidden="true"></i> <span itemprop="name" class="p-locality">Seoul</span>
+        </li>
+      
+
+      
+        
+          
+            <li><a href="mailto:nike3616@gmail.com" rel="nofollow noopener noreferrer me"><i class="fas fa-fw fa-envelope-square" aria-hidden="true"></i><span class="label">Email</span></a></li>
+          
+        
+          
+        
+          
+        
+          
+            <li><a href="https://github.com/hyanggonjin" rel="nofollow noopener noreferrer me"><i class="fab fa-fw fa-github" aria-hidden="true"></i><span class="label">GitHub</span></a></li>
+          
+        
+          
+        
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs" rel="nofollow noopener noreferrer me">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+  
+  </div>
+
+
+
+  <article class="page h-entry" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="Docker 시작하기">
+    <meta itemprop="description" content="본 문서는 docker 공식문서 - Get Started를 바탕으로 작성된 자료입니다.필요한 자료는 링크 에서 다운로드 할 수 있습니다.build  docker build 명령어를 통해 작성된 Dockerfile을 바탕으로 도커 이미지(docker image)를 생성할 수 있습니다.  도커 이미지는 [registry명]/[image명]:[버전]을 기본으로 하며 각각 생략할 경우 ‘registry명’은 ‘dockerhub’, ‘버전’은 ‘latest’로 인식합니다.# DockerfileFROM node:12-alpineRUN apk add --no-cache python2 g++ makeWORKDIR /appCOPY . .RUN yarn install --productionCMD [&quot;node&quot;, &quot;src/index.js&quot;]EXPOSE 3000# 이미지 생성docker build -t getting-started .  -t: docker image의 이름 지정.  .: Dockerfile의 경로.rundocker run 명령어를 통해 ‘build’ 또는 ‘pull’한 도커 이미지를 컨테이너로 실행합니다.# 컨테이너 실행docker run -d -p 80:80 --name tutorial docker/getting-started  -d: detached 모드(백그라운드에서 컨테이너 실행).  -p: [host-port]:[container-port]. 호스트의 포트 80을 컨테이너의 포트 80에 포트포워딩.  --name : 컨테이너 이름 설정.  docker/getting-started: 사용할 도커 이미지.rmrm과 rmi 명령어를 통해 도커 컨테이너/이미지를 삭제할 수 있습니다.# 현재 실행 중인 컨테이너 확인docker psdocker container ls (-al)# 도커 이미지 확인docker imagesdocker image ls # 실행 중인 컨테이너 중지docker stop &lt;컨테이너 Id/Names&gt;# 컨테이너 삭제docker rm &lt;컨테이너 Id/Names&gt;# 실행 중인 컨테이너 강제 삭제docker rm -f &lt;컨테이너 Id/Names&gt;# 이미지 삭제docker rmi [image Id/Names]docker image rm [image Id/Names]tag &amp; push  docker hub와 같은 registry를 사용하면 도커 이미지를 공유할 수 있습니다.  docker registry는 private과 public 환경으로 모두 생성 가능합니다.  docker tag 명령어를 통해 registry명을 변경해 도커 이미지를 ‘push’할 수 있습니다.# docker 로그인docker login# registry명 변경docker tag getting-started &lt;Your-dockerhub-id&gt;/getting-started# 이미지 pushdocker push &lt;Your-dockerhub-id&gt;/getting-startedVolume  실행된 docker 컨테이너에 추가되는 데이터들은 별도의 RW(Read and Write) 레이어에 저장되게 됩니다. 그래서 컨테이너를 삭제하는 경우 데이터도 같이 삭제가 됩니다.  DB 관련 컨테이너의 경우 이러한 현상은 데이터가 없어지기 때문에 문제가 되는데, 이러한 문제는 DB 컨테이너가 동일한 host의 디렉토리를 바라보게 설정해서 데이터를 보존할 수 있습니다.  -v 옵션을 통해 volume을 지정한 container경로에 mount 할 수 있습니다.# named volume# Volume 생성docker volume create todo-db# Volume 정보 확인docker volume inspect todo-db# DB 연결docker run -dp 3000:3000 -v todo-db:/etc/todos getting-startedNetworking  컨테이너 간 통신을 위해서는 network 작업이 필요합니다. 2가지의 방법을 통해 네트워크를 지정할 수 있습니다.          컨테이너 실행시 네트워크를 지정하는 방법.      만들어진 컨테이너에 네트워크를 연결하는 방법.      # network 생성docker network create todo-app# MySQL 컨테이너 시작# amd-architecturedocker run -d \     --network todo-app --network-alias mysql \     -v todo-mysql-data:/var/lib/mysql \     -e MYSQL_ROOT_PASSWORD=secret \     -e MYSQL_DATABASE=todos \     mysql:5.7# arm-architecturedocker run -d \     --network todo-app --network-alias mysql \     --platform &quot;linux/amd64&quot; \     -v todo-mysql-data:/var/lib/mysql \     -e MYSQL_ROOT_PASSWORD=secret \     -e MYSQL_DATABASE=todos \     mysql:5.7# MySQL 접속docker exec -it mysql -u root -p# todos 데이터베이스 확인SHOW DATABASES;docker run -it --network todo-app nicolaka/netshootdocker-compose  일반적으로 컨테이너를 실행할 때 (예제처럼) 여러 옵션을 줘야하는 경우가 많습니다. 이러한 옵션들을 커맨드라인으로 직접 입력하는 것은 매우 번거로우며, 컨테이너 관련 정보를 관리하는데도 불편한 점이 있습니다.  ‘docker-compose’는 커맨드라인으로 입력하던 컨테이너의 세부사항을 yml 파일을 통해 일괄적으로 정의하고 관리할 수 있게 지원합니다.  docker-compose 설치는 링크를 참조하시면 됩니다.# docker-compose.ymlversion: &quot;3.7&quot;services:  app:    image: node:12-alpine    command: sh -c &quot;yarn install &amp;&amp; yarn run dev&quot;    ports:      - 3000:3000    working_dir: /app    volumes:      - ./:/app    environment:      MYSQL_HOST: mysql      MYSQL_USER: root      MYSQL_PASSWORD: secret      MYSQL_DB: todos  mysql:    image: mysql:5.7    volumes:      - todo-mysql-data:/var/lib/mysql    environment:      MYSQL_ROOT_PASSWORD: secret      MYSQL_DATABASE: todosvolumes:  todo-mysql-data:# docker-compose 실행docker-compose up -d# docker-compose 중지docker-compose down기타# Security scanningdocker scan getting-started# Image layeringdocker image history getting-started# Image Searchdocker search [image명]  참고자료          docker 공식문서 - get started      ">
+    <meta itemprop="datePublished" content="2022-05-23T00:00:00+09:00">
+    <meta itemprop="dateModified" content="2022-05-23T00:00:00+09:00">
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <h1 id="page-title" class="page__title p-name" itemprop="headline">
+            <a href="http://localhost:4000/de/docker-tutorial/" class="u-url" itemprop="url">Docker 시작하기
+</a>
+          </h1>
+          
+
+
+        </header>
+      
+
+      <section class="page__content e-content" itemprop="text">
+        
+          <aside class="sidebar__right sticky">
+            <nav class="toc">
+              <header><h4 class="nav__title"><i class="fas fa-file-alt"></i> On This Page</h4></header>
+              <ul class="toc__menu"><li><a href="#build">build</a></li><li><a href="#run">run</a></li><li><a href="#rm">rm</a></li><li><a href="#tag--push">tag &amp; push</a></li><li><a href="#volume">Volume</a></li><li><a href="#networking">Networking</a></li><li><a href="#docker-compose">docker-compose</a></li><li><a href="#기타">기타</a></li></ul>
+
+            </nav>
+          </aside>
+        
+        <p>본 문서는 <a href="https://docs.docker.com/get-started/">docker 공식문서 - Get Started</a>를 바탕으로 작성된 자료입니다.</p>
+
+<p>필요한 자료는 <a href="https://github.com/docker/getting-started/tree/master/app">링크</a> 에서 다운로드 할 수 있습니다.</p>
+
+<h2 id="build">build</h2>
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">docker build</code> 명령어를 통해 작성된 Dockerfile을 바탕으로 도커 이미지(docker image)를 생성할 수 있습니다.</li>
+  <li>도커 이미지는 <code class="language-plaintext highlighter-rouge">[registry명]/[image명]:[버전]</code>을 기본으로 하며 각각 생략할 경우 ‘registry명’은 ‘dockerhub’, ‘버전’은 ‘latest’로 인식합니다.</li>
+</ul>
+
+<div class="language-docker highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># Dockerfile</span>
+<span class="k">FROM</span><span class="s"> node:12-alpine</span>
+<span class="k">RUN </span>apk add <span class="nt">--no-cache</span> python2 g++ make
+<span class="k">WORKDIR</span><span class="s"> /app</span>
+<span class="k">COPY</span><span class="s"> . .</span>
+<span class="k">RUN </span>yarn <span class="nb">install</span> <span class="nt">--production</span>
+<span class="k">CMD</span><span class="s"> ["node", "src/index.js"]</span>
+<span class="k">EXPOSE</span><span class="s"> 3000</span>
+</code></pre></div></div>
+
+<div class="language-docker highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># 이미지 생성</span>
+docker build -t getting-started .
+</code></pre></div></div>
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">-t</code>: docker image의 이름 지정.</li>
+  <li><code class="language-plaintext highlighter-rouge">.</code>: Dockerfile의 경로.</li>
+</ul>
+
+<h2 id="run">run</h2>
+<p><code class="language-plaintext highlighter-rouge">docker run</code> 명령어를 통해 ‘build’ 또는 ‘pull’한 도커 이미지를 컨테이너로 실행합니다.</p>
+<div class="language-docker highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># 컨테이너 실행</span>
+docker run -d -p 80:80 --name tutorial docker/getting-started
+</code></pre></div></div>
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">-d</code>: detached 모드(백그라운드에서 컨테이너 실행).</li>
+  <li><code class="language-plaintext highlighter-rouge">-p</code>: [host-port]:[container-port]. 호스트의 포트 80을 컨테이너의 포트 80에 포트포워딩.</li>
+  <li><code class="language-plaintext highlighter-rouge">--name</code> : 컨테이너 이름 설정.</li>
+  <li><code class="language-plaintext highlighter-rouge">docker/getting-started</code>: 사용할 도커 이미지.</li>
+</ul>
+
+<h2 id="rm">rm</h2>
+<p><code class="language-plaintext highlighter-rouge">rm</code>과 <code class="language-plaintext highlighter-rouge">rmi</code> 명령어를 통해 도커 컨테이너/이미지를 삭제할 수 있습니다.</p>
+<div class="language-docker highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># 현재 실행 중인 컨테이너 확인</span>
+docker ps
+docker container ls (-al)
+
+# 도커 이미지 확인
+docker images
+docker image ls 
+
+<span class="c"># 실행 중인 컨테이너 중지</span>
+docker stop &lt;컨테이너 Id/Names&gt;
+
+# 컨테이너 삭제
+docker rm &lt;컨테이너 Id/Names&gt;
+
+# 실행 중인 컨테이너 강제 삭제
+docker rm -f &lt;컨테이너 Id/Names&gt;
+
+# 이미지 삭제
+docker rmi [image Id/Names]
+docker image rm [image Id/Names]
+</code></pre></div></div>
+
+<h2 id="tag--push">tag &amp; push</h2>
+<ul>
+  <li>docker hub와 같은 registry를 사용하면 도커 이미지를 공유할 수 있습니다.</li>
+  <li>docker registry는 private과 public 환경으로 모두 생성 가능합니다.</li>
+  <li><code class="language-plaintext highlighter-rouge">docker tag</code> 명령어를 통해 registry명을 변경해 도커 이미지를 ‘push’할 수 있습니다.</li>
+</ul>
+
+<div class="language-docker highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># docker 로그인</span>
+docker login
+
+<span class="c"># registry명 변경</span>
+docker tag getting-started &lt;Your-dockerhub-id&gt;/getting-started
+
+<span class="c"># 이미지 push</span>
+docker push &lt;Your-dockerhub-id&gt;/getting-started
+</code></pre></div></div>
+
+<h2 id="volume">Volume</h2>
+<ul>
+  <li>실행된 docker 컨테이너에 추가되는 데이터들은 별도의 RW(Read and Write) 레이어에 저장되게 됩니다. 그래서 컨테이너를 삭제하는 경우 데이터도 같이 삭제가 됩니다.</li>
+  <li>DB 관련 컨테이너의 경우 이러한 현상은 데이터가 없어지기 때문에 문제가 되는데, 이러한 문제는 DB 컨테이너가 동일한 host의 디렉토리를 바라보게 설정해서 데이터를 보존할 수 있습니다.</li>
+  <li><code class="language-plaintext highlighter-rouge">-v</code> 옵션을 통해 volume을 지정한 container경로에 mount 할 수 있습니다.</li>
+</ul>
+
+<div class="language-docker highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># named volume</span>
+<span class="c"># Volume 생성</span>
+docker volume create todo-db
+
+<span class="c"># Volume 정보 확인</span>
+docker volume inspect todo-db
+
+<span class="c"># DB 연결</span>
+docker run -dp 3000:3000 -v todo-db:/etc/todos getting-started
+</code></pre></div></div>
+
+<h2 id="networking">Networking</h2>
+<ul>
+  <li>컨테이너 간 통신을 위해서는 network 작업이 필요합니다. 2가지의 방법을 통해 네트워크를 지정할 수 있습니다.
+    <ol>
+      <li>컨테이너 실행시 네트워크를 지정하는 방법.</li>
+      <li>만들어진 컨테이너에 네트워크를 연결하는 방법.</li>
+    </ol>
+  </li>
+</ul>
+
+<div class="language-docker highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># network 생성</span>
+docker network create todo-app
+
+<span class="c"># MySQL 컨테이너 시작</span>
+<span class="c"># amd-architecture</span>
+docker run -d \
+     --network todo-app --network-alias mysql \
+     -v todo-mysql-data:/var/lib/mysql \
+     -e MYSQL_ROOT_PASSWORD=secret \
+     -e MYSQL_DATABASE=todos \
+     mysql:5.7
+
+<span class="c"># arm-architecture</span>
+docker run -d \
+     --network todo-app --network-alias mysql \
+     --platform "linux/amd64" \
+     -v todo-mysql-data:/var/lib/mysql \
+     -e MYSQL_ROOT_PASSWORD=secret \
+     -e MYSQL_DATABASE=todos \
+     mysql:5.7
+
+<span class="c"># MySQL 접속</span>
+docker exec -it mysql -u root -p
+</code></pre></div></div>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="n">todos</span> <span class="err">데이터베이스</span> <span class="err">확인</span>
+<span class="k">SHOW</span> <span class="n">DATABASES</span><span class="p">;</span>
+</code></pre></div></div>
+
+<div class="language-docker highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker run -it --network todo-app nicolaka/netshoot
+</code></pre></div></div>
+
+<h2 id="docker-compose">docker-compose</h2>
+<ul>
+  <li>일반적으로 컨테이너를 실행할 때 (예제처럼) 여러 옵션을 줘야하는 경우가 많습니다. 이러한 옵션들을 커맨드라인으로 직접 입력하는 것은 매우 번거로우며, 컨테이너 관련 정보를 관리하는데도 불편한 점이 있습니다.</li>
+  <li>‘docker-compose’는 커맨드라인으로 입력하던 컨테이너의 세부사항을 yml 파일을 통해 일괄적으로 정의하고 관리할 수 있게 지원합니다.</li>
+  <li>docker-compose 설치는 <a href="https://docs.docker.com/compose/install/">링크</a>를 참조하시면 됩니다.</li>
+</ul>
+
+<div class="language-yml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># docker-compose.yml</span>
+<span class="na">version</span><span class="pi">:</span> <span class="s2">"</span><span class="s">3.7"</span>
+
+<span class="na">services</span><span class="pi">:</span>
+  <span class="na">app</span><span class="pi">:</span>
+    <span class="na">image</span><span class="pi">:</span> <span class="s">node:12-alpine</span>
+    <span class="na">command</span><span class="pi">:</span> <span class="s">sh -c "yarn install &amp;&amp; yarn run dev"</span>
+    <span class="na">ports</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s">3000:3000</span>
+    <span class="na">working_dir</span><span class="pi">:</span> <span class="s">/app</span>
+    <span class="na">volumes</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s">./:/app</span>
+    <span class="na">environment</span><span class="pi">:</span>
+      <span class="na">MYSQL_HOST</span><span class="pi">:</span> <span class="s">mysql</span>
+      <span class="na">MYSQL_USER</span><span class="pi">:</span> <span class="s">root</span>
+      <span class="na">MYSQL_PASSWORD</span><span class="pi">:</span> <span class="s">secret</span>
+      <span class="na">MYSQL_DB</span><span class="pi">:</span> <span class="s">todos</span>
+
+  <span class="na">mysql</span><span class="pi">:</span>
+    <span class="na">image</span><span class="pi">:</span> <span class="s">mysql:5.7</span>
+    <span class="na">volumes</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s">todo-mysql-data:/var/lib/mysql</span>
+    <span class="na">environment</span><span class="pi">:</span>
+      <span class="na">MYSQL_ROOT_PASSWORD</span><span class="pi">:</span> <span class="s">secret</span>
+      <span class="na">MYSQL_DATABASE</span><span class="pi">:</span> <span class="s">todos</span>
+
+<span class="na">volumes</span><span class="pi">:</span>
+  <span class="na">todo-mysql-data</span><span class="pi">:</span>
+</code></pre></div></div>
+
+<div class="language-docker highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># docker-compose 실행</span>
+docker-compose up -d
+
+<span class="c"># docker-compose 중지</span>
+docker-compose down
+</code></pre></div></div>
+
+<h2 id="기타">기타</h2>
+<div class="language-docker highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># Security scanning</span>
+docker scan getting-started
+</code></pre></div></div>
+
+<div class="language-docker highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># Image layering</span>
+docker image history getting-started
+</code></pre></div></div>
+
+<div class="language-docker highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># Image Search</span>
+docker search [image명]
+</code></pre></div></div>
+
+<ul>
+  <li>참고자료
+    <ul>
+      <li><a href="https://docs.docker.com/get-started/">docker 공식문서 - get started</a></li>
+    </ul>
+  </li>
+</ul>
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> 태그: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/tags/#data-engineering" class="page__taxonomy-item p-category" rel="tag">data engineering</a>
+    
+    </span>
+  </p>
+
+
+
+
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-folder-open" aria-hidden="true"></i> 카테고리: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/categories/#de" class="page__taxonomy-item p-category" rel="tag">DE</a>
+    
+    </span>
+  </p>
+
+
+        
+
+  <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> 업데이트:</strong> <time class="dt-published" datetime="2022-05-23">May 23, 2022</time></p>
+
+      </footer>
+
+      <section class="page__share">
+  
+    <h4 class="page__share-title">공유하기</h4>
+  
+
+  <a href="https://twitter.com/intent/tweet?text=Docker+%EC%8B%9C%EC%9E%91%ED%95%98%EA%B8%B0%20http%3A%2F%2Flocalhost%3A4000%2Fde%2Fdocker-tutorial%2F" class="btn btn--twitter" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="공유하기 Twitter"><i class="fab fa-fw fa-twitter" aria-hidden="true"></i><span> Twitter</span></a>
+
+  <a href="https://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Flocalhost%3A4000%2Fde%2Fdocker-tutorial%2F" class="btn btn--facebook" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="공유하기 Facebook"><i class="fab fa-fw fa-facebook" aria-hidden="true"></i><span> Facebook</span></a>
+
+  <a href="https://www.linkedin.com/shareArticle?mini=true&url=http%3A%2F%2Flocalhost%3A4000%2Fde%2Fdocker-tutorial%2F" class="btn btn--linkedin" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="공유하기 LinkedIn"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i><span> LinkedIn</span></a>
+</section>
+
+
+      
+  <nav class="pagination">
+    
+      <a href="/til/TIL_2204/" class="pagination--pager" title="22년 4월의 공부
+">이전</a>
+    
+    
+      <a href="#" class="pagination--pager disabled">다음</a>
+    
+  </nav>
+
+    </div>
+
+    
+  </article>
+
+  
+  
+    <div class="page__related">
+      <h2 class="page__related-title">참고</h2>
+      <div class="grid__wrapper">
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/til/TIL_2204/" rel="permalink">22년 4월의 공부
+</a>
+      
+    </h2>
+    
+
+
+    <p class="archive__item-excerpt" itemprop="description">2022년 4월 동안 검색하고 공부한 것들을 정리한 내용입니다.
+
+1. dataclasses
+
+  참고: dataclasses 공식문서
+  __init__() 나 __repr__() 과 같은 생성된 특수 메서드를 사용자 정의 클래스에 자동으로 추가하는 데코레이터와 함수를 제공합니다...</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/da/handle_to_json/" rel="permalink">JSON 데이터 다루기
+</a>
+      
+    </h2>
+    
+
+
+    <p class="archive__item-excerpt" itemprop="description">JSON 데이터와 관련된 함수를 알아봅니다.
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/da/pendulum_manipulation_datetimes/" rel="permalink">pendulum - datetime 다루기
+</a>
+      
+    </h2>
+    
+
+
+    <p class="archive__item-excerpt" itemprop="description">Python에서 datetime 객체를 다루는 라이브러리 중 하나인 pendulum에 대해서 간단히 알아보겠습니다.
+
+Instantiation
+pendulum의 default timezone은 ‘UTC’입니다.
+
+import pendulum
+
+dt = pendulum.datetim...</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/de/slack_operator/" rel="permalink">Airflow - Slack 알림 받기
+</a>
+      
+    </h2>
+    
+
+
+    <p class="archive__item-excerpt" itemprop="description">Airflow에서 task의 성공 여부에 따라 slack으로 알림을 받는 방법을 알아보겠습니다.
+
+Operator
+
+kobis_operator
+전체 코드는 아래와 같습니다.
+
+# plugins/operators/kobis_operator.py
+import sys
+import war...</p>
+  </article>
+</div>
+
+        
+      </div>
+    </div>
+  
+  
+</div>
+    </div>
+
+    
+
+    <div id="footer" class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+
+<!-- end custom footer snippets -->
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+      <li><strong>팔로우:</strong></li>
+    
+
+    
+      
+        
+      
+        
+          <li><a href="https://github.com/hyanggonjin" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+        
+      
+        
+      
+    
+
+    
+      <li><a href="/feed.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> 피드</a></li>
+    
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2022 HyangGon Jin. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script src="/assets/js/main.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+  </body>
+</html>

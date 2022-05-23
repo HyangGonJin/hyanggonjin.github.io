@@ -1,4 +1,304 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.0">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2022-05-04T18:19:22+09:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">Lego</title><subtitle>#Statistics #ML #Python #R</subtitle><author><name>HyangGon Jin</name></author><entry><title type="html">JSON 데이터 다루기</title><link href="http://localhost:4000/da/handle_to_json/" rel="alternate" type="text/html" title="JSON 데이터 다루기" /><published>2022-05-04T00:00:00+09:00</published><updated>2022-05-04T00:00:00+09:00</updated><id>http://localhost:4000/da/handle_to_json</id><content type="html" xml:base="http://localhost:4000/da/handle_to_json/">&lt;p&gt;JSON 데이터와 관련된 함수를 알아봅니다.&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.0">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2022-05-23T21:18:24+09:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">Lego</title><subtitle>#Statistics #ML #Python #R</subtitle><author><name>HyangGon Jin</name></author><entry><title type="html">Docker 시작하기</title><link href="http://localhost:4000/de/docker-tutorial/" rel="alternate" type="text/html" title="Docker 시작하기" /><published>2022-05-23T00:00:00+09:00</published><updated>2022-05-23T00:00:00+09:00</updated><id>http://localhost:4000/de/docker-tutorial</id><content type="html" xml:base="http://localhost:4000/de/docker-tutorial/">&lt;p&gt;본 문서는 &lt;a href=&quot;https://docs.docker.com/get-started/&quot;&gt;docker 공식문서 - Get Started&lt;/a&gt;를 바탕으로 작성된 자료입니다.&lt;/p&gt;
+
+&lt;p&gt;필요한 자료는 &lt;a href=&quot;https://github.com/docker/getting-started/tree/master/app&quot;&gt;링크&lt;/a&gt; 에서 다운로드 할 수 있습니다.&lt;/p&gt;
+
+&lt;h2 id=&quot;build&quot;&gt;build&lt;/h2&gt;
+&lt;ul&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;docker build&lt;/code&gt; 명령어를 통해 작성된 Dockerfile을 바탕으로 도커 이미지(docker image)를 생성할 수 있습니다.&lt;/li&gt;
+  &lt;li&gt;도커 이미지는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;[registry명]/[image명]:[버전]&lt;/code&gt;을 기본으로 하며 각각 생략할 경우 ‘registry명’은 ‘dockerhub’, ‘버전’은 ‘latest’로 인식합니다.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;div class=&quot;language-docker highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c&quot;&gt;# Dockerfile&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;FROM&lt;/span&gt;&lt;span class=&quot;s&quot;&gt; node:12-alpine&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;RUN &lt;/span&gt;apk add &lt;span class=&quot;nt&quot;&gt;--no-cache&lt;/span&gt; python2 g++ make
+&lt;span class=&quot;k&quot;&gt;WORKDIR&lt;/span&gt;&lt;span class=&quot;s&quot;&gt; /app&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;COPY&lt;/span&gt;&lt;span class=&quot;s&quot;&gt; . .&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;RUN &lt;/span&gt;yarn &lt;span class=&quot;nb&quot;&gt;install&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;--production&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;CMD&lt;/span&gt;&lt;span class=&quot;s&quot;&gt; [&quot;node&quot;, &quot;src/index.js&quot;]&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;EXPOSE&lt;/span&gt;&lt;span class=&quot;s&quot;&gt; 3000&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;div class=&quot;language-docker highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c&quot;&gt;# 이미지 생성&lt;/span&gt;
+docker build -t getting-started .
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;ul&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;-t&lt;/code&gt;: docker image의 이름 지정.&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;.&lt;/code&gt;: Dockerfile의 경로.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;run&quot;&gt;run&lt;/h2&gt;
+&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;docker run&lt;/code&gt; 명령어를 통해 ‘build’ 또는 ‘pull’한 도커 이미지를 컨테이너로 실행합니다.&lt;/p&gt;
+&lt;div class=&quot;language-docker highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c&quot;&gt;# 컨테이너 실행&lt;/span&gt;
+docker run -d -p 80:80 --name tutorial docker/getting-started
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;ul&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;-d&lt;/code&gt;: detached 모드(백그라운드에서 컨테이너 실행).&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;-p&lt;/code&gt;: [host-port]:[container-port]. 호스트의 포트 80을 컨테이너의 포트 80에 포트포워딩.&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;--name&lt;/code&gt; : 컨테이너 이름 설정.&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;docker/getting-started&lt;/code&gt;: 사용할 도커 이미지.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;rm&quot;&gt;rm&lt;/h2&gt;
+&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;rm&lt;/code&gt;과 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;rmi&lt;/code&gt; 명령어를 통해 도커 컨테이너/이미지를 삭제할 수 있습니다.&lt;/p&gt;
+&lt;div class=&quot;language-docker highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c&quot;&gt;# 현재 실행 중인 컨테이너 확인&lt;/span&gt;
+docker ps
+docker container ls (-al)
+
+# 도커 이미지 확인
+docker images
+docker image ls 
+
+&lt;span class=&quot;c&quot;&gt;# 실행 중인 컨테이너 중지&lt;/span&gt;
+docker stop &amp;lt;컨테이너 Id/Names&amp;gt;
+
+# 컨테이너 삭제
+docker rm &amp;lt;컨테이너 Id/Names&amp;gt;
+
+# 실행 중인 컨테이너 강제 삭제
+docker rm -f &amp;lt;컨테이너 Id/Names&amp;gt;
+
+# 이미지 삭제
+docker rmi [image Id/Names]
+docker image rm [image Id/Names]
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;tag--push&quot;&gt;tag &amp;amp; push&lt;/h2&gt;
+&lt;ul&gt;
+  &lt;li&gt;docker hub와 같은 registry를 사용하면 도커 이미지를 공유할 수 있습니다.&lt;/li&gt;
+  &lt;li&gt;docker registry는 private과 public 환경으로 모두 생성 가능합니다.&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;docker tag&lt;/code&gt; 명령어를 통해 registry명을 변경해 도커 이미지를 ‘push’할 수 있습니다.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;div class=&quot;language-docker highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c&quot;&gt;# docker 로그인&lt;/span&gt;
+docker login
+
+&lt;span class=&quot;c&quot;&gt;# registry명 변경&lt;/span&gt;
+docker tag getting-started &amp;lt;Your-dockerhub-id&amp;gt;/getting-started
+
+&lt;span class=&quot;c&quot;&gt;# 이미지 push&lt;/span&gt;
+docker push &amp;lt;Your-dockerhub-id&amp;gt;/getting-started
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;volume&quot;&gt;Volume&lt;/h2&gt;
+&lt;ul&gt;
+  &lt;li&gt;실행된 docker 컨테이너에 추가되는 데이터들은 별도의 RW(Read and Write) 레이어에 저장되게 됩니다. 그래서 컨테이너를 삭제하는 경우 데이터도 같이 삭제가 됩니다.&lt;/li&gt;
+  &lt;li&gt;DB 관련 컨테이너의 경우 이러한 현상은 데이터가 없어지기 때문에 문제가 되는데, 이러한 문제는 DB 컨테이너가 동일한 host의 디렉토리를 바라보게 설정해서 데이터를 보존할 수 있습니다.&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;-v&lt;/code&gt; 옵션을 통해 volume을 지정한 container경로에 mount 할 수 있습니다.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;div class=&quot;language-docker highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c&quot;&gt;# named volume&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# Volume 생성&lt;/span&gt;
+docker volume create todo-db
+
+&lt;span class=&quot;c&quot;&gt;# Volume 정보 확인&lt;/span&gt;
+docker volume inspect todo-db
+
+&lt;span class=&quot;c&quot;&gt;# DB 연결&lt;/span&gt;
+docker run -dp 3000:3000 -v todo-db:/etc/todos getting-started
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;networking&quot;&gt;Networking&lt;/h2&gt;
+&lt;ul&gt;
+  &lt;li&gt;컨테이너 간 통신을 위해서는 network 작업이 필요합니다. 2가지의 방법을 통해 네트워크를 지정할 수 있습니다.
+    &lt;ol&gt;
+      &lt;li&gt;컨테이너 실행시 네트워크를 지정하는 방법.&lt;/li&gt;
+      &lt;li&gt;만들어진 컨테이너에 네트워크를 연결하는 방법.&lt;/li&gt;
+    &lt;/ol&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;div class=&quot;language-docker highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c&quot;&gt;# network 생성&lt;/span&gt;
+docker network create todo-app
+
+&lt;span class=&quot;c&quot;&gt;# MySQL 컨테이너 시작&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# amd-architecture&lt;/span&gt;
+docker run -d \
+     --network todo-app --network-alias mysql \
+     -v todo-mysql-data:/var/lib/mysql \
+     -e MYSQL_ROOT_PASSWORD=secret \
+     -e MYSQL_DATABASE=todos \
+     mysql:5.7
+
+&lt;span class=&quot;c&quot;&gt;# arm-architecture&lt;/span&gt;
+docker run -d \
+     --network todo-app --network-alias mysql \
+     --platform &quot;linux/amd64&quot; \
+     -v todo-mysql-data:/var/lib/mysql \
+     -e MYSQL_ROOT_PASSWORD=secret \
+     -e MYSQL_DATABASE=todos \
+     mysql:5.7
+
+&lt;span class=&quot;c&quot;&gt;# MySQL 접속&lt;/span&gt;
+docker exec -it mysql -u root -p
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;div class=&quot;language-sql highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;o&quot;&gt;#&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;todos&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;데이터베이스&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;확인&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;SHOW&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;DATABASES&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;div class=&quot;language-docker highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;docker run -it --network todo-app nicolaka/netshoot
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;docker-compose&quot;&gt;docker-compose&lt;/h2&gt;
+&lt;ul&gt;
+  &lt;li&gt;일반적으로 컨테이너를 실행할 때 (예제처럼) 여러 옵션을 줘야하는 경우가 많습니다. 이러한 옵션들을 커맨드라인으로 직접 입력하는 것은 매우 번거로우며, 컨테이너 관련 정보를 관리하는데도 불편한 점이 있습니다.&lt;/li&gt;
+  &lt;li&gt;‘docker-compose’는 커맨드라인으로 입력하던 컨테이너의 세부사항을 yml 파일을 통해 일괄적으로 정의하고 관리할 수 있게 지원합니다.&lt;/li&gt;
+  &lt;li&gt;docker-compose 설치는 &lt;a href=&quot;https://docs.docker.com/compose/install/&quot;&gt;링크&lt;/a&gt;를 참조하시면 됩니다.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;div class=&quot;language-yml highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c1&quot;&gt;# docker-compose.yml&lt;/span&gt;
+&lt;span class=&quot;na&quot;&gt;version&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;3.7&quot;&lt;/span&gt;
+
+&lt;span class=&quot;na&quot;&gt;services&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;app&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;image&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;node:12-alpine&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;command&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;sh -c &quot;yarn install &amp;amp;&amp;amp; yarn run dev&quot;&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;ports&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+      &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;3000:3000&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;working_dir&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;/app&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;volumes&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+      &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;./:/app&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;environment&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+      &lt;span class=&quot;na&quot;&gt;MYSQL_HOST&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;mysql&lt;/span&gt;
+      &lt;span class=&quot;na&quot;&gt;MYSQL_USER&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;root&lt;/span&gt;
+      &lt;span class=&quot;na&quot;&gt;MYSQL_PASSWORD&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;secret&lt;/span&gt;
+      &lt;span class=&quot;na&quot;&gt;MYSQL_DB&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;todos&lt;/span&gt;
+
+  &lt;span class=&quot;na&quot;&gt;mysql&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;image&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;mysql:5.7&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;volumes&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+      &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;todo-mysql-data:/var/lib/mysql&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;environment&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+      &lt;span class=&quot;na&quot;&gt;MYSQL_ROOT_PASSWORD&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;secret&lt;/span&gt;
+      &lt;span class=&quot;na&quot;&gt;MYSQL_DATABASE&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;todos&lt;/span&gt;
+
+&lt;span class=&quot;na&quot;&gt;volumes&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;todo-mysql-data&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;div class=&quot;language-docker highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c&quot;&gt;# docker-compose 실행&lt;/span&gt;
+docker-compose up -d
+
+&lt;span class=&quot;c&quot;&gt;# docker-compose 중지&lt;/span&gt;
+docker-compose down
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;기타&quot;&gt;기타&lt;/h2&gt;
+&lt;div class=&quot;language-docker highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c&quot;&gt;# Security scanning&lt;/span&gt;
+docker scan getting-started
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;div class=&quot;language-docker highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c&quot;&gt;# Image layering&lt;/span&gt;
+docker image history getting-started
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;div class=&quot;language-docker highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c&quot;&gt;# Image Search&lt;/span&gt;
+docker search [image명]
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;참고자료
+    &lt;ul&gt;
+      &lt;li&gt;&lt;a href=&quot;https://docs.docker.com/get-started/&quot;&gt;docker 공식문서 - get started&lt;/a&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;</content><author><name>HyangGon Jin</name></author><category term="DE" /><category term="data engineering" /><summary type="html">본 문서는 docker 공식문서 - Get Started를 바탕으로 작성된 자료입니다. 필요한 자료는 링크 에서 다운로드 할 수 있습니다. build docker build 명령어를 통해 작성된 Dockerfile을 바탕으로 도커 이미지(docker image)를 생성할 수 있습니다. 도커 이미지는 [registry명]/[image명]:[버전]을 기본으로 하며 각각 생략할 경우 ‘registry명’은 ‘dockerhub’, ‘버전’은 ‘latest’로 인식합니다. # Dockerfile FROM node:12-alpine RUN apk add --no-cache python2 g++ make WORKDIR /app COPY . . RUN yarn install --production CMD [&quot;node&quot;, &quot;src/index.js&quot;] EXPOSE 3000 # 이미지 생성 docker build -t getting-started . -t: docker image의 이름 지정. .: Dockerfile의 경로. run docker run 명령어를 통해 ‘build’ 또는 ‘pull’한 도커 이미지를 컨테이너로 실행합니다. # 컨테이너 실행 docker run -d -p 80:80 --name tutorial docker/getting-started -d: detached 모드(백그라운드에서 컨테이너 실행). -p: [host-port]:[container-port]. 호스트의 포트 80을 컨테이너의 포트 80에 포트포워딩. --name : 컨테이너 이름 설정. docker/getting-started: 사용할 도커 이미지. rm rm과 rmi 명령어를 통해 도커 컨테이너/이미지를 삭제할 수 있습니다. # 현재 실행 중인 컨테이너 확인 docker ps docker container ls (-al) # 도커 이미지 확인 docker images docker image ls # 실행 중인 컨테이너 중지 docker stop &amp;lt;컨테이너 Id/Names&amp;gt; # 컨테이너 삭제 docker rm &amp;lt;컨테이너 Id/Names&amp;gt; # 실행 중인 컨테이너 강제 삭제 docker rm -f &amp;lt;컨테이너 Id/Names&amp;gt; # 이미지 삭제 docker rmi [image Id/Names] docker image rm [image Id/Names] tag &amp;amp; push docker hub와 같은 registry를 사용하면 도커 이미지를 공유할 수 있습니다. docker registry는 private과 public 환경으로 모두 생성 가능합니다. docker tag 명령어를 통해 registry명을 변경해 도커 이미지를 ‘push’할 수 있습니다. # docker 로그인 docker login # registry명 변경 docker tag getting-started &amp;lt;Your-dockerhub-id&amp;gt;/getting-started # 이미지 push docker push &amp;lt;Your-dockerhub-id&amp;gt;/getting-started Volume 실행된 docker 컨테이너에 추가되는 데이터들은 별도의 RW(Read and Write) 레이어에 저장되게 됩니다. 그래서 컨테이너를 삭제하는 경우 데이터도 같이 삭제가 됩니다. DB 관련 컨테이너의 경우 이러한 현상은 데이터가 없어지기 때문에 문제가 되는데, 이러한 문제는 DB 컨테이너가 동일한 host의 디렉토리를 바라보게 설정해서 데이터를 보존할 수 있습니다. -v 옵션을 통해 volume을 지정한 container경로에 mount 할 수 있습니다. # named volume # Volume 생성 docker volume create todo-db # Volume 정보 확인 docker volume inspect todo-db # DB 연결 docker run -dp 3000:3000 -v todo-db:/etc/todos getting-started Networking 컨테이너 간 통신을 위해서는 network 작업이 필요합니다. 2가지의 방법을 통해 네트워크를 지정할 수 있습니다. 컨테이너 실행시 네트워크를 지정하는 방법. 만들어진 컨테이너에 네트워크를 연결하는 방법. # network 생성 docker network create todo-app # MySQL 컨테이너 시작 # amd-architecture docker run -d \ --network todo-app --network-alias mysql \ -v todo-mysql-data:/var/lib/mysql \ -e MYSQL_ROOT_PASSWORD=secret \ -e MYSQL_DATABASE=todos \ mysql:5.7 # arm-architecture docker run -d \ --network todo-app --network-alias mysql \ --platform &quot;linux/amd64&quot; \ -v todo-mysql-data:/var/lib/mysql \ -e MYSQL_ROOT_PASSWORD=secret \ -e MYSQL_DATABASE=todos \ mysql:5.7 # MySQL 접속 docker exec -it mysql -u root -p # todos 데이터베이스 확인 SHOW DATABASES; docker run -it --network todo-app nicolaka/netshoot docker-compose 일반적으로 컨테이너를 실행할 때 (예제처럼) 여러 옵션을 줘야하는 경우가 많습니다. 이러한 옵션들을 커맨드라인으로 직접 입력하는 것은 매우 번거로우며, 컨테이너 관련 정보를 관리하는데도 불편한 점이 있습니다. ‘docker-compose’는 커맨드라인으로 입력하던 컨테이너의 세부사항을 yml 파일을 통해 일괄적으로 정의하고 관리할 수 있게 지원합니다. docker-compose 설치는 링크를 참조하시면 됩니다. # docker-compose.yml version: &quot;3.7&quot; services: app: image: node:12-alpine command: sh -c &quot;yarn install &amp;amp;&amp;amp; yarn run dev&quot; ports: - 3000:3000 working_dir: /app volumes: - ./:/app environment: MYSQL_HOST: mysql MYSQL_USER: root MYSQL_PASSWORD: secret MYSQL_DB: todos mysql: image: mysql:5.7 volumes: - todo-mysql-data:/var/lib/mysql environment: MYSQL_ROOT_PASSWORD: secret MYSQL_DATABASE: todos volumes: todo-mysql-data: # docker-compose 실행 docker-compose up -d # docker-compose 중지 docker-compose down 기타 # Security scanning docker scan getting-started # Image layering docker image history getting-started # Image Search docker search [image명] 참고자료 docker 공식문서 - get started</summary></entry><entry><title type="html">22년 4월의 공부</title><link href="http://localhost:4000/til/TIL_2204/" rel="alternate" type="text/html" title="22년 4월의 공부" /><published>2022-05-04T00:00:00+09:00</published><updated>2022-05-04T00:00:00+09:00</updated><id>http://localhost:4000/til/TIL_2204</id><content type="html" xml:base="http://localhost:4000/til/TIL_2204/">&lt;p&gt;2022년 4월 동안 검색하고 공부한 것들을 정리한 내용입니다.&lt;/p&gt;
+
+&lt;h1 id=&quot;1-dataclasses&quot;&gt;1. dataclasses&lt;/h1&gt;
+&lt;ul&gt;
+  &lt;li&gt;참고: &lt;a href=&quot;https://docs.python.org/ko/3/library/dataclasses.html&quot;&gt;dataclasses 공식문서&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;__init__()&lt;/code&gt; 나 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;__repr__()&lt;/code&gt; 과 같은 생성된 특수 메서드를 사용자 정의 클래스에 자동으로 추가하는 데코레이터와 함수를 제공합니다. &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;@dataclass&lt;/code&gt; 데코레이터를 통해 사용할 수 있습니다. 아래와 같이 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;__init__&lt;/code&gt;과 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;__repr__&lt;/code&gt;을 명시하지 않았지만 자동으로 설정이 된 것을 확인할 수 있습니다.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;div class=&quot;language-py highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kn&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;dataclasses&lt;/span&gt; &lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;dataclass&lt;/span&gt;
+
+&lt;span class=&quot;o&quot;&gt;@&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;dataclass&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;account&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;object&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;password&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;int&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;balance&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;int&lt;/span&gt;
+
+    &lt;span class=&quot;n&quot;&gt;random&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;seed&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1234&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;_id&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;x&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;str&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;int&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;round&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;random&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;random&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(),&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;6&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;mf&quot;&gt;1E6&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
+
+
+    &lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;print1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;bp&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;password&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;bp&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;_id&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;bp&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;balance&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+    &lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;deposit&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;amount&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
+        &lt;span class=&quot;bp&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;balance&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;amount&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;입급 완료.&quot;&lt;/span&gt;
+
+        
+&lt;span class=&quot;n&quot;&gt;acc1&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;account&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&apos;lego&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;password&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1234&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;balance&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;100000&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;acc1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;# account(name=&apos;\x08lego&apos;, password=1234, balance=100000)
+&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;acc1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;deposit&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;3000&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;acc1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;balance&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;# 103000
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;hr /&gt;
+
+&lt;h1 id=&quot;2-중복레코드-처리---mysql&quot;&gt;2. 중복레코드 처리 - MySQL&lt;/h1&gt;
+&lt;ul&gt;
+  &lt;li&gt;참고:
+    &lt;ul&gt;
+      &lt;li&gt;&lt;a href=&quot;https://www.mysqltutorial.org/mysql-insert-ignore/&quot;&gt;블로그 - INSERT IGNORE&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;https://www.mysqltutorial.org/mysql-insert-or-update-on-duplicate-key-update/&quot;&gt;블로그 - INSERT ON DUPLICATE UPDATE&lt;/a&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;MySQL에서 중복레코드를 처리할 때 사용하는 방법 중 2가지를 비교합니다.
+    &lt;ol&gt;
+      &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;INSERT IGNORE&lt;/code&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;INSERT INTO ON DUPLICATE UPDATE&lt;/code&gt;&lt;/li&gt;
+    &lt;/ol&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;insert-ignore&quot;&gt;INSERT IGNORE&lt;/h2&gt;
+&lt;p&gt;중복레코드 오류가 발생하면 (이를 무시하고) 처음에 기록된 데이터가 남습니다.&lt;/p&gt;
+
+&lt;div class=&quot;language-sql highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;INSERT&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;IGNORE&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;INTO&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;table&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;column_list&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; 
+&lt;span class=&quot;k&quot;&gt;VALUES&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;value_list&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+
+&lt;span class=&quot;o&quot;&gt;#&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;출처&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;https&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;//&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;www&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;mysqltutorial&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;org&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;mysql&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;insert&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;ignore&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;/&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;insert-into-on-duplicate-update&quot;&gt;INSERT INTO ON DUPLICATE UPDATE&lt;/h2&gt;
+&lt;p&gt;중복레코드 오류가 발생했을 때 업데이트할 값을 지정할 수 있습니다.&lt;/p&gt;
+
+&lt;div class=&quot;language-sql highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;INSERT&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;INTO&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;table&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;column_list&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;VALUES&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;value_list&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;ON&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;DUPLICATE&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;KEY&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;UPDATE&lt;/span&gt;
+   &lt;span class=&quot;n&quot;&gt;c1&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;v1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; 
+   &lt;span class=&quot;n&quot;&gt;c2&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;v2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+   &lt;span class=&quot;p&quot;&gt;...;&lt;/span&gt;
+
+&lt;span class=&quot;o&quot;&gt;#&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;출처&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;https&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;//&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;www&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;mysqltutorial&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;org&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;mysql&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;insert&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;or&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;update&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;on&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;duplicate&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;key&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;update&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;/&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;hr /&gt;
+
+&lt;h1 id=&quot;3-data-leakage&quot;&gt;3. Data Leakage&lt;/h1&gt;
+&lt;ul&gt;
+  &lt;li&gt;참고: &lt;a href=&quot;https://www.kaggle.com/alexisbcook/data-leakage&quot;&gt;Data Leakage - Find and fix this problem that ruins your model in subtle ways.&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;data-leakage의-유형&quot;&gt;Data leakage의 유형&lt;/h2&gt;
+&lt;ol&gt;
+  &lt;li&gt;Target leakage&lt;/li&gt;
+  &lt;li&gt;Train-Test contamination&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h2 id=&quot;target-leakage&quot;&gt;Target leakage&lt;/h2&gt;
+&lt;ul&gt;
+  &lt;li&gt;feature가 모델 개발을 할 때는 사용이 가능하지만, &lt;u&gt;예측을 할 때는 활용이 불가능한 경우&lt;/u&gt;.&lt;/li&gt;
+  &lt;li&gt;사용하고자 하는 feature가 있는 경우, 단순히 ‘&lt;strong&gt;예측에 도움이 되는지&lt;/strong&gt;’ 뿐만이 아니라 ‘&lt;strong&gt;예측 시점에 활용 가능한지&lt;/strong&gt;‘도 생각하는 것이 중요.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;train-test-contamination&quot;&gt;Train-Test contamination&lt;/h2&gt;
+&lt;ul&gt;
+  &lt;li&gt;Data preprocessing 또는 Feature engineering을 할 때, validation(또는 test) data의 정보를 이용하는 경우.&lt;/li&gt;
+&lt;/ul&gt;</content><author><name>HyangGon Jin</name></author><category term="TIL" /><category term="TIL" /><category term="python" /><summary type="html">2022년 4월 동안 검색하고 공부한 것들을 정리한 내용입니다. 1. dataclasses 참고: dataclasses 공식문서 __init__() 나 __repr__() 과 같은 생성된 특수 메서드를 사용자 정의 클래스에 자동으로 추가하는 데코레이터와 함수를 제공합니다. @dataclass 데코레이터를 통해 사용할 수 있습니다. 아래와 같이 __init__과 __repr__을 명시하지 않았지만 자동으로 설정이 된 것을 확인할 수 있습니다. from dataclasses import dataclass @dataclass class account: name: object password: int balance: int random.seed(1234) _id = &quot;x&quot;+str(int(round(random.random(),6)*1E6)) def print1(self): print(self.name, self.password, self._id, self.balance) def deposit(self,amount): self.balance += amount return &quot;입급 완료.&quot; acc1 = account(name=&apos;lego&apos;, password=1234, balance=100000) print(acc1) # account(name=&apos;\x08lego&apos;, password=1234, balance=100000) acc1.deposit(3000) print(acc1.balance) # 103000 2. 중복레코드 처리 - MySQL 참고: 블로그 - INSERT IGNORE 블로그 - INSERT ON DUPLICATE UPDATE MySQL에서 중복레코드를 처리할 때 사용하는 방법 중 2가지를 비교합니다. INSERT IGNORE INSERT INTO ON DUPLICATE UPDATE INSERT IGNORE 중복레코드 오류가 발생하면 (이를 무시하고) 처음에 기록된 데이터가 남습니다. INSERT IGNORE INTO table (column_list) VALUES (value_list); # 출처: https://www.mysqltutorial.org/mysql-insert-ignore/ INSERT INTO ON DUPLICATE UPDATE 중복레코드 오류가 발생했을 때 업데이트할 값을 지정할 수 있습니다. INSERT INTO table (column_list) VALUES (value_list) ON DUPLICATE KEY UPDATE c1 = v1, c2 = v2, ...; # 출처: https://www.mysqltutorial.org/mysql-insert-or-update-on-duplicate-key-update/ 3. Data Leakage 참고: Data Leakage - Find and fix this problem that ruins your model in subtle ways. Data leakage의 유형 Target leakage Train-Test contamination Target leakage feature가 모델 개발을 할 때는 사용이 가능하지만, 예측을 할 때는 활용이 불가능한 경우. 사용하고자 하는 feature가 있는 경우, 단순히 ‘예측에 도움이 되는지’ 뿐만이 아니라 ‘예측 시점에 활용 가능한지‘도 생각하는 것이 중요. Train-Test contamination Data preprocessing 또는 Feature engineering을 할 때, validation(또는 test) data의 정보를 이용하는 경우.</summary></entry><entry><title type="html">JSON 데이터 다루기</title><link href="http://localhost:4000/da/handle_to_json/" rel="alternate" type="text/html" title="JSON 데이터 다루기" /><published>2022-05-04T00:00:00+09:00</published><updated>2022-05-04T00:00:00+09:00</updated><id>http://localhost:4000/da/handle_to_json</id><content type="html" xml:base="http://localhost:4000/da/handle_to_json/">&lt;p&gt;JSON 데이터와 관련된 함수를 알아봅니다.&lt;/p&gt;
 
 &lt;h1 id=&quot;to_json&quot;&gt;to_json&lt;/h1&gt;
 &lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;to_json()&lt;/code&gt; 함수를 통해 데이터프레임을 json으로 변경할 수 있습니다. 먼저, 간단한 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;pandas&lt;/code&gt; 데이터프레임을 생성합니다.&lt;/p&gt;
@@ -107,103 +407,7 @@
       &lt;li&gt;&lt;a href=&quot;https://docs.python.org/ko/3/library/json.html&quot;&gt;json 공식문서 - json 인코더와 디코더&lt;/a&gt;&lt;/li&gt;
     &lt;/ul&gt;
   &lt;/li&gt;
-&lt;/ul&gt;</content><author><name>HyangGon Jin</name></author><category term="DA" /><category term="python" /><summary type="html">JSON 데이터와 관련된 함수를 알아봅니다.</summary></entry><entry><title type="html">22년 4월의 공부</title><link href="http://localhost:4000/til/TIL_2204/" rel="alternate" type="text/html" title="22년 4월의 공부" /><published>2022-05-04T00:00:00+09:00</published><updated>2022-05-04T00:00:00+09:00</updated><id>http://localhost:4000/til/TIL_2204</id><content type="html" xml:base="http://localhost:4000/til/TIL_2204/">&lt;p&gt;2022년 4월 동안 검색하고 공부한 것들을 정리한 내용입니다.&lt;/p&gt;
-
-&lt;h1 id=&quot;1-dataclasses&quot;&gt;1. dataclasses&lt;/h1&gt;
-&lt;ul&gt;
-  &lt;li&gt;참고: &lt;a href=&quot;https://docs.python.org/ko/3/library/dataclasses.html&quot;&gt;dataclasses 공식문서&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;__init__()&lt;/code&gt; 나 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;__repr__()&lt;/code&gt; 과 같은 생성된 특수 메서드를 사용자 정의 클래스에 자동으로 추가하는 데코레이터와 함수를 제공합니다. &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;@dataclass&lt;/code&gt; 데코레이터를 통해 사용할 수 있습니다. 아래와 같이 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;__init__&lt;/code&gt;과 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;__repr__&lt;/code&gt;을 명시하지 않았지만 자동으로 설정이 된 것을 확인할 수 있습니다.&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;div class=&quot;language-py highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kn&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;dataclasses&lt;/span&gt; &lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;dataclass&lt;/span&gt;
-
-&lt;span class=&quot;o&quot;&gt;@&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;dataclass&lt;/span&gt;
-&lt;span class=&quot;k&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;account&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
-    &lt;span class=&quot;n&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;object&lt;/span&gt;
-    &lt;span class=&quot;n&quot;&gt;password&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;int&lt;/span&gt;
-    &lt;span class=&quot;n&quot;&gt;balance&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;int&lt;/span&gt;
-
-    &lt;span class=&quot;n&quot;&gt;random&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;seed&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1234&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-    &lt;span class=&quot;n&quot;&gt;_id&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;x&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;str&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;int&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;round&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;random&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;random&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(),&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;6&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;mf&quot;&gt;1E6&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
-
-
-    &lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;print1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
-        &lt;span class=&quot;k&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;bp&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;password&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;bp&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;_id&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;bp&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;balance&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-
-    &lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;deposit&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;amount&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
-        &lt;span class=&quot;bp&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;balance&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;amount&lt;/span&gt;
-        &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;입급 완료.&quot;&lt;/span&gt;
-
-        
-&lt;span class=&quot;n&quot;&gt;acc1&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;account&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&apos;lego&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;password&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1234&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;balance&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;100000&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-&lt;span class=&quot;k&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;acc1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;# account(name=&apos;\x08lego&apos;, password=1234, balance=100000)
-&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;acc1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;deposit&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;3000&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-&lt;span class=&quot;k&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;acc1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;balance&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;# 103000
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;hr /&gt;
-
-&lt;h1 id=&quot;2-중복레코드-처리---mysql&quot;&gt;2. 중복레코드 처리 - MySQL&lt;/h1&gt;
-&lt;ul&gt;
-  &lt;li&gt;참고:
-    &lt;ul&gt;
-      &lt;li&gt;&lt;a href=&quot;https://www.mysqltutorial.org/mysql-insert-ignore/&quot;&gt;블로그 - INSERT IGNORE&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;https://www.mysqltutorial.org/mysql-insert-or-update-on-duplicate-key-update/&quot;&gt;블로그 - INSERT ON DUPLICATE UPDATE&lt;/a&gt;&lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-  &lt;li&gt;MySQL에서 중복레코드를 처리할 때 사용하는 방법 중 2가지를 비교합니다.
-    &lt;ol&gt;
-      &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;INSERT IGNORE&lt;/code&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;INSERT INTO ON DUPLICATE UPDATE&lt;/code&gt;&lt;/li&gt;
-    &lt;/ol&gt;
-  &lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h2 id=&quot;insert-ignore&quot;&gt;INSERT IGNORE&lt;/h2&gt;
-&lt;p&gt;중복레코드 오류가 발생하면 (이를 무시하고) 처음에 기록된 데이터가 남습니다.&lt;/p&gt;
-
-&lt;div class=&quot;language-sql highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;INSERT&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;IGNORE&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;INTO&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;table&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;column_list&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; 
-&lt;span class=&quot;k&quot;&gt;VALUES&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;value_list&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
-
-&lt;span class=&quot;o&quot;&gt;#&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;출처&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;https&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;//&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;www&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;mysqltutorial&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;org&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;mysql&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;insert&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;ignore&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;/&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h2 id=&quot;insert-into-on-duplicate-update&quot;&gt;INSERT INTO ON DUPLICATE UPDATE&lt;/h2&gt;
-&lt;p&gt;중복레코드 오류가 발생했을 때 업데이트할 값을 지정할 수 있습니다.&lt;/p&gt;
-
-&lt;div class=&quot;language-sql highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;INSERT&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;INTO&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;table&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;column_list&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-&lt;span class=&quot;k&quot;&gt;VALUES&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;value_list&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-&lt;span class=&quot;k&quot;&gt;ON&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;DUPLICATE&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;KEY&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;UPDATE&lt;/span&gt;
-   &lt;span class=&quot;n&quot;&gt;c1&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;v1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; 
-   &lt;span class=&quot;n&quot;&gt;c2&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;v2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
-   &lt;span class=&quot;p&quot;&gt;...;&lt;/span&gt;
-
-&lt;span class=&quot;o&quot;&gt;#&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;출처&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;https&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;//&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;www&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;mysqltutorial&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;org&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;mysql&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;insert&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;or&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;update&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;on&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;duplicate&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;key&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;update&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;/&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;hr /&gt;
-
-&lt;h1 id=&quot;3-data-leakage&quot;&gt;3. Data Leakage&lt;/h1&gt;
-&lt;ul&gt;
-  &lt;li&gt;참고: &lt;a href=&quot;https://www.kaggle.com/alexisbcook/data-leakage&quot;&gt;Data Leakage - Find and fix this problem that ruins your model in subtle ways.&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h2 id=&quot;data-leakage의-유형&quot;&gt;Data leakage의 유형&lt;/h2&gt;
-&lt;ol&gt;
-  &lt;li&gt;Target leakage&lt;/li&gt;
-  &lt;li&gt;Train-Test contamination&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;h2 id=&quot;target-leakage&quot;&gt;Target leakage&lt;/h2&gt;
-&lt;ul&gt;
-  &lt;li&gt;feature가 모델 개발을 할 때는 사용이 가능하지만, &lt;u&gt;예측을 할 때는 활용이 불가능한 경우&lt;/u&gt;.&lt;/li&gt;
-  &lt;li&gt;사용하고자 하는 feature가 있는 경우, 단순히 ‘&lt;strong&gt;예측에 도움이 되는지&lt;/strong&gt;’ 뿐만이 아니라 ‘&lt;strong&gt;예측 시점에 활용 가능한지&lt;/strong&gt;‘도 생각하는 것이 중요.&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h2 id=&quot;train-test-contamination&quot;&gt;Train-Test contamination&lt;/h2&gt;
-&lt;ul&gt;
-  &lt;li&gt;Data preprocessing 또는 Feature engineering을 할 때, validation(또는 test) data의 정보를 이용하는 경우.&lt;/li&gt;
-&lt;/ul&gt;</content><author><name>HyangGon Jin</name></author><category term="TIL" /><category term="TIL" /><category term="python" /><summary type="html">2022년 4월 동안 검색하고 공부한 것들을 정리한 내용입니다. 1. dataclasses 참고: dataclasses 공식문서 __init__() 나 __repr__() 과 같은 생성된 특수 메서드를 사용자 정의 클래스에 자동으로 추가하는 데코레이터와 함수를 제공합니다. @dataclass 데코레이터를 통해 사용할 수 있습니다. 아래와 같이 __init__과 __repr__을 명시하지 않았지만 자동으로 설정이 된 것을 확인할 수 있습니다. from dataclasses import dataclass @dataclass class account: name: object password: int balance: int random.seed(1234) _id = &quot;x&quot;+str(int(round(random.random(),6)*1E6)) def print1(self): print(self.name, self.password, self._id, self.balance) def deposit(self,amount): self.balance += amount return &quot;입급 완료.&quot; acc1 = account(name=&apos;lego&apos;, password=1234, balance=100000) print(acc1) # account(name=&apos;\x08lego&apos;, password=1234, balance=100000) acc1.deposit(3000) print(acc1.balance) # 103000 2. 중복레코드 처리 - MySQL 참고: 블로그 - INSERT IGNORE 블로그 - INSERT ON DUPLICATE UPDATE MySQL에서 중복레코드를 처리할 때 사용하는 방법 중 2가지를 비교합니다. INSERT IGNORE INSERT INTO ON DUPLICATE UPDATE INSERT IGNORE 중복레코드 오류가 발생하면 (이를 무시하고) 처음에 기록된 데이터가 남습니다. INSERT IGNORE INTO table (column_list) VALUES (value_list); # 출처: https://www.mysqltutorial.org/mysql-insert-ignore/ INSERT INTO ON DUPLICATE UPDATE 중복레코드 오류가 발생했을 때 업데이트할 값을 지정할 수 있습니다. INSERT INTO table (column_list) VALUES (value_list) ON DUPLICATE KEY UPDATE c1 = v1, c2 = v2, ...; # 출처: https://www.mysqltutorial.org/mysql-insert-or-update-on-duplicate-key-update/ 3. Data Leakage 참고: Data Leakage - Find and fix this problem that ruins your model in subtle ways. Data leakage의 유형 Target leakage Train-Test contamination Target leakage feature가 모델 개발을 할 때는 사용이 가능하지만, 예측을 할 때는 활용이 불가능한 경우. 사용하고자 하는 feature가 있는 경우, 단순히 ‘예측에 도움이 되는지’ 뿐만이 아니라 ‘예측 시점에 활용 가능한지‘도 생각하는 것이 중요. Train-Test contamination Data preprocessing 또는 Feature engineering을 할 때, validation(또는 test) data의 정보를 이용하는 경우.</summary></entry><entry><title type="html">pendulum - datetime 다루기</title><link href="http://localhost:4000/da/pendulum_manipulation_datetimes/" rel="alternate" type="text/html" title="pendulum - datetime 다루기" /><published>2022-03-27T00:00:00+09:00</published><updated>2022-04-11T00:00:00+09:00</updated><id>http://localhost:4000/da/pendulum_manipulation_datetimes</id><content type="html" xml:base="http://localhost:4000/da/pendulum_manipulation_datetimes/">&lt;p&gt;Python에서 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;datetime&lt;/code&gt; 객체를 다루는 라이브러리 중 하나인 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;pendulum&lt;/code&gt;에 대해서 간단히 알아보겠습니다.&lt;/p&gt;
+&lt;/ul&gt;</content><author><name>HyangGon Jin</name></author><category term="DA" /><category term="python" /><summary type="html">JSON 데이터와 관련된 함수를 알아봅니다.</summary></entry><entry><title type="html">pendulum - datetime 다루기</title><link href="http://localhost:4000/da/pendulum_manipulation_datetimes/" rel="alternate" type="text/html" title="pendulum - datetime 다루기" /><published>2022-03-27T00:00:00+09:00</published><updated>2022-04-11T00:00:00+09:00</updated><id>http://localhost:4000/da/pendulum_manipulation_datetimes</id><content type="html" xml:base="http://localhost:4000/da/pendulum_manipulation_datetimes/">&lt;p&gt;Python에서 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;datetime&lt;/code&gt; 객체를 다루는 라이브러리 중 하나인 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;pendulum&lt;/code&gt;에 대해서 간단히 알아보겠습니다.&lt;/p&gt;
 
 &lt;h1 id=&quot;instantiation&quot;&gt;Instantiation&lt;/h1&gt;
 &lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;pendulum&lt;/code&gt;의 default timezone은 ‘UTC’입니다.&lt;/p&gt;
@@ -1419,201 +1623,4 @@ Port : your port (e.g. 3306)&lt;/p&gt;
       &lt;li&gt;&lt;a href=&quot;https://pandas.pydata.org/docs/reference/api/pandas.io.formats.style.Styler.highlight_between.html&quot;&gt;pandas 공식문서 - style.highlight_between&lt;/a&gt;&lt;/li&gt;
     &lt;/ul&gt;
   &lt;/li&gt;
-&lt;/ul&gt;</content><author><name>HyangGon Jin</name></author><category term="DA" /><category term="python" /><category term="pandas" /><summary type="html">pandas의 DataFrame에서는 format, highlighting 등 여러 가지 style을 지정할 수 있습니다. (경험에 의하면) style의 지정은 단순히 이쁘게 보여주는 기능 외에도 하나의 column 내에서 값을 비교하거나, 관심있는 수치 구간을 확인할 때 직관적으로 원하는 정보를 쉽게 얻을 수 있다는 장점이 있었습니다.</summary></entry><entry><title type="html">유용한 Python 함수 - Part 2.</title><link href="http://localhost:4000/da/useful_python_functions_2/" rel="alternate" type="text/html" title="유용한 Python 함수 - Part 2." /><published>2021-12-03T00:00:00+09:00</published><updated>2021-12-08T00:00:00+09:00</updated><id>http://localhost:4000/da/useful_python_functions_2</id><content type="html" xml:base="http://localhost:4000/da/useful_python_functions_2/">&lt;p&gt;Part 1.에 이어서 데이터 핸들링에 도움이 되는 python 함수들을 알아봅니다.&lt;/p&gt;
-
-&lt;h2 id=&quot;pivot&quot;&gt;pivot&lt;/h2&gt;
-&lt;ul&gt;
-  &lt;li&gt;def pivot(index=None, columns=None, values=None)&lt;/li&gt;
-  &lt;li&gt;예시) index와 column에 대해 value를 가지는 형태로 변환할 때 사용 (pivot).&lt;/li&gt;
-  &lt;li&gt;index와 column에 대해 unique한 값을 가지고 있어야 함 (&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;pivot_table&lt;/code&gt;과의 차이).&lt;/li&gt;
-  &lt;li&gt;&lt;strong&gt;parameters&lt;/strong&gt;
-    &lt;ul&gt;
-      &lt;li&gt;&lt;strong&gt;index&lt;/strong&gt; : str or object or a list of str, optional&lt;/li&gt;
-      &lt;li&gt;&lt;strong&gt;columns&lt;/strong&gt; : str or object or a list of str&lt;/li&gt;
-      &lt;li&gt;&lt;strong&gt;values&lt;/strong&gt; : str, object or a list of the previous, optional&lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;div class=&quot;language-py highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;numpy&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;as&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;
-&lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;pandas&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;as&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;pd&lt;/span&gt;
-
-&lt;span class=&quot;n&quot;&gt;a&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&apos;Apple&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&apos;Banana&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
-&lt;span class=&quot;n&quot;&gt;A&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;list&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;repeat&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;a&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
-&lt;span class=&quot;n&quot;&gt;B&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&apos;A&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&apos;B&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&apos;C&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;
-&lt;span class=&quot;n&quot;&gt;C&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;list&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;range&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;7&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
-
-&lt;span class=&quot;n&quot;&gt;d&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&apos;A&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;A&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&apos;B&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;B&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&apos;C&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;C&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-&lt;span class=&quot;n&quot;&gt;df&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;pd&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;DataFrame&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;data&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;d&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-&lt;span class=&quot;n&quot;&gt;df&lt;/span&gt;
-&lt;span class=&quot;c1&quot;&gt;# 	A	B	C
-# 0	Apple	A	1
-# 1	Apple	B	2
-# 2	Apple	C	3
-# 3	Banana	A	4
-# 4	Banana	B	5
-# 5	Banana	C	6
-&lt;/span&gt;
-&lt;span class=&quot;n&quot;&gt;df&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pivot&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;index&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&apos;A&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;columns&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&apos;B&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;values&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&apos;C&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-
-&lt;span class=&quot;c1&quot;&gt;# index와 column에 대해 값이 unique하지 않으면 ValueError.
-&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;df1&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;df&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;append&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pd&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;DataFrame&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;([[&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&apos;Apple&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&apos;A&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]],&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;columns&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;list&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&apos;ABC&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)),&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ignore_index&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;True&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-&lt;span class=&quot;n&quot;&gt;df1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pivot&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;index&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&apos;A&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;columns&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&apos;B&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;values&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&apos;C&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p align=&quot;center&quot;&gt;
-&lt;img src=&quot;/assets/images/pivot_output1.png&quot; width=&quot;800&quot; height=&quot;1000&quot; /&gt;
-&lt;/p&gt;
-
-&lt;h2 id=&quot;pivot_table&quot;&gt;pivot_table&lt;/h2&gt;
-&lt;ul&gt;
-  &lt;li&gt;def pivot_table(values=None, index=None, columns=None, aggfunc=’mean’, …)&lt;/li&gt;
-  &lt;li&gt;&lt;strong&gt;parameters&lt;/strong&gt;
-    &lt;ul&gt;
-      &lt;li&gt;&lt;strong&gt;aggfunc&lt;/strong&gt; : function, list of functions, dict, default numpy.mean&lt;/li&gt;
-      &lt;li&gt;&lt;strong&gt;fill_value&lt;/strong&gt; : scalar, default None. aggregation 이후 missing 값에 대한 처리.&lt;/li&gt;
-      &lt;li&gt;&lt;strong&gt;margins&lt;/strong&gt; : bool, default False&lt;/li&gt;
-      &lt;li&gt;&lt;strong&gt;margins_name&lt;/strong&gt; : str, default ‘All’&lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;div class=&quot;language-py highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;df1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pivot_table&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;index&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&apos;A&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;columns&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&apos;B&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;values&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&apos;C&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;aggfunc&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&apos;mean&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-&lt;span class=&quot;n&quot;&gt;df1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pivot_table&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;index&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&apos;A&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;columns&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&apos;B&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;values&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&apos;C&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;aggfunc&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&apos;count&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p align=&quot;center&quot;&gt;
-&lt;img src=&quot;/assets/images/pivot_table_output1.png&quot; width=&quot;700&quot; height=&quot;300&quot; /&gt;
-&lt;/p&gt;
-
-&lt;h2 id=&quot;groupby--agg&quot;&gt;groupby &amp;amp; agg&lt;/h2&gt;
-
-&lt;div class=&quot;language-py highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;df1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;groupby&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;([&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&apos;A&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&apos;B&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;as_index&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;False&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;).&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;agg&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;({&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&apos;C&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&apos;mean&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;})&lt;/span&gt;
-
-&lt;span class=&quot;n&quot;&gt;df1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;groupby&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;([&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&apos;A&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&apos;B&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]).&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;agg&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;c_sum&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pd&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;NamedAgg&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;column&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;C&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;aggfunc&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;sum&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p align=&quot;center&quot;&gt;
-&lt;img src=&quot;/assets/images/groupby_output1.png&quot; width=&quot;800&quot; height=&quot;520&quot; /&gt;
-&lt;/p&gt;
-
-&lt;div class=&quot;language-py highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;df2&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;df1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;groupby&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;([&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&apos;A&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&apos;B&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;as_index&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;False&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;).&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;agg&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;({&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&apos;C&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&apos;mean&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;})&lt;/span&gt;
-&lt;span class=&quot;n&quot;&gt;pd&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;crosstab&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;index&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;df2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&apos;A&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;columns&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;df2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&apos;B&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;values&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;df2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&apos;C&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;aggfunc&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&apos;sum&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p align=&quot;center&quot;&gt;
-&lt;img src=&quot;/assets/images/groupby_output3.png&quot; width=&quot;500&quot; height=&quot;180&quot; /&gt;
-&lt;/p&gt;
-
-&lt;h2 id=&quot;melt&quot;&gt;melt&lt;/h2&gt;
-&lt;ul&gt;
-  &lt;li&gt;def melt(id_vars=None, value_vars=None, var_name=None, …)&lt;/li&gt;
-  &lt;li&gt;예시) 데이터 format을 wide 형태에서 long 형태로 변환할 때 사용 (unpivot).&lt;/li&gt;
-  &lt;li&gt;&lt;strong&gt;parameters&lt;/strong&gt;
-    &lt;ul&gt;
-      &lt;li&gt;&lt;strong&gt;var_name&lt;/strong&gt; : scalar&lt;/li&gt;
-      &lt;li&gt;&lt;strong&gt;value_name&lt;/strong&gt; : scalar, default ‘value’&lt;/li&gt;
-      &lt;li&gt;&lt;strong&gt;col_level&lt;/strong&gt; : int or str, optional. column이 MultiIndex일 때 사용.&lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;div class=&quot;language-py highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;pivot_t&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;df&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pivot_table&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;index&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&apos;A&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;columns&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&apos;B&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;values&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&apos;C&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;aggfunc&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&apos;mean&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-&lt;span class=&quot;n&quot;&gt;pivot_t&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;index&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;name&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;A1&quot;&lt;/span&gt;
-&lt;span class=&quot;n&quot;&gt;df3&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;pivot_t&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;reset_index&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;().&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;melt&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;id_vars&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&apos;A1&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;value_vars&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&apos;A&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&apos;B&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&apos;C&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;value_name&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&apos;C1&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;).&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;sort_values&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&apos;A1&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-&lt;span class=&quot;n&quot;&gt;df3&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p align=&quot;center&quot;&gt;
-&lt;img src=&quot;/assets/images/melt_output3.png&quot; width=&quot;750&quot; height=&quot;600&quot; /&gt;
-&lt;/p&gt;
-
-&lt;h2 id=&quot;wide_to_long&quot;&gt;wide_to_long&lt;/h2&gt;
-&lt;ul&gt;
-  &lt;li&gt;def wide_to_long(df: ‘DataFrame’, stubnames, i, j, …)&lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;melt&lt;/code&gt;와의 차이 : &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;wide_to_long&lt;/code&gt;함수는 column명이 ‘stubnames-suffix1’, ‘stubnames-suffix2’, … 와 같은 형태로 있어야 한다는 제약이 있음.&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;&lt;strong&gt;parameters&lt;/strong&gt;
-    &lt;ul&gt;
-      &lt;li&gt;&lt;strong&gt;df&lt;/strong&gt; : DataFrame&lt;/li&gt;
-      &lt;li&gt;&lt;strong&gt;stubnames&lt;/strong&gt; : str or list-like. wide 형태의 변수명 앞에 붙는 이름.&lt;/li&gt;
-      &lt;li&gt;&lt;strong&gt;i&lt;/strong&gt; : str or list-like. id로 사용될 변수.&lt;/li&gt;
-      &lt;li&gt;&lt;strong&gt;j&lt;/strong&gt; : str. suffix에 대한 이름.&lt;/li&gt;
-      &lt;li&gt;&lt;strong&gt;sep&lt;/strong&gt; : str, default “”&lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;div class=&quot;language-py highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;df4&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;pd&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;DataFrame&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;([[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;5&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;6&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]],&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;index&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;Apple&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;Banana&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;columns&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;var_1&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;var_2&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;var_3&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]).&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;reset_index&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
-&lt;span class=&quot;n&quot;&gt;pd&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;wide_to_long&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;df&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;df4&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;stubnames&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;var&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&apos;index&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;j&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;j&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;sep&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;_&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p align=&quot;center&quot;&gt;
-&lt;img src=&quot;/assets/images/wide_to_long_output1.png&quot; width=&quot;800&quot; height=&quot;430&quot; /&gt;
-&lt;/p&gt;
-
-&lt;h2 id=&quot;merge&quot;&gt;merge&lt;/h2&gt;
-&lt;ul&gt;
-  &lt;li&gt;def merge(right, how=’inner’, on=None, left_on=None, right_on=None, …)&lt;/li&gt;
-  &lt;li&gt;&lt;strong&gt;parameters&lt;/strong&gt;
-    &lt;ul&gt;
-      &lt;li&gt;&lt;strong&gt;right&lt;/strong&gt; : DataFrame or named Series&lt;/li&gt;
-      &lt;li&gt;&lt;strong&gt;how&lt;/strong&gt; : {‘left’, ‘right’, ‘outer’, ‘inner’}, default ‘inner’&lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;div class=&quot;language-py highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;d1&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&apos;left_key&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:[&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&apos;A&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&apos;B&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&apos;C&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&apos;value&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;7&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]}&lt;/span&gt;
-&lt;span class=&quot;n&quot;&gt;df1&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;pd&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;DataFrame&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;d1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-
-&lt;span class=&quot;n&quot;&gt;d2&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&apos;right_key&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:[&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&apos;A&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&apos;C&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&apos;B&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&apos;value&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;8&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;14&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]}&lt;/span&gt;
-&lt;span class=&quot;n&quot;&gt;df2&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;pd&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;DataFrame&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;d2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-
-&lt;span class=&quot;n&quot;&gt;df1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;merge&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;df2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;left_on&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&apos;left_key&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;right_on&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&apos;right_key&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p align=&quot;center&quot;&gt;
-&lt;img src=&quot;/assets/images/merge_output2.png&quot; width=&quot;600&quot; height=&quot;300&quot; /&gt;
-&lt;/p&gt;
-
-&lt;h2 id=&quot;join&quot;&gt;join&lt;/h2&gt;
-&lt;ul&gt;
-  &lt;li&gt;def join(other, on=None, how=’left’, lsuffix=’’, rsuffix=’’, sort=False)&lt;/li&gt;
-  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;merge&lt;/code&gt;와의 차이 : index를 기본으로 하여 데이터를 결합하므로 사용함에 있어서 주의가 필요하다.&lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;&lt;strong&gt;parameters&lt;/strong&gt;&lt;/p&gt;
-
-    &lt;ul&gt;
-      &lt;li&gt;&lt;strong&gt;other&lt;/strong&gt; : DataFrame, Series, or list of DataFrame&lt;/li&gt;
-      &lt;li&gt;&lt;strong&gt;on&lt;/strong&gt; : str, list of str, or array-like, optional&lt;/li&gt;
-      &lt;li&gt;&lt;strong&gt;how&lt;/strong&gt; : {‘left’, ‘right’, ‘outer’, ‘inner’}, default ‘left’&lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;div class=&quot;language-py highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;df1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;join&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;other&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;df2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;how&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&apos;inner&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;lsuffix&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&apos;_l&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;rsuffix&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&apos;_r&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-
-&lt;span class=&quot;n&quot;&gt;df3&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;df1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;set_index&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&apos;left_key&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-&lt;span class=&quot;n&quot;&gt;df4&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;df2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;set_index&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&apos;right_key&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-
-&lt;span class=&quot;n&quot;&gt;df3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;join&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;other&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;df4&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;how&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&apos;inner&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;lsuffix&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&apos;_l&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;rsuffix&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&apos;_r&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p align=&quot;center&quot;&gt;
-&lt;img src=&quot;/assets/images/join_output1.png&quot; width=&quot;600&quot; height=&quot;380&quot; /&gt;
-&lt;/p&gt;
-
-&lt;hr /&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;참고자료
-    &lt;ul&gt;
-      &lt;li&gt;&lt;a href=&quot;https://pandas.pydata.org/docs/index.html&quot;&gt;pandas 공식문서&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;https://towardsdatascience.com/my-top-5-pandas-data-manipulation-function-680e346809c7&quot;&gt;Medium - My Top 5 Pandas Data Manipulation Functions&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;https://towardsdatascience.com/how-to-be-fancy-with-python-8e4c53f47789&quot;&gt;Medium - How to be fancy with Python&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;https://towardsdatascience.com/top-3-pandas-functions-you-dont-know-about-probably-5ae9e1c964c8&quot;&gt;Medium - Top 3 Pandas Functions You Don’t Know About (Probably)&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;https://medium.com/analytics-vidhya/every-dataframe-manipulation-explained-visualized-intuitively-dbeea7a5529e&quot;&gt;Medium - Every Complex DataFrame Manipulation, Explained &amp;amp; Visualized Intuitively&lt;/a&gt;&lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-&lt;/ul&gt;</content><author><name>HyangGon Jin</name></author><category term="DA" /><category term="data analysis" /><category term="python" /><category term="numpy" /><category term="pandas" /><summary type="html">Part 1.에 이어서 데이터 핸들링에 도움이 되는 python 함수들을 알아봅니다.</summary></entry></feed>
+&lt;/ul&gt;</content><author><name>HyangGon Jin</name></author><category term="DA" /><category term="python" /><category term="pandas" /><summary type="html">pandas의 DataFrame에서는 format, highlighting 등 여러 가지 style을 지정할 수 있습니다. (경험에 의하면) style의 지정은 단순히 이쁘게 보여주는 기능 외에도 하나의 column 내에서 값을 비교하거나, 관심있는 수치 구간을 확인할 때 직관적으로 원하는 정보를 쉽게 얻을 수 있다는 장점이 있었습니다.</summary></entry></feed>

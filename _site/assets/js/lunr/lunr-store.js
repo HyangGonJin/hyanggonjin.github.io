@@ -82,4 +82,10 @@ var store = [{
         "tags": ["data engineering"],
         "url": "/de/docker-tutorial/",
         "teaser": null
+      },{
+        "title": "22년 5월의 공부",
+        "excerpt":"2022년 5월 동안 검색하고 공부한 것들을 정리한 내용입니다. 1. DataFrame &amp; Dictionary dictionary 객체를 pandas의 DataFrame으로 변환할 경우, key값은 컬럼명으로 각 key에 대한 value는 컬럼값으로 들어갑니다. import pandas as pd dict1 = {'A':[1,2,3],'B':[4,5,6]} df1 = pd.DataFrame(dict1) df1 DataFrame을 dictionary로 변경하는 방법은 2가지가 있습니다. pd.Series : index가 key가 되고, Series의 값이...","categories": ["TIL"],
+        "tags": ["TIL"],
+        "url": "/til/TIL_2205/",
+        "teaser": null
       }]

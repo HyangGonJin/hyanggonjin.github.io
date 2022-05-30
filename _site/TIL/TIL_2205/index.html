@@ -1,0 +1,697 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.24.0 by Michael Rose
+  Copyright 2013-2020 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="ko" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>22년 5월의 공부 - Lego</title>
+<meta name="description" content="2022년 5월 동안 검색하고 공부한 것들을 정리한 내용입니다.  1. DataFrame &amp; Dictionary dictionary 객체를 pandas의 DataFrame으로 변환할 경우, key값은 컬럼명으로 각 key에 대한 value는 컬럼값으로 들어갑니다.  import pandas as pd  dict1 = {&#39;A&#39;:[1,2,3],&#39;B&#39;:[4,5,6]}  df1 = pd.DataFrame(dict1) df1     DataFrame을 dictionary로 변경하는 방법은 2가지가 있습니다.     pd.Series : index가 key가 되고, Series의 값이 value가 됩니다.   pd.DataFrame : 2개의 컬럼만 있는 DataFrame의 value만 가져오는 경우, 앞의 컬럼이 key 그리고 뒤의 컬럼이 value가 됩니다.   # pd.Series with index dict(df1[&#39;A&#39;]) # {0: 1, 1: 2, 2: 3}  # value of pd.DataFrame with 2 columns dict(df1.values) # {1: 4, 2: 5, 3: 6}   2. 크롤링(Crawling) - 동적 웹페이지 &amp; 마우스 오버         동적 웹페이지                동적 웹페이지란 url만으로는 들어갈 수 없는 웹페이지를 말합니다.         혹시 들어가지더라도 url의 변화가 없는데도 실시간으로 내용이 계속해서 추가되거나 수정된다면 동적 웹 페이지입니다.         여기서 무언가를 클릭해서 페이지가 변경되는 것은 다른 경우입니다.                 사례                로그인을 해야만 접속 가능한 네이버 메일         보고 있는 위치에 출력 결과와 url이 계속 변하는 네이버 지도         드래그를 아래로 내리면 계속 새로운 사진과 영상이 나타나는 인스타그램과 유튜브                   출처 : 사장님 몰래 하는 파이썬 업무자동화(부제 : 들키면 일 많아짐), 정용범, 손상우 외 1명   아래와 같이 마우스의 위치에 따라 카테고리 정보가 바뀌는 ‘네이버 쇼핑’의 카테고리 정보를 얻고자 합니다.    마우스 위치 조정 in selenium ActionChains() 함수를 이용해 마우스의 행동을 제어할 수 있습니다. perform()을 명시해줘야 실행됩니다. # 마우스 위치 지정 move1 = driver.find_element(By.XPATH,&quot;/html/body/div[1]/div[1]/div/div[1]/div/div/div[2]/div/div[3]/div/div/div[1]/ul/li[&quot;+str(i)+&quot;]/a&quot;)  # 마우스 이동 ActionChains(driver).move_to_element(move1).perform()   string → list string타입의 데이터를 list로 변경하는 방법은 list(a)와 [a] - 2가지가 있습니다. 하지만 string타입은 iterable 하므로 2가지 방법의 결과물은 차이가 있습니다. a = &#39;가나다라&#39;  # 1. list(a) # [&#39;가&#39;, &#39;나&#39;,&#39; 다&#39;,&#39; 라&#39;]  # 2. [a] # [&#39;가나다라&#39;]   다른 길이의 list 조합 생성 for 반복문을 실행하며 지정된 ‘대분류’, ‘중분류’와 이에 대한 ‘소분류’ 간의 조합을 만들고자 합니다. cycle 함수를 통해 element를 반복 입력하여 원하는 조합을 생성할 수 있습니다. from itertools import cycle  a = [&#39;a&#39;] b = [&#39;b&#39;,&#39;c&#39;,&#39;d&#39;] list(zip(cycle(a),b)) # [(&#39;a&#39;, &#39;b&#39;), (&#39;a&#39;, &#39;c&#39;), (&#39;a&#39;, &#39;d&#39;)]   전체코드 # naver_shopping_category.py import selenium from selenium import webdriver from selenium.webdriver.chrome.service import Service from selenium.webdriver.common.keys import Keys from selenium.webdriver.common.by import By from selenium.webdriver.common.action_chains import ActionChains  import time from itertools import cycle import pandas as pd  # 옵션 설정 s = Service(&#39;./chromedriver&#39;) options = webdriver.ChromeOptions() options.add_argument(&#39;headless&#39;) options.add_argument(&#39;window-size=1920x1080&#39;) options.add_argument(&quot;disable-gpu&quot;) options.add_argument(&quot;user-agent=Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36&quot;) driver = webdriver.Chrome(service=s, options=options)  driver.get(&#39;https://shopping.naver.com/home/p/index.naver&#39;)  # &#39;카테고리 더보기&#39; 클릭 driver.find_element(By.XPATH,&#39;/html/body/div[1]/div[1]/div/div[1]/div/div/div[2]/div/div[3]/button&#39;).click()  time.sleep(2)  # &#39;대분류&#39;명 수집 element1 = driver.find_element(By.CLASS_NAME,&quot;_categoryLayer_main_category_2A7mb&quot;).text.split(&quot;\n&quot;)[1:]  cat_lst = [] for i in range(1,len(element1)):     # &#39;대분류&#39; 항목으로 마우스 오버     move1 = driver.find_element(By.XPATH,&quot;/html/body/div[1]/div[1]/div/div[1]/div/div/div[2]/div/div[3]/div/div/div[1]/ul/li[&quot;+str(i)+&quot;]/a&quot;)     ActionChains(driver).move_to_element(move1).perform()      time.sleep(1)      # &#39;중분류&#39;명 수집     element2 = driver.find_element(By.CLASS_NAME,&quot;_categoryLayer_middle_category_2g2zY&quot;).text.split(&quot;\n&quot;)[1:]          for j in range(1,min(22,len(element2))):         # &#39;중분류&#39; 항목으로 마우스 오버         move2 = driver.find_element(By.XPATH,&quot;/html/body/div[1]/div[1]/div/div[1]/div/div/div[2]/div/div[3]/div/div/div[2]/ul/li[&quot;+str(j)+&quot;]/a&quot;)         ActionChains(driver).move_to_element(move2).perform()         time.sleep(1)          # &#39;소분류&#39;명 수집         try:             element3 = driver.find_element(By.CLASS_NAME,&quot;_categoryLayer_subclass_1K649&quot;).text.split(&quot;\n&quot;)[1:]         except:             element3 = []         a = [element1[i-1]]         b = [element2[j-1]]         c = element3          # (대분류,중분류,소분류) 조합 생성         zip_lst = zip(cycle(a),cycle(b),c)         cat_lst.append(list(zip_lst))  # 데이터 처리 df1 = pd.DataFrame(cat_lst) df1 = pd.melt(df1,value_vars=df1.columns).dropna() df1 = pd.DataFrame(df1.value.to_list(),columns=[&#39;대분류&#39;,&#39;중분류&#39;,&#39;소분류&#39;]) df1 = df1.sort_values([&#39;대분류&#39;,&#39;중분류&#39;,&#39;소분류&#39;]) df1.reset_index().iloc[:,1:].to_csv(&quot;naver_shopping_category.csv&quot;)  # 종료 driver.quit()">
+
+
+  <meta name="author" content="HyangGon Jin">
+  
+  <meta property="article:author" content="HyangGon Jin">
+  
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="ko_KR">
+<meta property="og:site_name" content="Lego">
+<meta property="og:title" content="22년 5월의 공부">
+<meta property="og:url" content="http://localhost:4000/til/TIL_2205/">
+
+
+  <meta property="og:description" content="2022년 5월 동안 검색하고 공부한 것들을 정리한 내용입니다.  1. DataFrame &amp; Dictionary dictionary 객체를 pandas의 DataFrame으로 변환할 경우, key값은 컬럼명으로 각 key에 대한 value는 컬럼값으로 들어갑니다.  import pandas as pd  dict1 = {&#39;A&#39;:[1,2,3],&#39;B&#39;:[4,5,6]}  df1 = pd.DataFrame(dict1) df1     DataFrame을 dictionary로 변경하는 방법은 2가지가 있습니다.     pd.Series : index가 key가 되고, Series의 값이 value가 됩니다.   pd.DataFrame : 2개의 컬럼만 있는 DataFrame의 value만 가져오는 경우, 앞의 컬럼이 key 그리고 뒤의 컬럼이 value가 됩니다.   # pd.Series with index dict(df1[&#39;A&#39;]) # {0: 1, 1: 2, 2: 3}  # value of pd.DataFrame with 2 columns dict(df1.values) # {1: 4, 2: 5, 3: 6}   2. 크롤링(Crawling) - 동적 웹페이지 &amp; 마우스 오버         동적 웹페이지                동적 웹페이지란 url만으로는 들어갈 수 없는 웹페이지를 말합니다.         혹시 들어가지더라도 url의 변화가 없는데도 실시간으로 내용이 계속해서 추가되거나 수정된다면 동적 웹 페이지입니다.         여기서 무언가를 클릭해서 페이지가 변경되는 것은 다른 경우입니다.                 사례                로그인을 해야만 접속 가능한 네이버 메일         보고 있는 위치에 출력 결과와 url이 계속 변하는 네이버 지도         드래그를 아래로 내리면 계속 새로운 사진과 영상이 나타나는 인스타그램과 유튜브                   출처 : 사장님 몰래 하는 파이썬 업무자동화(부제 : 들키면 일 많아짐), 정용범, 손상우 외 1명   아래와 같이 마우스의 위치에 따라 카테고리 정보가 바뀌는 ‘네이버 쇼핑’의 카테고리 정보를 얻고자 합니다.    마우스 위치 조정 in selenium ActionChains() 함수를 이용해 마우스의 행동을 제어할 수 있습니다. perform()을 명시해줘야 실행됩니다. # 마우스 위치 지정 move1 = driver.find_element(By.XPATH,&quot;/html/body/div[1]/div[1]/div/div[1]/div/div/div[2]/div/div[3]/div/div/div[1]/ul/li[&quot;+str(i)+&quot;]/a&quot;)  # 마우스 이동 ActionChains(driver).move_to_element(move1).perform()   string → list string타입의 데이터를 list로 변경하는 방법은 list(a)와 [a] - 2가지가 있습니다. 하지만 string타입은 iterable 하므로 2가지 방법의 결과물은 차이가 있습니다. a = &#39;가나다라&#39;  # 1. list(a) # [&#39;가&#39;, &#39;나&#39;,&#39; 다&#39;,&#39; 라&#39;]  # 2. [a] # [&#39;가나다라&#39;]   다른 길이의 list 조합 생성 for 반복문을 실행하며 지정된 ‘대분류’, ‘중분류’와 이에 대한 ‘소분류’ 간의 조합을 만들고자 합니다. cycle 함수를 통해 element를 반복 입력하여 원하는 조합을 생성할 수 있습니다. from itertools import cycle  a = [&#39;a&#39;] b = [&#39;b&#39;,&#39;c&#39;,&#39;d&#39;] list(zip(cycle(a),b)) # [(&#39;a&#39;, &#39;b&#39;), (&#39;a&#39;, &#39;c&#39;), (&#39;a&#39;, &#39;d&#39;)]   전체코드 # naver_shopping_category.py import selenium from selenium import webdriver from selenium.webdriver.chrome.service import Service from selenium.webdriver.common.keys import Keys from selenium.webdriver.common.by import By from selenium.webdriver.common.action_chains import ActionChains  import time from itertools import cycle import pandas as pd  # 옵션 설정 s = Service(&#39;./chromedriver&#39;) options = webdriver.ChromeOptions() options.add_argument(&#39;headless&#39;) options.add_argument(&#39;window-size=1920x1080&#39;) options.add_argument(&quot;disable-gpu&quot;) options.add_argument(&quot;user-agent=Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36&quot;) driver = webdriver.Chrome(service=s, options=options)  driver.get(&#39;https://shopping.naver.com/home/p/index.naver&#39;)  # &#39;카테고리 더보기&#39; 클릭 driver.find_element(By.XPATH,&#39;/html/body/div[1]/div[1]/div/div[1]/div/div/div[2]/div/div[3]/button&#39;).click()  time.sleep(2)  # &#39;대분류&#39;명 수집 element1 = driver.find_element(By.CLASS_NAME,&quot;_categoryLayer_main_category_2A7mb&quot;).text.split(&quot;\n&quot;)[1:]  cat_lst = [] for i in range(1,len(element1)):     # &#39;대분류&#39; 항목으로 마우스 오버     move1 = driver.find_element(By.XPATH,&quot;/html/body/div[1]/div[1]/div/div[1]/div/div/div[2]/div/div[3]/div/div/div[1]/ul/li[&quot;+str(i)+&quot;]/a&quot;)     ActionChains(driver).move_to_element(move1).perform()      time.sleep(1)      # &#39;중분류&#39;명 수집     element2 = driver.find_element(By.CLASS_NAME,&quot;_categoryLayer_middle_category_2g2zY&quot;).text.split(&quot;\n&quot;)[1:]          for j in range(1,min(22,len(element2))):         # &#39;중분류&#39; 항목으로 마우스 오버         move2 = driver.find_element(By.XPATH,&quot;/html/body/div[1]/div[1]/div/div[1]/div/div/div[2]/div/div[3]/div/div/div[2]/ul/li[&quot;+str(j)+&quot;]/a&quot;)         ActionChains(driver).move_to_element(move2).perform()         time.sleep(1)          # &#39;소분류&#39;명 수집         try:             element3 = driver.find_element(By.CLASS_NAME,&quot;_categoryLayer_subclass_1K649&quot;).text.split(&quot;\n&quot;)[1:]         except:             element3 = []         a = [element1[i-1]]         b = [element2[j-1]]         c = element3          # (대분류,중분류,소분류) 조합 생성         zip_lst = zip(cycle(a),cycle(b),c)         cat_lst.append(list(zip_lst))  # 데이터 처리 df1 = pd.DataFrame(cat_lst) df1 = pd.melt(df1,value_vars=df1.columns).dropna() df1 = pd.DataFrame(df1.value.to_list(),columns=[&#39;대분류&#39;,&#39;중분류&#39;,&#39;소분류&#39;]) df1 = df1.sort_values([&#39;대분류&#39;,&#39;중분류&#39;,&#39;소분류&#39;]) df1.reset_index().iloc[:,1:].to_csv(&quot;naver_shopping_category.csv&quot;)  # 종료 driver.quit()">
+
+
+
+
+
+
+
+  <meta property="article:published_time" content="2022-05-29T00:00:00+09:00">
+
+
+
+  <meta property="article:modified_time" content="2022-05-29T00:00:00+09:00">
+
+
+
+  
+
+  
+
+
+<link rel="canonical" href="http://localhost:4000/til/TIL_2205/">
+
+
+
+
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    
+      "@type": "Person",
+      "name": "HyangGon Jin",
+      "url": "http://localhost:4000/"
+    
+  }
+</script>
+
+
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+
+  <link href="/feed.xml" type="application/atom+xml" rel="alternate" title="Lego Feed">
+
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css"></noscript>
+
+
+
+    <!-- start custom head snippets -->
+
+<!-- insert favicons. use https://realfavicongenerator.net/ -->
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body class="layout--single">
+    <nav class="skip-links">
+  <ul>
+    <li><a href="#site-nav" class="screen-reader-shortcut">Skip to primary navigation</a></li>
+    <li><a href="#main" class="screen-reader-shortcut">Skip to content</a></li>
+    <li><a href="#footer" class="screen-reader-shortcut">Skip to footer</a></li>
+  </ul>
+</nav>
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+        <a class="site-title" href="/">
+          Lego
+          <span class="site-subtitle"></span>
+        </a>
+        <ul class="visible-links"><li class="masthead__menu-item">
+              <a href="/categories/">Category</a>
+            </li><li class="masthead__menu-item">
+              <a href="/tags/">Tag</a>
+            </li><li class="masthead__menu-item">
+              <a href="/about/">About</a>
+            </li><li class="masthead__menu-item">
+              <a href="/search/">Search</a>
+            </li></ul>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">토글 메뉴</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="https://schema.org/Person" class="h-card">
+
+  
+    <div class="author__avatar">
+      <a href="http://localhost:4000/">
+        <img src="/assets/images/blue_lego_ver.1.png" alt="HyangGon Jin" itemprop="image" class="u-photo">
+      </a>
+    </div>
+  
+
+  <div class="author__content">
+    <h3 class="author__name p-name" itemprop="name">
+      <a class="u-url" rel="me" href="http://localhost:4000/" itemprop="url">HyangGon Jin</a>
+    </h3>
+    
+      <div class="author__bio p-note" itemprop="description">
+        <p>#Statistics #ML #Python #R</p>
+
+      </div>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">팔로우</button>
+    <ul class="author__urls social-icons">
+      
+        <li itemprop="homeLocation" itemscope itemtype="https://schema.org/Place">
+          <i class="fas fa-fw fa-map-marker-alt" aria-hidden="true"></i> <span itemprop="name" class="p-locality">Seoul</span>
+        </li>
+      
+
+      
+        
+          
+            <li><a href="mailto:nike3616@gmail.com" rel="nofollow noopener noreferrer me"><i class="fas fa-fw fa-envelope-square" aria-hidden="true"></i><span class="label">Email</span></a></li>
+          
+        
+          
+        
+          
+        
+          
+            <li><a href="https://github.com/hyanggonjin" rel="nofollow noopener noreferrer me"><i class="fab fa-fw fa-github" aria-hidden="true"></i><span class="label">GitHub</span></a></li>
+          
+        
+          
+        
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs" rel="nofollow noopener noreferrer me">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+  
+  </div>
+
+
+
+  <article class="page h-entry" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="22년 5월의 공부">
+    <meta itemprop="description" content="2022년 5월 동안 검색하고 공부한 것들을 정리한 내용입니다.1. DataFrame &amp; Dictionarydictionary 객체를 pandas의 DataFrame으로 변환할 경우, key값은 컬럼명으로 각 key에 대한 value는 컬럼값으로 들어갑니다.import pandas as pddict1 = {&#39;A&#39;:[1,2,3],&#39;B&#39;:[4,5,6]}df1 = pd.DataFrame(dict1)df1DataFrame을 dictionary로 변경하는 방법은 2가지가 있습니다.  pd.Series : index가 key가 되고, Series의 값이 value가 됩니다.  pd.DataFrame : 2개의 컬럼만 있는 DataFrame의 value만 가져오는 경우, 앞의 컬럼이 key 그리고 뒤의 컬럼이 value가 됩니다.# pd.Series with indexdict(df1[&#39;A&#39;]) # {0: 1, 1: 2, 2: 3}# value of pd.DataFrame with 2 columnsdict(df1.values) # {1: 4, 2: 5, 3: 6}2. 크롤링(Crawling) - 동적 웹페이지 &amp; 마우스 오버      동적 웹페이지              동적 웹페이지란 url만으로는 들어갈 수 없는 웹페이지를 말합니다.        혹시 들어가지더라도 url의 변화가 없는데도 실시간으로 내용이 계속해서 추가되거나 수정된다면 동적 웹 페이지입니다.        여기서 무언가를 클릭해서 페이지가 변경되는 것은 다른 경우입니다.              사례              로그인을 해야만 접속 가능한 네이버 메일        보고 있는 위치에 출력 결과와 url이 계속 변하는 네이버 지도        드래그를 아래로 내리면 계속 새로운 사진과 영상이 나타나는 인스타그램과 유튜브              출처 : 사장님 몰래 하는 파이썬 업무자동화(부제 : 들키면 일 많아짐), 정용범, 손상우 외 1명아래와 같이 마우스의 위치에 따라 카테고리 정보가 바뀌는 ‘네이버 쇼핑’의 카테고리 정보를 얻고자 합니다.마우스 위치 조정 in seleniumActionChains() 함수를 이용해 마우스의 행동을 제어할 수 있습니다. perform()을 명시해줘야 실행됩니다.# 마우스 위치 지정move1 = driver.find_element(By.XPATH,&quot;/html/body/div[1]/div[1]/div/div[1]/div/div/div[2]/div/div[3]/div/div/div[1]/ul/li[&quot;+str(i)+&quot;]/a&quot;)# 마우스 이동ActionChains(driver).move_to_element(move1).perform()string → liststring타입의 데이터를 list로 변경하는 방법은 list(a)와 [a] - 2가지가 있습니다. 하지만 string타입은 iterable 하므로 2가지 방법의 결과물은 차이가 있습니다.a = &#39;가나다라&#39;# 1.list(a) # [&#39;가&#39;, &#39;나&#39;,&#39; 다&#39;,&#39; 라&#39;]# 2.[a] # [&#39;가나다라&#39;]다른 길이의 list 조합 생성for 반복문을 실행하며 지정된 ‘대분류’, ‘중분류’와 이에 대한 ‘소분류’ 간의 조합을 만들고자 합니다. cycle 함수를 통해 element를 반복 입력하여 원하는 조합을 생성할 수 있습니다.from itertools import cyclea = [&#39;a&#39;]b = [&#39;b&#39;,&#39;c&#39;,&#39;d&#39;]list(zip(cycle(a),b)) # [(&#39;a&#39;, &#39;b&#39;), (&#39;a&#39;, &#39;c&#39;), (&#39;a&#39;, &#39;d&#39;)]전체코드# naver_shopping_category.pyimport seleniumfrom selenium import webdriverfrom selenium.webdriver.chrome.service import Servicefrom selenium.webdriver.common.keys import Keysfrom selenium.webdriver.common.by import Byfrom selenium.webdriver.common.action_chains import ActionChainsimport timefrom itertools import cycleimport pandas as pd# 옵션 설정s = Service(&#39;./chromedriver&#39;)options = webdriver.ChromeOptions()options.add_argument(&#39;headless&#39;)options.add_argument(&#39;window-size=1920x1080&#39;)options.add_argument(&quot;disable-gpu&quot;)options.add_argument(&quot;user-agent=Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36&quot;)driver = webdriver.Chrome(service=s, options=options)driver.get(&#39;https://shopping.naver.com/home/p/index.naver&#39;)# &#39;카테고리 더보기&#39; 클릭driver.find_element(By.XPATH,&#39;/html/body/div[1]/div[1]/div/div[1]/div/div/div[2]/div/div[3]/button&#39;).click()time.sleep(2)# &#39;대분류&#39;명 수집element1 = driver.find_element(By.CLASS_NAME,&quot;_categoryLayer_main_category_2A7mb&quot;).text.split(&quot;\n&quot;)[1:]cat_lst = []for i in range(1,len(element1)):    # &#39;대분류&#39; 항목으로 마우스 오버    move1 = driver.find_element(By.XPATH,&quot;/html/body/div[1]/div[1]/div/div[1]/div/div/div[2]/div/div[3]/div/div/div[1]/ul/li[&quot;+str(i)+&quot;]/a&quot;)    ActionChains(driver).move_to_element(move1).perform()    time.sleep(1)    # &#39;중분류&#39;명 수집    element2 = driver.find_element(By.CLASS_NAME,&quot;_categoryLayer_middle_category_2g2zY&quot;).text.split(&quot;\n&quot;)[1:]        for j in range(1,min(22,len(element2))):        # &#39;중분류&#39; 항목으로 마우스 오버        move2 = driver.find_element(By.XPATH,&quot;/html/body/div[1]/div[1]/div/div[1]/div/div/div[2]/div/div[3]/div/div/div[2]/ul/li[&quot;+str(j)+&quot;]/a&quot;)        ActionChains(driver).move_to_element(move2).perform()        time.sleep(1)        # &#39;소분류&#39;명 수집        try:            element3 = driver.find_element(By.CLASS_NAME,&quot;_categoryLayer_subclass_1K649&quot;).text.split(&quot;\n&quot;)[1:]        except:            element3 = []        a = [element1[i-1]]        b = [element2[j-1]]        c = element3        # (대분류,중분류,소분류) 조합 생성        zip_lst = zip(cycle(a),cycle(b),c)        cat_lst.append(list(zip_lst))# 데이터 처리df1 = pd.DataFrame(cat_lst)df1 = pd.melt(df1,value_vars=df1.columns).dropna()df1 = pd.DataFrame(df1.value.to_list(),columns=[&#39;대분류&#39;,&#39;중분류&#39;,&#39;소분류&#39;])df1 = df1.sort_values([&#39;대분류&#39;,&#39;중분류&#39;,&#39;소분류&#39;])df1.reset_index().iloc[:,1:].to_csv(&quot;naver_shopping_category.csv&quot;)# 종료driver.quit()">
+    <meta itemprop="datePublished" content="2022-05-29T00:00:00+09:00">
+    <meta itemprop="dateModified" content="2022-05-29T00:00:00+09:00">
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <h1 id="page-title" class="page__title p-name" itemprop="headline">
+            <a href="http://localhost:4000/til/TIL_2205/" class="u-url" itemprop="url">22년 5월의 공부
+</a>
+          </h1>
+          
+
+
+        </header>
+      
+
+      <section class="page__content e-content" itemprop="text">
+        
+          <aside class="sidebar__right sticky">
+            <nav class="toc">
+              <header><h4 class="nav__title"><i class="fas fa-file-alt"></i> On This Page</h4></header>
+              <ul class="toc__menu"><li><a href="#1-dataframe--dictionary">1. DataFrame &amp; Dictionary</a></li><li><a href="#2-크롤링crawling---동적-웹페이지--마우스-오버">2. 크롤링(Crawling) - 동적 웹페이지 &amp; 마우스 오버</a><ul><li><a href="#마우스-위치-조정-in-selenium">마우스 위치 조정 in selenium</a></li><li><a href="#string--list">string → list</a></li><li><a href="#다른-길이의-list-조합-생성">다른 길이의 list 조합 생성</a></li><li><a href="#전체코드">전체코드</a></li></ul></li></ul>
+
+            </nav>
+          </aside>
+        
+        <p>2022년 5월 동안 검색하고 공부한 것들을 정리한 내용입니다.</p>
+
+<h2 id="1-dataframe--dictionary">1. DataFrame &amp; Dictionary</h2>
+<p>dictionary 객체를 pandas의 DataFrame으로 변환할 경우, key값은 컬럼명으로 각 key에 대한 value는 컬럼값으로 들어갑니다.</p>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="n">pd</span>
+
+<span class="n">dict1</span> <span class="o">=</span> <span class="p">{</span><span class="s">'A'</span><span class="p">:[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">],</span><span class="s">'B'</span><span class="p">:[</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">6</span><span class="p">]}</span>
+
+<span class="n">df1</span> <span class="o">=</span> <span class="n">pd</span><span class="p">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">dict1</span><span class="p">)</span>
+<span class="n">df1</span>
+</code></pre></div></div>
+
+<p><img src="/assets/images/til_05_1.png" alt="image" /></p>
+
+<p>DataFrame을 dictionary로 변경하는 방법은 2가지가 있습니다.</p>
+
+<ol>
+  <li><code class="language-plaintext highlighter-rouge">pd.Series</code> : index가 key가 되고, Series의 값이 value가 됩니다.</li>
+  <li><code class="language-plaintext highlighter-rouge">pd.DataFrame</code> : 2개의 컬럼만 있는 DataFrame의 value만 가져오는 경우, 앞의 컬럼이 key 그리고 뒤의 컬럼이 value가 됩니다.</li>
+</ol>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># pd.Series with index
+</span><span class="nb">dict</span><span class="p">(</span><span class="n">df1</span><span class="p">[</span><span class="s">'A'</span><span class="p">])</span> <span class="c1"># {0: 1, 1: 2, 2: 3}
+</span>
+<span class="c1"># value of pd.DataFrame with 2 columns
+</span><span class="nb">dict</span><span class="p">(</span><span class="n">df1</span><span class="p">.</span><span class="n">values</span><span class="p">)</span> <span class="c1"># {1: 4, 2: 5, 3: 6}
+</span></code></pre></div></div>
+
+<h2 id="2-크롤링crawling---동적-웹페이지--마우스-오버">2. 크롤링(Crawling) - 동적 웹페이지 &amp; 마우스 오버</h2>
+<blockquote>
+  <ul>
+    <li>동적 웹페이지
+      <ul>
+        <li>동적 웹페이지란 url만으로는 들어갈 수 없는 웹페이지를 말합니다.</li>
+        <li>혹시 들어가지더라도 url의 변화가 없는데도 실시간으로 내용이 계속해서 추가되거나 수정된다면 동적 웹 페이지입니다.</li>
+        <li>여기서 무언가를 클릭해서 페이지가 변경되는 것은 다른 경우입니다.</li>
+      </ul>
+    </li>
+    <li>사례
+      <ol>
+        <li>로그인을 해야만 접속 가능한 네이버 메일</li>
+        <li>보고 있는 위치에 출력 결과와 url이 계속 변하는 네이버 지도</li>
+        <li>드래그를 아래로 내리면 계속 새로운 사진과 영상이 나타나는 인스타그램과 유튜브</li>
+      </ol>
+    </li>
+  </ul>
+
+  <p>출처 : <a href="https://wikidocs.net/141607">사장님 몰래 하는 파이썬 업무자동화(부제 : 들키면 일 많아짐), 정용범, 손상우 외 1명</a></p>
+</blockquote>
+
+<p>아래와 같이 마우스의 위치에 따라 카테고리 정보가 바뀌는 ‘네이버 쇼핑’의 카테고리 정보를 얻고자 합니다.</p>
+
+<p><img src="/assets/images/til_05_2.png" alt="image" /></p>
+
+<h3 id="마우스-위치-조정-in-selenium">마우스 위치 조정 in selenium</h3>
+<p><code class="language-plaintext highlighter-rouge">ActionChains()</code> 함수를 이용해 마우스의 행동을 제어할 수 있습니다. <code class="language-plaintext highlighter-rouge">perform()</code>을 명시해줘야 실행됩니다.</p>
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># 마우스 위치 지정
+</span><span class="n">move1</span> <span class="o">=</span> <span class="n">driver</span><span class="p">.</span><span class="n">find_element</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="n">XPATH</span><span class="p">,</span><span class="s">"/html/body/div[1]/div[1]/div/div[1]/div/div/div[2]/div/div[3]/div/div/div[1]/ul/li["</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="o">+</span><span class="s">"]/a"</span><span class="p">)</span>
+
+<span class="c1"># 마우스 이동
+</span><span class="n">ActionChains</span><span class="p">(</span><span class="n">driver</span><span class="p">).</span><span class="n">move_to_element</span><span class="p">(</span><span class="n">move1</span><span class="p">).</span><span class="n">perform</span><span class="p">()</span>
+</code></pre></div></div>
+
+<h3 id="string--list">string → list</h3>
+<p><code class="language-plaintext highlighter-rouge">string</code>타입의 데이터를 <code class="language-plaintext highlighter-rouge">list</code>로 변경하는 방법은 <code class="language-plaintext highlighter-rouge">list(a)</code>와 <code class="language-plaintext highlighter-rouge">[a]</code> - 2가지가 있습니다. 하지만 <code class="language-plaintext highlighter-rouge">string</code>타입은 iterable 하므로 2가지 방법의 결과물은 차이가 있습니다.</p>
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">a</span> <span class="o">=</span> <span class="s">'가나다라'</span>
+
+<span class="c1"># 1.
+</span><span class="nb">list</span><span class="p">(</span><span class="n">a</span><span class="p">)</span> <span class="c1"># ['가', '나',' 다',' 라']
+</span>
+<span class="c1"># 2.
+</span><span class="p">[</span><span class="n">a</span><span class="p">]</span> <span class="c1"># ['가나다라']
+</span></code></pre></div></div>
+
+<h3 id="다른-길이의-list-조합-생성">다른 길이의 list 조합 생성</h3>
+<p>for 반복문을 실행하며 지정된 ‘대분류’, ‘중분류’와 이에 대한 ‘소분류’ 간의 조합을 만들고자 합니다. <code class="language-plaintext highlighter-rouge">cycle</code> 함수를 통해 element를 반복 입력하여 원하는 조합을 생성할 수 있습니다.</p>
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">itertools</span> <span class="kn">import</span> <span class="n">cycle</span>
+
+<span class="n">a</span> <span class="o">=</span> <span class="p">[</span><span class="s">'a'</span><span class="p">]</span>
+<span class="n">b</span> <span class="o">=</span> <span class="p">[</span><span class="s">'b'</span><span class="p">,</span><span class="s">'c'</span><span class="p">,</span><span class="s">'d'</span><span class="p">]</span>
+<span class="nb">list</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">cycle</span><span class="p">(</span><span class="n">a</span><span class="p">),</span><span class="n">b</span><span class="p">))</span> <span class="c1"># [('a', 'b'), ('a', 'c'), ('a', 'd')]
+</span></code></pre></div></div>
+
+<h3 id="전체코드">전체코드</h3>
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># naver_shopping_category.py
+</span><span class="kn">import</span> <span class="nn">selenium</span>
+<span class="kn">from</span> <span class="nn">selenium</span> <span class="kn">import</span> <span class="n">webdriver</span>
+<span class="kn">from</span> <span class="nn">selenium.webdriver.chrome.service</span> <span class="kn">import</span> <span class="n">Service</span>
+<span class="kn">from</span> <span class="nn">selenium.webdriver.common.keys</span> <span class="kn">import</span> <span class="n">Keys</span>
+<span class="kn">from</span> <span class="nn">selenium.webdriver.common.by</span> <span class="kn">import</span> <span class="n">By</span>
+<span class="kn">from</span> <span class="nn">selenium.webdriver.common.action_chains</span> <span class="kn">import</span> <span class="n">ActionChains</span>
+
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">from</span> <span class="nn">itertools</span> <span class="kn">import</span> <span class="n">cycle</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="n">pd</span>
+
+<span class="c1"># 옵션 설정
+</span><span class="n">s</span> <span class="o">=</span> <span class="n">Service</span><span class="p">(</span><span class="s">'./chromedriver'</span><span class="p">)</span>
+<span class="n">options</span> <span class="o">=</span> <span class="n">webdriver</span><span class="p">.</span><span class="n">ChromeOptions</span><span class="p">()</span>
+<span class="n">options</span><span class="p">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">'headless'</span><span class="p">)</span>
+<span class="n">options</span><span class="p">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">'window-size=1920x1080'</span><span class="p">)</span>
+<span class="n">options</span><span class="p">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">"disable-gpu"</span><span class="p">)</span>
+<span class="n">options</span><span class="p">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">"user-agent=Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36"</span><span class="p">)</span>
+<span class="n">driver</span> <span class="o">=</span> <span class="n">webdriver</span><span class="p">.</span><span class="n">Chrome</span><span class="p">(</span><span class="n">service</span><span class="o">=</span><span class="n">s</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="n">options</span><span class="p">)</span>
+
+<span class="n">driver</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="s">'https://shopping.naver.com/home/p/index.naver'</span><span class="p">)</span>
+
+<span class="c1"># '카테고리 더보기' 클릭
+</span><span class="n">driver</span><span class="p">.</span><span class="n">find_element</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="n">XPATH</span><span class="p">,</span><span class="s">'/html/body/div[1]/div[1]/div/div[1]/div/div/div[2]/div/div[3]/button'</span><span class="p">).</span><span class="n">click</span><span class="p">()</span>
+
+<span class="n">time</span><span class="p">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+
+<span class="c1"># '대분류'명 수집
+</span><span class="n">element1</span> <span class="o">=</span> <span class="n">driver</span><span class="p">.</span><span class="n">find_element</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="n">CLASS_NAME</span><span class="p">,</span><span class="s">"_categoryLayer_main_category_2A7mb"</span><span class="p">).</span><span class="n">text</span><span class="p">.</span><span class="n">split</span><span class="p">(</span><span class="s">"</span><span class="se">\n</span><span class="s">"</span><span class="p">)[</span><span class="mi">1</span><span class="p">:]</span>
+
+<span class="n">cat_lst</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">element1</span><span class="p">)):</span>
+    <span class="c1"># '대분류' 항목으로 마우스 오버
+</span>    <span class="n">move1</span> <span class="o">=</span> <span class="n">driver</span><span class="p">.</span><span class="n">find_element</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="n">XPATH</span><span class="p">,</span><span class="s">"/html/body/div[1]/div[1]/div/div[1]/div/div/div[2]/div/div[3]/div/div/div[1]/ul/li["</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="o">+</span><span class="s">"]/a"</span><span class="p">)</span>
+    <span class="n">ActionChains</span><span class="p">(</span><span class="n">driver</span><span class="p">).</span><span class="n">move_to_element</span><span class="p">(</span><span class="n">move1</span><span class="p">).</span><span class="n">perform</span><span class="p">()</span>
+
+    <span class="n">time</span><span class="p">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="c1"># '중분류'명 수집
+</span>    <span class="n">element2</span> <span class="o">=</span> <span class="n">driver</span><span class="p">.</span><span class="n">find_element</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="n">CLASS_NAME</span><span class="p">,</span><span class="s">"_categoryLayer_middle_category_2g2zY"</span><span class="p">).</span><span class="n">text</span><span class="p">.</span><span class="n">split</span><span class="p">(</span><span class="s">"</span><span class="se">\n</span><span class="s">"</span><span class="p">)[</span><span class="mi">1</span><span class="p">:]</span>    
+
+    <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="nb">min</span><span class="p">(</span><span class="mi">22</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">element2</span><span class="p">))):</span>
+        <span class="c1"># '중분류' 항목으로 마우스 오버
+</span>        <span class="n">move2</span> <span class="o">=</span> <span class="n">driver</span><span class="p">.</span><span class="n">find_element</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="n">XPATH</span><span class="p">,</span><span class="s">"/html/body/div[1]/div[1]/div/div[1]/div/div/div[2]/div/div[3]/div/div/div[2]/ul/li["</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">j</span><span class="p">)</span><span class="o">+</span><span class="s">"]/a"</span><span class="p">)</span>
+        <span class="n">ActionChains</span><span class="p">(</span><span class="n">driver</span><span class="p">).</span><span class="n">move_to_element</span><span class="p">(</span><span class="n">move2</span><span class="p">).</span><span class="n">perform</span><span class="p">()</span>
+        <span class="n">time</span><span class="p">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="c1"># '소분류'명 수집
+</span>        <span class="k">try</span><span class="p">:</span>
+            <span class="n">element3</span> <span class="o">=</span> <span class="n">driver</span><span class="p">.</span><span class="n">find_element</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="n">CLASS_NAME</span><span class="p">,</span><span class="s">"_categoryLayer_subclass_1K649"</span><span class="p">).</span><span class="n">text</span><span class="p">.</span><span class="n">split</span><span class="p">(</span><span class="s">"</span><span class="se">\n</span><span class="s">"</span><span class="p">)[</span><span class="mi">1</span><span class="p">:]</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="n">element3</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">a</span> <span class="o">=</span> <span class="p">[</span><span class="n">element1</span><span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">]]</span>
+        <span class="n">b</span> <span class="o">=</span> <span class="p">[</span><span class="n">element2</span><span class="p">[</span><span class="n">j</span><span class="o">-</span><span class="mi">1</span><span class="p">]]</span>
+        <span class="n">c</span> <span class="o">=</span> <span class="n">element3</span>
+
+        <span class="c1"># (대분류,중분류,소분류) 조합 생성
+</span>        <span class="n">zip_lst</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span><span class="n">cycle</span><span class="p">(</span><span class="n">a</span><span class="p">),</span><span class="n">cycle</span><span class="p">(</span><span class="n">b</span><span class="p">),</span><span class="n">c</span><span class="p">)</span>
+        <span class="n">cat_lst</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">zip_lst</span><span class="p">))</span>
+
+<span class="c1"># 데이터 처리
+</span><span class="n">df1</span> <span class="o">=</span> <span class="n">pd</span><span class="p">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">cat_lst</span><span class="p">)</span>
+<span class="n">df1</span> <span class="o">=</span> <span class="n">pd</span><span class="p">.</span><span class="n">melt</span><span class="p">(</span><span class="n">df1</span><span class="p">,</span><span class="n">value_vars</span><span class="o">=</span><span class="n">df1</span><span class="p">.</span><span class="n">columns</span><span class="p">).</span><span class="n">dropna</span><span class="p">()</span>
+<span class="n">df1</span> <span class="o">=</span> <span class="n">pd</span><span class="p">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">df1</span><span class="p">.</span><span class="n">value</span><span class="p">.</span><span class="n">to_list</span><span class="p">(),</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s">'대분류'</span><span class="p">,</span><span class="s">'중분류'</span><span class="p">,</span><span class="s">'소분류'</span><span class="p">])</span>
+<span class="n">df1</span> <span class="o">=</span> <span class="n">df1</span><span class="p">.</span><span class="n">sort_values</span><span class="p">([</span><span class="s">'대분류'</span><span class="p">,</span><span class="s">'중분류'</span><span class="p">,</span><span class="s">'소분류'</span><span class="p">])</span>
+<span class="n">df1</span><span class="p">.</span><span class="n">reset_index</span><span class="p">().</span><span class="n">iloc</span><span class="p">[:,</span><span class="mi">1</span><span class="p">:].</span><span class="n">to_csv</span><span class="p">(</span><span class="s">"naver_shopping_category.csv"</span><span class="p">)</span>
+
+<span class="c1"># 종료
+</span><span class="n">driver</span><span class="p">.</span><span class="n">quit</span><span class="p">()</span>
+</code></pre></div></div>
+
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> 태그: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/tags/#til" class="page__taxonomy-item p-category" rel="tag">TIL</a>
+    
+    </span>
+  </p>
+
+
+
+
+  
+
+
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-folder-open" aria-hidden="true"></i> 카테고리: </strong>
+    <span itemprop="keywords">
+    
+      <a href="/categories/#til" class="page__taxonomy-item p-category" rel="tag">TIL</a>
+    
+    </span>
+  </p>
+
+
+        
+
+  <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> 업데이트:</strong> <time class="dt-published" datetime="2022-05-29">May 29, 2022</time></p>
+
+      </footer>
+
+      <section class="page__share">
+  
+    <h4 class="page__share-title">공유하기</h4>
+  
+
+  <a href="https://twitter.com/intent/tweet?text=22%EB%85%84+5%EC%9B%94%EC%9D%98+%EA%B3%B5%EB%B6%80%20http%3A%2F%2Flocalhost%3A4000%2Ftil%2FTIL_2205%2F" class="btn btn--twitter" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="공유하기 Twitter"><i class="fab fa-fw fa-twitter" aria-hidden="true"></i><span> Twitter</span></a>
+
+  <a href="https://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Flocalhost%3A4000%2Ftil%2FTIL_2205%2F" class="btn btn--facebook" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="공유하기 Facebook"><i class="fab fa-fw fa-facebook" aria-hidden="true"></i><span> Facebook</span></a>
+
+  <a href="https://www.linkedin.com/shareArticle?mini=true&url=http%3A%2F%2Flocalhost%3A4000%2Ftil%2FTIL_2205%2F" class="btn btn--linkedin" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="공유하기 LinkedIn"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i><span> LinkedIn</span></a>
+</section>
+
+
+      
+  <nav class="pagination">
+    
+      <a href="/de/docker-tutorial/" class="pagination--pager" title="Docker 시작하기
+">이전</a>
+    
+    
+      <a href="#" class="pagination--pager disabled">다음</a>
+    
+  </nav>
+
+    </div>
+
+    
+  </article>
+
+  
+  
+    <div class="page__related">
+      <h2 class="page__related-title">참고</h2>
+      <div class="grid__wrapper">
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/de/docker-tutorial/" rel="permalink">Docker 시작하기
+</a>
+      
+    </h2>
+    
+
+
+    <p class="archive__item-excerpt" itemprop="description">본 문서는 docker 공식문서 - Get Started를 바탕으로 작성된 자료입니다.
+
+필요한 자료는 링크 에서 다운로드 할 수 있습니다.
+
+build
+
+  docker build 명령어를 통해 작성된 Dockerfile을 바탕으로 도커 이미지(docker image)를 생성할 ...</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/til/TIL_2204/" rel="permalink">22년 4월의 공부
+</a>
+      
+    </h2>
+    
+
+
+    <p class="archive__item-excerpt" itemprop="description">2022년 4월 동안 검색하고 공부한 것들을 정리한 내용입니다.
+
+1. dataclasses
+
+  참고: dataclasses 공식문서
+  __init__() 나 __repr__() 과 같은 생성된 특수 메서드를 사용자 정의 클래스에 자동으로 추가하는 데코레이터와 함수를 제공합니다...</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/da/handle_to_json/" rel="permalink">JSON 데이터 다루기
+</a>
+      
+    </h2>
+    
+
+
+    <p class="archive__item-excerpt" itemprop="description">JSON 데이터와 관련된 함수를 알아봅니다.
+
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/da/pendulum_manipulation_datetimes/" rel="permalink">pendulum - datetime 다루기
+</a>
+      
+    </h2>
+    
+
+
+    <p class="archive__item-excerpt" itemprop="description">Python에서 datetime 객체를 다루는 라이브러리 중 하나인 pendulum에 대해서 간단히 알아보겠습니다.
+
+Instantiation
+pendulum의 default timezone은 ‘UTC’입니다.
+
+import pendulum
+
+dt = pendulum.datetim...</p>
+  </article>
+</div>
+
+        
+      </div>
+    </div>
+  
+  
+</div>
+    </div>
+
+    
+
+    <div id="footer" class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+
+<!-- end custom footer snippets -->
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+      <li><strong>팔로우:</strong></li>
+    
+
+    
+      
+        
+      
+        
+          <li><a href="https://github.com/hyanggonjin" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+        
+      
+        
+      
+    
+
+    
+      <li><a href="/feed.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> 피드</a></li>
+    
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2022 HyangGon Jin. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script src="/assets/js/main.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+  </body>
+</html>

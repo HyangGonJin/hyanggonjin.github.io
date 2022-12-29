@@ -13,7 +13,7 @@ last_modified_at: 2022-12-29
 
 API를 활용하기 위해 준비해야될 것들은 [해당 링크](https://developers.naver.com/main/)에서 애플리케이션을 등록한 후 약관 동의 및 인증 절차를 완료해야 합니다. 이후 과정을 위해 만든 애플리케이션의 정보는 아래와 같습니다. 
 
-![image](/assets/img/2022-12-29/naver_api_img1.PNG){: width="90%" }
+![image](https://github.com/HyangGonJin/hyanggonjin.github.io/blob/main/assets/img/naver_api_img1.png?raw=true)
 
 애플리케이션을 만든 후, 애플리케이션 정보에서 본인의 `Client ID`와 `Client Secret`를 확인 가능합니다.
 
@@ -59,7 +59,7 @@ pd.DataFrame(tmp['items'])
 
 아래 결과는 'TV'를 검색해 나오는 결과 중 5개만 추출한 결과입니다.
 
-![imgs](/assets/img/2022-12-29/naver_api_img2.png)
+![image](https://github.com/HyangGonJin/hyanggonjin.github.io/blob/main/assets/img/naver_api_img2.png?raw=true)
 
 ## 방법 2. urllib.request
 ```py
@@ -94,7 +94,7 @@ pd.DataFrame(json_tv_sammple['items'])
 
 주의해야할 부분은 결과를 'JSON'으로 불러올 때 UTF-8로 decoding을 해줘야 하는 부분이 '방법 1'과의 차이 중 하나입니다.
 
-![Desktop View](/assets/img/2022-12-29/naver_api_img3.png)
+![image](https://github.com/HyangGonJin/hyanggonjin.github.io/blob/main/assets/img/naver_api_img3.png?raw=true)
 
 
 ## 참고자료

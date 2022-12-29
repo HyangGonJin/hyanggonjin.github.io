@@ -142,10 +142,9 @@ In order to prevent the page content layout from shifting when the image is load
 
 Starting from _Chirpy v5.0.0_, `height` and `width` support abbreviations (`height` → `h`, `width` → `w`). The following example has the same effect as the above:
 
-```markdown
+
 ![Desktop View](/assets/img/sample/mockup.png){: w="700" h="400" }
-```
-{: .nolineno}
+
 
 ### Position
 

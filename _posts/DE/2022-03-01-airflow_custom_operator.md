@@ -1,11 +1,7 @@
 ---
 title: "Airflow - Custom operator"
-# categories:
-#   - DE
-# tags:
-#   - data engineering
-#   - mongodb
-#   - airflow
+categories: [DE, Airflow]
+tags: [de, airflow]
 toc : True
 toc_sticky: true
 last_modified_at: 2022-03-01

@@ -1,9 +1,7 @@
 ---
 title: "JSON 데이터 다루기"
-# categories:
-#   - DA
-# tags:
-#   - python
+categories: [DA, Python]
+tags: [da, python]
 toc : True
 toc_sticky: true
 last_modified_at: 2022-05-04

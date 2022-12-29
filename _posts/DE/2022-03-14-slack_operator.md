@@ -1,10 +1,7 @@
 ---
 title: "Airflow - Slack 알림 받기"
-# categories:
-#   - DE
-# tags:
-#   - data engineering
-#   - airflow
+categories: [DE, Airflow]
+tags: [de, airflow]
 toc : True
 toc_sticky: true
 last_modified_at: 2022-03-14

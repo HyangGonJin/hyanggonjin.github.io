@@ -1,10 +1,7 @@
 ---
 title: "DataFrame Style 적용하기 (2)"
-# categories:
-#   - DA
-# tags:
-#   - python
-#   - pandas
+categories: [DA, pandas]
+tags: [da, pandas]
 toc : True
 toc_sticky: true
 last_modified_at: 2022-01-20

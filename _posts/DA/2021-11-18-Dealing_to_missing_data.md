@@ -1,12 +1,7 @@
 ---
 title: "결측값 다루기"
-# categories:
-#   - DA
-# tags:
-#   - data analysis
-#   - python
-#   - numpy
-#   - pandas
+categories: [DA, Python]
+tags: [da, python]
 toc : True
 toc_sticky: true
 last_modified_at: 2021-12-05

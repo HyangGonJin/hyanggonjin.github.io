@@ -1,12 +1,7 @@
 ---
 title: "유용한 Python 함수 - Part 1."
-# categories:
-#   - DA
-# tags:
-#   - data analysis
-#   - python
-#   - numpy
-#   - pandas
+categories: [DA, pandas]
+tags: [da, python, pandas]
 toc : True
 toc_sticky: true
 last_modified_at: 2021-12-08

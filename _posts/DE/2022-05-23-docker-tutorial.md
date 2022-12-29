@@ -1,9 +1,7 @@
 ---
 title: "Docker 시작하기"
-# categories:
-#   - DE
-# tags:
-#   - data engineering
+categories: [DE, Docker]
+tags: [de, docker]
 toc : True
 toc_sticky: true
 last_modified_at: 2022-05-23

@@ -1,10 +1,7 @@
 ---
 title: "시각화 - wifi 데이터"
-# categories:
-#   - DA
-# tags:
-#   - data analysis
-#   - visualization
+categories: [DA, Visualization]
+tags: [da, visualization]
 toc : True
 toc_sticky: true
 last_modified_at: 2022-10-03

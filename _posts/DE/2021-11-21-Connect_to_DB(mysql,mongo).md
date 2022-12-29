@@ -1,11 +1,7 @@
 ---
 title: "데이터베이스 연결"
-# categories:
-#   - DE
-# tags:
-#   - data engineering
-#   - mysql
-#   - mongodb
+categories: [DE, DB]
+tags: [de, mysql, mongodb]
 toc : True
 toc_sticky: true
 last_modified_at: 2021-12-05

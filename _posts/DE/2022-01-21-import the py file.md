@@ -1,10 +1,7 @@
 ---
 title: "모듈 import"
-# categories:
-#   - DE
-# tags:
-#   - data engineering
-#   - python
+categories: [DE, Python]
+tags: [de, python]
 toc : True
 toc_sticky: true
 last_modified_at: 2022-01-21

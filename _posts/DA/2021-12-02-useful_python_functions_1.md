@@ -85,18 +85,15 @@ import seaborn as sns
 mpg = sns.load_dataset('mpg')
 mpg.head()
 ```
+![image](/assets/img/mpg_head.png)
 
-<p align="center">
-<img src = '/assets/img/mpg_head.png' width="800" height="300">
-</p> 
 
 ```py
 pd.crosstab(index=mpg['origin'], columns=mpg['model_year'], values=mpg['horsepower'], aggfunc='mean', margins=True)
 ```
 
-<p align="center">
-<img src = '/assets/img/crosstab_output1.png' width="700" height="800">
-</p> 
+![image](/assets/img/crosstab_output1.png)
+
 
 
 ## cut
@@ -124,9 +121,8 @@ cut_val = pd.cut(x=mpg['mpg'],bins=4,labels=list(range(1,5)),retbins=True) # ret
 cut_val
 ```
 
-<p align="center">
-<img src = '/assets/img/cut_output1.png' width="500" height="550">
-</p> 
+![image](/assets/img/cut_output1.png)
+
 
 
 ## qcut
@@ -140,9 +136,8 @@ cut_val
 pd.qcut(x = mpg['mpg'], q = 4, labels = [1,2,3,4], retbins = True)
 ```
 
-<p align="center">
-<img src = '/assets/img/qcut_output1.png' width="650" height="330">
-</p> 
+![image](/assets/img/qcut_output1.png)
+
 
 ## select_dtypes
 - def select_dtypes(include=None, exclude=None)
@@ -154,10 +149,8 @@ pd.qcut(x = mpg['mpg'], q = 4, labels = [1,2,3,4], retbins = True)
 mpg.select_dtypes(include='object').head()
 mpg.select_dtypes(exclude='object').head()
 ```
+![image](/assets/img/select_dtypes_output1.png)
 
-<p align="center">
-<img src = '/assets/img/select_dtypes_output1.png' width="700" height="450">
-</p> 
 
 ## idxmin / idxmax
 - def idxmin(axis=0, skipna=True, *args, **kwargs)

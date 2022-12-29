@@ -73,11 +73,8 @@ cursor.execute("select * from wifi limit 1")
 print(cursor.fetchall())
 
 ```
+![image](/assets/img/to_sql_output.png)
 
-<p align="center">
-<img src = '/assets/img/to_sql_output.png' width="700" height="300">
-<!-- </img> -->
-</p>
 
 * 참고자료
   
@@ -114,11 +111,7 @@ collection = db.zips
 import pprint
 pprint.pprint(collection.find_one())
 ```
-<p align="center">
-<img src = '/assets/img/pymongo_output.png' width="700" height="300">
-<!-- </img> -->
-</p>
-
+![image](/assets/img/pymongo_output.png)
 
 
 * 참고자료 

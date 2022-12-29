@@ -29,10 +29,8 @@ df = pd.DataFrame(data=[a,b,c],columns=["var1"])
 df.isna()
 ```
 
-<p align="center">
-<img src = '/assets/img/missing1_output.png' width="650" height="160">
-<!-- </img> -->
-</p>
+![image](/assets/img/missing1_output.png)
+
 
 `nan`과 `None`은 결측값으로 정확히 인식하였으나, ""(빈 칸)의 경우는 결측으로 인식하지 못했습니다.     
 
@@ -94,8 +92,6 @@ df1.groupby("grp",as_index=False).aggregate({'var1':'mean','var2':'mean'})
 df1.groupby("grp",as_index=False).aggregate({'var1':np.sum,'var2':np.mean})
 ```
 
-<p align="center">
-<img src = '/assets/img/pandas_groupby.png' width="700" height="450">
-</p>
+![image](/assets/img/pandas_groupby.png)
 
 결측값이 포함된 데이터프레임을 이용해 pandas의 `groupby` 함수를 적용한 결과를 볼 때, 결측을 제외한 결과를 계산함을 알 수 있습니다.

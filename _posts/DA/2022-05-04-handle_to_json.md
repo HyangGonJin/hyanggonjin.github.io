@@ -21,13 +21,9 @@ df = pd.DataFrame([["a", "b"], ["c", "d"]], index=["row 1", "row 2"],columns=["c
 df
 ```
 
-![image](../../assets/img/1_json_data.png)
-<!-- <p align="center">
-<img src = '../../assets/images/1_json_data.png' width="900" height="300">
-</p>  -->
+![image](/assets/img/1_json_data.png)
 
-
-`to_json()` 함수를 통해 데이터프레임을 json 문자열로 변경할 수 있습니다. `orient` 옵션('split', 'index', 'columns', 'values' 등)을 통해 json string 포맷을 지정할 수 있습니다. 참고로, `json.loads()` 함수는 json 문자열을 python 객체로(json 디코딩), `json.dumps()`는 python 객체를 json 문자열로(json 인코딩) 변경시켜줍니다. 
+`orient` 옵션('split', 'index', 'columns', 'values' 등)을 통해 json string 포맷을 지정할 수 있습니다. 참고로, `json.loads()` 함수는 json 문자열을 python 객체로(json 디코딩), `json.dumps()`는 python 객체를 json 문자열로(json 인코딩) 변경시켜줍니다. 
 
 ```py
 result = df.to_json(orient="split")
@@ -35,10 +31,8 @@ parsed = json.loads(result)
 print(json.dumps(parsed, indent=4))
 ```
 
-![image](../../assets/img/2_json_to_json.png)
-<!-- <p align="center">
-<img src = '../../assets/images/2_json_to_json.png' width="900" height="500">
-</p>  -->
+![image](/assets/img/2_json_to_json.png)
+
 
 # json_normalize
 `json_normalize()` 함수를 통해 python 객체(dict)를 쉽게 데이터프레임으로 변경할 수 있습니다. 참고로, json 형식을 다룰 때는 'json 문자열'인지 'python 객체'인지 확인하는 것이 중요합니다. `json_normalize()`는 'json 문자열'을 입력으로 사용할 경우 `NotImplementedError`가 발생합니다.
@@ -55,12 +49,7 @@ pd.json_normalize(data)
 pd.DataFrame(data)
 ```
 
-![image](../../assets/img/3_json_normalize1.png)
-<!-- <p align="center">
-<img src = '../../assets/images/3_json_normalize1.png' width="900" height="1000">
-</p>  -->
-
-
+![image](/assets/img/3_json_normalize1.png)
 
 
 `max_level` 옵션을 통해 지정한 level까지 데이퍼프레임으로 변환할 수 있습니다. 
@@ -84,7 +73,7 @@ pd.json_normalize(data, max_level=0)
 pd.json_normalize(data, max_level=1)
 ```
 
-![image](../../assets/img/4_json_normalize2.png)
+![image](/assets/img/4_json_normalize2.png)
 
 `meta` 옵션을 통해 데이터프레임으로 변환할 필드를 지정해줄 수 있습니다.
 ```py
@@ -115,7 +104,7 @@ pd.json_normalize(data, "counties")
 pd.json_normalize(data, "counties", ["state", "shortname", ["info", "governor"]])
 ```
 
-![image](../../assets/img/5_json_normalize3.png)
+![image](/assets/img/5_json_normalize3.png)
 
 
 * 참고자료

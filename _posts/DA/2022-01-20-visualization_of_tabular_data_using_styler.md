@@ -44,7 +44,7 @@ df.style.format(precision=0, na_rep='MISSING', thousands=",",
 
 공식 문서에 따르면 방법 1과 2는 개별적인 CSS selectors와 properties를 추가하기 쉬우며, 방법 3은 특정 데이터 셀에 CSS를 추가하기에 쉽습니다. 자세한 내용은 [관련 링크](https://pandas.pydata.org/docs/user_guide/style.html#Methods-to-Add-Styles)를 통해 확인할 수 있습니다.
 
-## `.set_table_styles()` & `.set_td_classes()`
+## set_table_styles() & .set_td_classes()
 
 ```py
 s = df.style.format('{:.0f}').hide_columns([('Random', 'Tumour'), ('Random', 'Non-Tumour')])
@@ -94,7 +94,7 @@ s.set_td_classes(cell_color)
 ![image](/assets/img/output_style_cell_css1.png)
 
 
-## `.apply()` & `.applymap()` 
+## apply() & applymap() 
 
 ```py
 np.random.seed(0)

@@ -73,7 +73,7 @@ test.added(1,3,5)
 ```
 
 <!-- 이미지 삽입 -->
-![image](../../assets/img/output_import_test2.png)
+![image](/assets/img/output_import_test2.png)
 
 
 

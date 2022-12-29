@@ -45,10 +45,8 @@ df.pivot(index='A',columns='B',values='C')
 df1 = df.append(pd.DataFrame([['Apple','A',2]],columns=list('ABC')),ignore_index=True)
 df1.pivot(index='A',columns='B',values='C')
 ```
+![image](/assets/img/pivot_output1.png)
 
-<p align="center">
-<img src = '/assets/img/pivot_output1.png' width="800" height="1000">
-</p> 
 
 ## pivot_table
 - def pivot_table(values=None, index=None, columns=None, aggfunc='mean', ...)
@@ -62,10 +60,8 @@ df1.pivot(index='A',columns='B',values='C')
 df1.pivot_table(index='A',columns='B',values='C',aggfunc='mean')
 df1.pivot_table(index='A',columns='B',values='C',aggfunc='count')
 ```
+![image](/assets/img/pivot_table_output1.png)
 
-<p align="center">
-<img src = '/assets/img/pivot_table_output1.png' width="700" height="300">
-</p> 
 
 ## groupby & agg
 
@@ -74,19 +70,14 @@ df1.groupby(['A','B'], as_index=False).agg({'C':'mean'})
 
 df1.groupby(['A','B']).agg(c_sum=pd.NamedAgg(column="C", aggfunc="sum"))
 ```
-
-<p align="center">
-<img src = '/assets/img/groupby_output1.png' width="800" height="520">
-</p> 
+![image](/assets/img/groupby_output1.png)
+ 
 
 ```py
 df2 = df1.groupby(['A','B'], as_index=False).agg({'C':'mean'})
 pd.crosstab(index=df2['A'], columns=df2['B'], values=df2['C'],aggfunc='sum')
 ```
-
-<p align="center">
-<img src = '/assets/img/groupby_output3.png' width="500" height="180">
-</p> 
+![image](/assets/img/groupby_output3.png)
 
 
 ## melt
@@ -103,10 +94,7 @@ pivot_t.index.name = "A1"
 df3 = pivot_t.reset_index().melt(id_vars=['A1'], value_vars=['A','B','C'], value_name='C1').sort_values('A1')
 df3
 ```
-
-<p align="center">
-<img src = '/assets/img/melt_output3.png' width="750" height="600">
-</p> 
+![image](/assets/img/melt_output3.png)
 
 ## wide_to_long
 - def wide_to_long(df: 'DataFrame', stubnames, i, j, ...)
@@ -123,10 +111,7 @@ df3
 df4 = pd.DataFrame([[1,2,3],[4,5,6]],index=["Apple","Banana"],columns=["var_1","var_2","var_3"]).reset_index()
 pd.wide_to_long(df=df4, stubnames="var", i='index',j="j",sep="_")
 ```
-
-<p align="center">
-<img src = '/assets/img/wide_to_long_output1.png' width="800" height="430">
-</p> 
+![image](/assets/img/wide_to_long_output1.png)
 
 
 ## merge 
@@ -144,10 +129,8 @@ df2 = pd.DataFrame(d2)
 
 df1.merge(df2,left_on='left_key',right_on='right_key')
 ```
+![image](/assets/img/merge_output2.png)
 
-<p align="center">
-<img src = '/assets/img/merge_output2.png' width="600" height="300">
-</p> 
 
 ## join
 - def join(other, on=None, how='left', lsuffix='', rsuffix='', sort=False)
@@ -167,10 +150,7 @@ df4 = df2.set_index('right_key')
 
 df3.join(other=df4,how='inner',lsuffix='_l', rsuffix='_r')
 ```
-
-<p align="center">
-<img src = '/assets/img/join_output1.png' width="600" height="380">
-</p> 
+![image](/assets/img/join_output1.png)
 
 ---   
 

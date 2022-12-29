@@ -19,6 +19,13 @@ timezone: Asia/Seoul
 # jekyll-seo-tag settings › https://github.com/jekyll/jekyll-seo-tag/blob/master/docs/usage.md
 # ↓ --------------------------
 
+futrue: true               #  미래의 포스팅을 보이게 하는 설정
+published: true            #  publised   공개/비공개 설정
+
+provider: utterence   #댓글기능인데 저는 disqus와 utterence중 2번째걸로 했습니다
+comments: true          #사용 true   미사용 false
+
+
 title: Lego                          # the main title
 
 tagline:    # it will display as the sub-title

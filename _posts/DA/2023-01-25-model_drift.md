@@ -55,7 +55,7 @@ Continuous evaluation이란 새롭게 생성되는 n개의 데이터를 이용�
 ### 2. Population Stability Index (PSI)
 PSI는 모델 개발 시점의 데이터와 현재 데이터 간 분포가 얼마나 다른지를 구성비를 통해 비교하는 방법입니다. 
 연속형 자료일 경우에는 10개 혹은 20개 정도의 구간으로 구분하여 구성비를 계산합니다. 
-계산하는 식은 $$PSI = \sum ((\%O - \%E) \times \log(\frac{\%O}{\%E}))$$ 이며, $\%O$는 현재 데이터의 구성비, $\%E$는 개발 데이터의 구성비를 의미합니다. 
+계산하는 식은 $$PSI = \sum \(\(\%O - \%E\) \times \log(\frac{\%O}{\%E}))$$ 이며, $\%O$는 현재 데이터의 구성비, $\%E$는 개발 데이터의 구성비를 의미합니다. 
 
 PSI를 판단하는 일반적인 기준(Rule of thumb, 절대적인 기준은 아님)은 다음과 같습니다.
 
@@ -73,7 +73,7 @@ PSI를 판단하는 일반적인 기준(Rule of thumb, 절대적인 기준은 �
 ### 3. Kullback-Leibler Divergence
 Kullback-Leibler Divergence는 통계나 정보이론 분야에서 사용되는 두 확률분포의 차이를 계산하는 측도입니다. KL-Divergence의 정의는 아래와와 같습니다.
 
-$$ D_{KL}(P||Q)=\int log(\frac{p(x)}{q(x)}) \medspace p(x) \medspace dx = \mathbb{E}[log({p(x)}) - log({q(x)})] $$ 
+$$ D_{KL}(P||Q)=\int log(\frac{p(x)}{q(x)}) p(x) dx = \mathbb{E}[log({p(x)}) - log({q(x)})] $$ 
 
 Kullback-Leibler Divergence는 다음과 같은 2가지 특징이 있습니다.
 

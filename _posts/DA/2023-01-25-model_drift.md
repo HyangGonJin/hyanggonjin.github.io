@@ -45,18 +45,22 @@ Model Drift를 탐지하는 방법으로는 크게 'Model에 기반한 방법'�
 ### 1. Continuous evaluation
 Continuous evaluation이란 새롭게 생성되는 n개의 데이터를 이용해 모델의 성능을 지속적으로 모니터링하며 미리 정의한 threshold 이상의 성능인지를 확인하는 방법입니다.
 
-'얼마나 자주 모델을 평가할 것인지'와 관련해 
+여기에서는 '얼마나 자주 모델을 평가할 것인지'와 관련해 
 
-1) 고정된 time interval마다 확인할 지    
+1. 고정된 time interval마다 확인할 지    
 
-2) 정해진 수의 데이터가 모였을 때 확인할 것인지   
+2. 정해진 수의 데이터가 모였을 때 확인할 것인지   
 
 를 결정해야 합니다.
 
 ### 2. Population Stability Index (PSI)
 PSI는 모델 개발 시점의 데이터와 현재 데이터 간 분포가 얼마나 다른지를 구성비를 통해 비교하는 방법입니다. 
 연속형 자료일 경우에는 10개 혹은 20개 정도의 구간으로 구분하여 구성비를 계산합니다. 
-계산하는 식은 $$PSI = \sum ((\%O - \%E) \times \log(\frac{\%O}{\%E}))$$ 이며, $\%O$는 현재 데이터의 구성비, $\%E$는 개발 데이터의 구성비를 의미합니다. 
+계산하는 식은 
+
+$$PSI = \sum ((\%O - \%E) \times \log(\frac{\%O}{\%E}))$$ 
+
+이며, $\%O$는 현재 데이터의 구성비, $\%E$는 개발 데이터의 구성비를 의미합니다. 
 
 PSI를 판단하는 일반적인 기준(Rule of thumb, 절대적인 기준은 아님)은 다음과 같습니다.
 
@@ -76,11 +80,11 @@ Kullback-Leibler Divergence는 통계나 정보이론 분야에서 사용되는 
 
 $$D_{KL}(P||Q)=\int log(\frac{p(x)}{q(x)}) p(x) dx = \mathbb{E}[log({p(x)}) - log({q(x)})]$$ 
 
-Kullback-Leibler Divergence는 다음과 같은 2가지 특징이 있습니다.
+Kullback-Leibler Divergence는 다음과 같은 2가지 특징이 있습니다.   
 
-1. $D(P||Q) \ge 0 \quad  \&  \quad D(P||Q) = 0$ iff $P = Q$ (nonnegative)   
+1. $D(P\|\|Q) \ge 0 \quad \&  D(P\|\|Q) = 0$ iff $P = Q$ (nonnegative)
 
-2. $D(P||Q) \ne D(Q||P)$ (asymmetric)   
+2. $D(P\|\|Q) \ne D(Q\|\|P)$ (asymmetric)   
 
 특히 '2'와 같은 특징으로 인해 KL-Divergence는 거리 개념으로 사용할 수 없습니다. 참고로, Jensen-Shannon Divergence는 KL-Divergence를 통해 계산할 수 있으며 symmetric 성질을 만족합니다. Jensen-Shannon Divergence의 정의는 아래와 같습니다.
 
@@ -89,9 +93,11 @@ $$JSD(P||Q) = \frac{1}{2} D(P||M) + \frac{1}{2}D(Q||M)$$
 
 ### 4. Kolmogorov-Smirnov test
 통계학에서 두 분포가 동일한지를 검정하기 위한 비모수적 통계검정 방법입니다. Empirical (Cumulative) Distribuion $F_n(x)$와 검정통계량 $D_n$은 다음과 같습니다.
-- $F_n(x) = \frac{1}{n} \sum_{i=1}^{n} 1_{(-\infty,x]}(X_i)$ 이며, 여기서 $1_{(-\infty,x]}$ 은 $X_i \le x$ 이면 1 그렇지 않으면 0의 값을 가지는 indicator 함수입니다.
+- $F_n(x) = \frac{1}{n} \sum_{i=1}^{n} 1_{(-\infty,x]}(X_i)$이며
 
-- $D_{n,m} = sup_{x}|F_{1,n}(x) - F_{2,m}(x)|$
+    $1_{(-\infty,x]}$은 $X_i \le x$ 이면 1 그렇지 않으면 0의 값을 가지는 indicator 함수입니다.
+
+- $D_{n,m} = sup_{x}\|F_{1,n}(x) - F_{2,m}(x)\|$
 
 ## 마무리
 Model Drift의 signal이 관측되었다면 바로 모델을 재학습해야 할까? 그렇지 않다. 우선, Drift가 발생한 근본적인 원인을 파악해야 한다. 실제로 Drift가 발생한 것인지, 아니면 Data를 Injection하는 과정에서 문제가 있는 것인지 Data Quality에 대한 체크를 해야 한다. 또한 Drift가 실제로 발생했다 하더라도 재학습에 필요한 충분한 데이터가 모였는지, 모델 외적인 방법으로 해결할 수 있는지 등 여러 조건을 고려하며 의사결정을 해야 하겠다.

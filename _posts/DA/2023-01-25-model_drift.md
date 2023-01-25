@@ -78,7 +78,7 @@ $$D_{KL}(P||Q)=\int log(\frac{p(x)}{q(x)}) p(x) dx = \mathbb{E}[log({p(x)}) - lo
 
 Kullback-Leibler Divergence는 다음과 같은 2가지 특징이 있습니다.
 
-1. $D(P||Q) \ge 0$ and $D(P||Q) = 0$ iff $P \stackrel{d}{=} Q$ (nonnegative)   
+1. $D(P||Q) \ge 0 \quad  \&  \quad D(P||Q) = 0$ iff $P = Q$ (nonnegative)   
 
 2. $D(P||Q) \ne D(Q||P)$ (asymmetric)   
 
@@ -89,7 +89,7 @@ $$JSD(P||Q) = \frac{1}{2} D(P||M) + \frac{1}{2}D(Q||M)$$
 
 ### 4. Kolmogorov-Smirnov test
 통계학에서 두 분포가 동일한지를 검정하기 위한 비모수적 통계검정 방법입니다. Empirical (Cumulative) Distribuion $F_n(x)$와 검정통계량 $D_n$은 다음과 같습니다.
-- $F_n(x) = \frac{1}{n} \sum_{i=1}^{n} 1_{(-\infty,x]}(X_i)$이며, 여기서 $1_{(-\infty,x]}$은 $X_i \le x$이면 1 그렇지 않으면 0의 값을 가지는 indicator 함수입니다.
+- $F_n(x) = \frac{1}{n} \sum_{i=1}^{n} 1_{(-\infty,x]}(X_i)$ 이며, 여기서 $1_{(-\infty,x]}$ 은 $X_i \le x$ 이면 1 그렇지 않으면 0의 값을 가지는 indicator 함수입니다.
 
 - $D_{n,m} = sup_{x}|F_{1,n}(x) - F_{2,m}(x)|$
 

@@ -3,7 +3,8 @@ title: "Model Drift"
 categories: [DA, Ops]
 tags: [da, ops]
 toc : True
-toc_sticky: true
+toc_sticky: True
+math : True
 last_modified_at: 2023-01-25
 ---
 

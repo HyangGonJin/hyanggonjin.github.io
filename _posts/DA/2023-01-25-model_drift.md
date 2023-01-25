@@ -74,11 +74,11 @@ PSI를 판단하는 일반적인 기준(Rule of thumb, 절대적인 기준은 �
 ### 3. Kullback-Leibler Divergence
 Kullback-Leibler Divergence는 통계나 정보이론 분야에서 사용되는 두 확률분포의 차이를 계산하는 측도입니다. KL-Divergence의 정의는 아래와와 같습니다.
 
-$$ D_{KL}(P||Q)=\int log(\frac{p(x)}{q(x)}) p(x) dx = \mathbb{E}[log({p(x)}) - log({q(x)})] $$ 
+$$D_{KL}(P||Q)=\int log(\frac{p(x)}{q(x)}) p(x) dx = \mathbb{E}[log({p(x)}) - log({q(x)})]$$ 
 
 Kullback-Leibler Divergence는 다음과 같은 2가지 특징이 있습니다.
 
-1. $D(P||Q) \ge 0$ & $D(P||Q) = 0$ iff $P \stackrel{d}{=} Q$ (nonnegative)   
+1. $D(P||Q) \ge 0$ and $D(P||Q) = 0$ iff $P \stackrel{d}{=} Q$ (nonnegative)   
 
 2. $D(P||Q) \ne D(Q||P)$ (asymmetric)   
 

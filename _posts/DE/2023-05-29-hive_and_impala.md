@@ -10,7 +10,6 @@ last_modified_at: 2023-05-29
 
 파이썬 환경에서 Hive와 Impala를 사용할 수 있는 방법에 대해 간단하게 알아 보겠습니다.
 
-
 ## 1. Hive
 Hive는 하둡에서 동작하는 data warehouse 시스템으로 HiveQL이라는 SQL 쿼리를 통해 대용량의 데이터를 읽고, 쓰고, 관리하는 기능을 지원합니다. 
 

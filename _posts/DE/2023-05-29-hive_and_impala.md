@@ -1,5 +1,5 @@
 ---
-title: "Hive & Impala - Intro"
+title: "Hive & Impala - connection & sqlalchemy"
 categories: [DE, DB]
 tags: [de, db]
 toc : True
@@ -45,6 +45,7 @@ temp_df.head()
 ```
 
 'df'라는 pandas 데이터프레임이 있다고 할 때, `INSERT`문은 아래와 같은 방법으로 할 수 있으며, `to_sql` 함수를 사용해 동일한 작업을 할 수도 있습니다.
+
 ```py
 ## insert ##
 ### df : pandas dataframe

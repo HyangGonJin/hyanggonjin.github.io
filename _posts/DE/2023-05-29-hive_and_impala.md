@@ -15,6 +15,7 @@ Hive는 하둡에서 동작하는 data warehouse 시스템으로 HiveQL이라는
 
 ### 1.1 hive connection
 다른 DB와 동일하게 connection과 cursor를 통해 Hive와 통신할 수 있습니다. 먼저, 연결정보를 지정해주고 cursor까지 생성합니다.
+
 ```py
 from pyhive import hive
 

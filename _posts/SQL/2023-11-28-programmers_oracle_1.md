@@ -29,7 +29,7 @@ WHERE TO_CHAR(b.CREATED_DATE, 'YYYY-MM') = '2022-10'
 ORDER BY CREATED_DATE, b.TITLE;
 ```
 
-# 해설
+# 설명
 - TO_CHAR은 Oracle SQL에서 날짜나 숫자 값을 문자열로 변환하는데 사용되는 함수. 
 - 날짜나 숫자 데이터를 특정 형식으로 표시하고 싶을 때 사용.
 ```sql

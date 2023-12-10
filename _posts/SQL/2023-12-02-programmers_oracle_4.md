@@ -42,7 +42,7 @@ ORDER BY FEE DESC, CAR_TYPE ASC, CAR_ID DESC
 ;
 ```
 
-# 해설
+# 설명
 - NOT EXISTS 연산자는 종종 특정 조건을 만족하는 행이 없음을 확인하기 위해 서브 쿼리와 함께 사용. 
 ```sql
 SELECT column1, column2, ...

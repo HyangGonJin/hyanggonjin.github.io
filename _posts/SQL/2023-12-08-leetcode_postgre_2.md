@@ -1,5 +1,5 @@
 ---
-title: "[Leetcode, Postgre] 184. Department Highest Salary"
+title: "[Leetcode, PostgreSQL] 184. Department Highest Salary"
 categories: [SQL]
 tags: [sql]
 toc : True

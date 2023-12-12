@@ -1,5 +1,5 @@
 ---
-title: "[Leetcode, Postgre] 180. Consecutive Numbers"
+title: "[Leetcode, PostgreSQL] 180. Consecutive Numbers"
 categories: [SQL]
 tags: [sql]
 toc : True

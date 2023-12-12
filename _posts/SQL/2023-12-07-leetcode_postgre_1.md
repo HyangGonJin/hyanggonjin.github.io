@@ -1,5 +1,5 @@
 ---
-title: "[Leetcode, Postgre] 262. Trips and Users"
+title: "[Leetcode, PostgreSQL] 262. Trips and Users"
 categories: [SQL]
 tags: [sql]
 toc : True

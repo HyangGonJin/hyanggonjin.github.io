@@ -52,19 +52,18 @@ last_modified_at: 2023-12-14
 
 - Explanation: 
 
-        In the IT department:
-        - Max earns the highest unique salary
-        - Both Randy and Joe earn the second-highest unique salary
-        - Will earns the third-highest unique salary
+  - In the IT department:
+    - Max earns the highest unique salary
+    - Both Randy and Joe earn the second-highest unique salary
+    - Will earns the third-highest unique salary
 
-        In the Sales department:
-        - Henry earns the highest salary
-        - Sam earns the second-highest salary
-        - There is no third-highest salary as there are only two employees
+   - In the Sales department:
+     - Henry earns the highest salary
+     - Sam earns the second-highest salary
+     - There is no third-highest salary as there are only two employees
 
 # 코드
 ## My solution
-
 ```sql
 WITH TBL_A AS (
     SELECT B.NAME AS DEPARTMENT,
@@ -86,7 +85,6 @@ WHERE (DEPARTMENT, SALARY) IN (SELECT DEPARTMENT, SALARY FROM TBL_B WHERE ROW_NU
 ```
 
 ## Claude ai
-
 ```sql
 WITH CTE AS (
   SELECT D.NAME DEPARTMENT, E.NAME EMPLOYEE, E.SALARY, 
@@ -128,10 +126,9 @@ WHERE
 
 
 # 설명
-
 ## DENSE_RANK()
 - 윈도우 함수 중 하나로, 파티션 내의 행을 정렬한 후 순위를 매기는 기능.
-- ORDER BY절을 사용하여 정렬 기준을 지정 가능.   
+- `ORDER BY`절을 사용하여 정렬 기준을 지정 가능.   
 - 순위 중복을 허용. 즉, 동일한 값에 대해서는 동일한 순위를 부여함.   
 - 순위 중복으로 인한 후속 순위의 건너뛰기가 발생하지 않음.   
 

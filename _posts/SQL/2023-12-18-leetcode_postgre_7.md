@@ -8,7 +8,7 @@ math : True
 last_modified_at: 2023-12-18
 ---
 
-# 문제 1
+# 문제
 - Write a solution to find managers with at least five direct reports.
 
 - Example:

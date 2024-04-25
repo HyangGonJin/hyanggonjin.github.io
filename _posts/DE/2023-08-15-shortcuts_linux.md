@@ -5,7 +5,7 @@ tags: [de]
 toc : True
 toc_sticky: True
 math : True
-last_modified_at: 2023-08-15
+last_modified_at: 2024-04-25
 ---
 
 리눅스 터미널에서 파일 관리, 텍스트 편집 및 검색, 시스템 정보 조회와 같은 다양한 작업을 수행하는 데 필요한 기본적인 명령어들을 알아보겠습니다.

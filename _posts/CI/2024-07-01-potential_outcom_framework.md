@@ -60,3 +60,4 @@ last_modified_at: 2024-07-01
 	- All other things being equal. 비교 가능한 상태를 의미
 	- 'Control 그룹'이 treatment를 제외하고 나머지 특성에 대해서는 'Treatment 그룹'과 비교 가능해야(같아야) 함
 		- selection bias가 제거되어야 함
+

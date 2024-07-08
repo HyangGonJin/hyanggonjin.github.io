@@ -1,5 +1,5 @@
 ---
-title: "[Review] 잠재적결과 프레임워크 - Korea Summer Workshop on Causal Inference 2023"
+title: "[Review] 잠재적결과 프레임워크"
 categories: [CI]
 tags: [ci]
 toc : True

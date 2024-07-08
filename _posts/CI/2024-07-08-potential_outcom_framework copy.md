@@ -29,7 +29,7 @@ last_modified_at: 2024-07-08
 	- Potential Outcome Framework는 “원인에 대한 intervention을 통해 outcome의 변화, 향상을 확인”하는 것이 목적.
 	- 'Counterfactual consistnecy'를 보장하기 위해서 (원인의) ‘manipulability’가 중요함.
 		- manipulable해야 counterfactual과 potential outcom을 잘 정의할 수 있음.
-	- (예시) ’비만‘은 not manipulable(→ ’비만’의 원인이 다양한 만큼 observed 결과도 다양하게 나타탐) ⇒ Counterfactual consistency 만족 X
+	- (예시) ’비만‘은 not manipulable(→ ’비만’의 원인이 다양한 만큼 observed 결과도 다양하게 나타탐) ⇒ Counterfactual consistency 만족 X.
 
 ### 2. No interference
 - treatment 그룹과 control 그룹 간 (직$\cdot$간접적인) 간섭이 없어야 함.
@@ -42,11 +42,11 @@ last_modified_at: 2024-07-08
 
 ### (잠재적결과 프레임워크로) 추정한 Treatment Effect는 ATE일까? ATT일까?
 - Observed effect of the treatment   
-= {Treatment 그룹 결과} - {Control 그룹 결과}   
-= (Outcome for treated if treated) - (Outcome for untreated if not treated)    
-= {(Outcome for treated if treated) - (Outcome for treated if not treated)} + {(Outcome for treated if not treated) - (Outcome for untreated if not treated)}   
-= **Causal effect** + Selection bias   
-= **ATT** + Selection bias
+= {Treatment 그룹 결과} - {Control 그룹 결과}.   
+= (Outcome for treated if treated) - (Outcome for untreated if not treated).    
+= {(Outcome for treated if treated) - (Outcome for treated if not treated)} + {(Outcome for treated if not treated) - (Outcome for untreated if not treated)}.   
+= **Causal effect** + Selection bias.   
+= **ATT** + Selection bias.
 - Selection bias를 충분히 작게 하거나 0으로 만들어야, data를 통해 나온 observed 효과를 causal effect로 설명할 수 있음.
 - Control 그룹과의 비교로 추정할 수 있는 것은 ATT 뿐.
 	- Control 그룹의 결과를 가지고 Treatment 그룹의 Counterfactual를 추론하므로써 ATT를 추정 (by Ceteris Paribus).
@@ -69,7 +69,7 @@ last_modified_at: 2024-07-08
 		- Treatment 그룹 = 쿠폰을 갖고 있는 고객.
 		- Control 그룹 = 쿠폰을 갖고 있지 않은 고객.
 		
-		$\Rightarrow$ Treatment 그룹 $\ne$ Control 그룹 (bcs. 쿠폰의 반응성이 두 그룹에 대해서 다름. Treatment 그룹은 쿠폰의 반응성이 높을 것)
+		$\Rightarrow$ Treatment 그룹 $\ne$ Control 그룹 (bcs. 쿠폰의 반응성이 두 그룹에 대해서 다름. Treatment 그룹은 쿠폰의 반응성이 높을 것).
 	- 필요한 효과가 ATT인지 ATE인지 분명히 하는 것이 중요함.
 
 

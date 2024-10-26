@@ -59,10 +59,10 @@ graph LR
 
 ### Counterfactual 관점의 Data Structure
 - (**Remind**) Ceteris Paribus 만족    
-	$\Rarr$ Selection bias $\simeq$ 0    
-	$\Rarr$ Control group과 comparable    
-	$\Rarr$ Treatment group의 counterfactual 추정 가능    
-	$\Rarr$ Treatment Effect 추정 가능   
+	$\Rightarrow$ Selection bias $\simeq$ 0    
+	$\Rightarrow$ Control group과 comparable    
+	$\Rightarrow$ Treatment group의 counterfactual 추정 가능    
+	$\Rightarrow$ Treatment Effect 추정 가능   
 	
 - Time-series data(; time)
 	- Treatment 이전/이후의 결과 데이터가 있는 경우(=Interrupted time series model).
@@ -80,18 +80,18 @@ graph LR
 	- 또한 **각 유닛에 대한 fixed effect를 통해 time-invariant confounders를 control** 가능 (; like control variables).
 	- **Control group은 'time-varying confounders'에 대해서만 comparable을 만족하면 됨** (; 가정 완화).
 	- Treatment 전후의 패널 데이터가 있는 경우
-		- 유닛에 대한 fixed effects를 통해 time-invariant한 요소에 대한 설명이 가능함 $\Rarr$ Control group은 time-varying confounders에 대해서만 comparable을 만족하면 됨.
-		- Treatment 이전/이후의 데이터를 이용해 Treatment group과 Control group 간의 차이를 time trend로 설명할 수 있다면 $\Rarr$ '인과추론'이 가능 ($\because$ Treatment group과 Control group 간의 차이는 time-varying한 요소).
+		- 유닛에 대한 fixed effects를 통해 time-invariant한 요소에 대한 설명이 가능함 $\Rightarrow$ Control group은 time-varying confounders에 대해서만 comparable을 만족하면 됨.
+		- Treatment 이전/이후의 데이터를 이용해 Treatment group과 Control group 간의 차이를 time trend로 설명할 수 있다면 $\Rightarrow$ '인과추론'이 가능 ($\because$ Treatment group과 Control group 간의 차이는 time-varying한 요소).
 
 
 ### Fixed-Effects Model enables Within-Group Comparison
 - Treatment 이후의 패널 데이터만 있는 경우
 	- (유닛 fixed effect -treatment이면 1 아니면 0-인 경우) fixed effects와 treatment effects를 구분할 수 없기 때문에 인과분석이 불가능.
-	- 만약 treatment의 intensity에 대한 정보가 있다면 그룹 내 비교(; **within-group comparison**) 가능 $\Rarr$ 인과분석 가능.
+	- 만약 treatment의 intensity에 대한 정보가 있다면 그룹 내 비교(; **within-group comparison**) 가능 $\Rightarrow$ 인과분석 가능.
 - Treatment 전후의 패널 데이터가 있는 경우
 	- **Two-Way Fixed Effects(; TWFE) model** = panel 모델 w. both unit and time fixed-effects
-		- unit fixed effects $\Rarr$ treatment group의 outcome이 treatment 이전/이후에 얼마나 더 변했는지
-		- time fixed effects $\Rarr$ control group과 treatment group의 차이가 treatment 이전/이후에 얼마나 더 변했는지(; 커졌는지)
+		- unit fixed effects $\Rightarrow$ treatment group의 outcome이 treatment 이전/이후에 얼마나 더 변했는지
+		- time fixed effects $\Rightarrow$ control group과 treatment group의 차이가 treatment 이전/이후에 얼마나 더 변했는지(; 커졌는지)
 
 
 ### Fixed-Effect Model is the Primary Workhorse for Panel data

@@ -19,8 +19,7 @@ last_modified_at: 2024-10-26
 - **Cross-sectional data**
 	- 고정된 시점에 대해 다수의 유닛을 관측한 자료.
 	- e.g. survey 자료 등
-	- 예
-
+	- 예시
 ```mermaid
 	graph TD
 		subgraph "Cross-Sectional Data at Time T"
@@ -34,8 +33,7 @@ last_modified_at: 2024-10-26
 - **Time-series data**
 	- 고정된 유닛에 대해 다수의 시점을 관측한 자료.
 	- e.g. 주가, GDP 등
-	- 예
-
+	- 예시
 ```mermaid
 graph LR
     2021 --> 2022 --> 2023
@@ -48,8 +46,7 @@ graph LR
 - **Panel(or longitudinal) data**
 	- 다수의 유닛에 대해 다수의 시점을 관측한 자료.
 	- 시간의 변화에 따라 유닛이 추적 가능해야 함(= 유닛이 달라지거나 변하지 않아야 함).
-	- 예
-
+	- 예시
 ```mermaid
 graph LR
     A2020["ID: A, Year: 2020"] --> A2021["ID: A, Year: 2021"]

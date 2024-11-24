@@ -1,5 +1,5 @@
 ---
-title: "[Review] 패널데이터와 고정효과 part 1"
+title: "[Review] 패널데이터와 고정효과"
 categories: [CI]
 tags: [ci]
 toc : True
@@ -11,9 +11,9 @@ last_modified_at: 2024-11-08
 
 본 글은 [Korea Summer Workshop on Causal Inference 2023](https://www.youtube.com/playlist?list=PLKKkeayRo4PUyqxgszL-biEZOOA9j61HT)의 내용을 주관적으로 정리한 글입니다. 추가적인 설명이 필요한 분들을 위해 원래 영상 링크를 같이 첨부합니다. 
 
-- 링크: [[Week 3-3] 패널데이터와 고정효과](https://www.youtube.com/watch?v=UNIF-jHY2Rk&list=PLKKkeayRo4PUyqxgszL-biEZOOA9j61HT&index=13)
+- 링크: [[Week 3-3] 패널데이터와 고정효과](https://www.youtube.com/watch?v=UNIF-jHY2Rk&list=PLKKkeayRo4PUyqxgszL-biEZOOA9j61HT&index=11)
 
-# Week 3.  Regression and Matching
+# Week 3. Regression and Matching
 ## 3-3. How Fixed Effects Work for Causal Inference
 ### 예시. 모바일 푸쉬 알림의 구매 효과
 

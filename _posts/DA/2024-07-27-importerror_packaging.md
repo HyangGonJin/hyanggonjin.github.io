@@ -1,8 +1,8 @@
 ---
 title: "[Error] ImportError: cannot import name 'packaging' from 'pkg_resources' when starting"
 excerpt: ""
-categories: [DA]
-tags: [da]
+categories: [DA, LLM]
+tags: [da, llm]
 toc : True
 toc_sticky: True
 math : True

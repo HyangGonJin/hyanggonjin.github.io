@@ -1,6 +1,6 @@
 ---
 title: "[Git] 원격 저장소(remote repo) URL을 변경"
-categories: [DE, Git]
+categories: [DE]
 tags: [de, git]
 toc : True
 toc_sticky: True

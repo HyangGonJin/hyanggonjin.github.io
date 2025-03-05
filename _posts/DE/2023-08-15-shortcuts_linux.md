@@ -1,7 +1,7 @@
 ---
-title: "Linux 터미널 단축키"
+title: "[shortcuts] Linux 터미널 단축키"
 categories: [DE]
-tags: [de]
+tags: [de, shortcuts]
 toc : True
 toc_sticky: True
 math : True

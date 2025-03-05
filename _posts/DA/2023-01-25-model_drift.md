@@ -1,7 +1,7 @@
 ---
-title: "Model Drift"
-categories: [DA, Ops]
-tags: [da, ops]
+title: "[MLOps] Model Drift"
+categories: [DA, MLOps]
+tags: [da, mlops]
 toc : True
 toc_sticky: True
 math : True

@@ -1,7 +1,7 @@
 ---
-title: "유용한 Python 함수 - Part 2."
-categories: [DA, pandas]
-tags: [da, python, pandas]
+title: "[pandas] 유용한 pandas 함수 - Part 2."
+categories: [DA]
+tags: [da, pandas]
 toc : True
 toc_sticky: true
 last_modified_at: 2021-12-08

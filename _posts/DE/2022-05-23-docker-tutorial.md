@@ -1,6 +1,6 @@
 ---
-title: "Docker 시작하기"
-categories: [DE, Docker]
+title: "[Docker] Docker 시작하기"
+categories: [DE]
 tags: [de, docker]
 toc : True
 toc_sticky: true

@@ -1,8 +1,8 @@
 ---
-title: "[DA] polars - filtering & json_normalize"
+title: "[polars] filtering & json_normalize"
 excerpt: ""
 categories: [DA]
-tags: [da]
+tags: [da, polars]
 toc : True
 toc_sticky: True
 math : True

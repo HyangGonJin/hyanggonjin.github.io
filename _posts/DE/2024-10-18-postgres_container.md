@@ -1,7 +1,7 @@
 ---
 title: "[Docker] POSTGRES 컨테이너 도커로 띄우기"
 categories: [DE]
-tags: [de, docker]
+tags: [de, docker, postgres]
 toc : True
 toc_sticky: True
 math : True

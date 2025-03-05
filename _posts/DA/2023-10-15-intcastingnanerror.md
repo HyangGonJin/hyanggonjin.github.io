@@ -1,8 +1,8 @@
 ---
-title: "IntCastingNaNError - Int 타입에 결측이 있는 경우"
+title: "[Error] IntCastingNaNError - Int 타입에 결측이 있는 경우"
 excerpt: ""
 categories: [DA]
-tags: [da]
+tags: [da, pandas]
 toc : True
 toc_sticky: True
 math : True

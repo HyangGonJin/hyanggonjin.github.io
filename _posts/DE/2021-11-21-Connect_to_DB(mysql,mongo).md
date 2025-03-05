@@ -1,6 +1,6 @@
 ---
-title: "데이터베이스 연결"
-categories: [DE, DB]
+title: "[DB] 데이터베이스 연결"
+categories: [DE]
 tags: [de, mysql, mongodb]
 toc : True
 toc_sticky: true

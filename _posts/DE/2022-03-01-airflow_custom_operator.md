@@ -1,6 +1,6 @@
 ---
-title: "Airflow - Custom operator"
-categories: [DE, Airflow]
+title: "[Airflow] Custom operator"
+categories: [DE]
 tags: [de, airflow]
 toc : True
 toc_sticky: true

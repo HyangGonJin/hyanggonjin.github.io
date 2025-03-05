@@ -1,7 +1,7 @@
 ---
-title: "vi / vim 단축키"
+title: "[shortcuts] vi / vim 단축키"
 categories: [DE]
-tags: [de]
+tags: [de, shortcuts]
 toc : True
 toc_sticky: True
 math : True

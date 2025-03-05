@@ -1,6 +1,6 @@
 ---
-title: "Classification 예제 - part 2. Classification metrics"
-categories: [DA, sklearn]
+title: "[sklearn] Classification 예제 - part 2. Classification metrics"
+categories: [DA]
 tags: [da, sklearn]
 toc : True
 toc_sticky: True

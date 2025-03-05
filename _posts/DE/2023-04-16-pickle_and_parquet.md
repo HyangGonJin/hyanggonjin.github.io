@@ -1,6 +1,6 @@
 ---
-title: "File format - pickle, parquet"
-categories: [DE, Python]
+title: "[python] File format - pickle, parquet"
+categories: [DE]
 tags: [de, python]
 toc : True
 toc_sticky: True

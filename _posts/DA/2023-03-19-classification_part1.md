@@ -1,6 +1,6 @@
 ---
-title: "Classification 예제 - part 1. Scaler, Encoder, Pipeline"
-categories: [DA, sklearn]
+title: "[sklearn] Classification 예제 - part 1. Scaler, Encoder, Pipeline"
+categories: [DA]
 tags: [da, sklearn]
 toc : True
 toc_sticky: True

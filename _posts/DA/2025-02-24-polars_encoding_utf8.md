@@ -1,8 +1,8 @@
 ---
-title: "[DA] polars encoding - utf8 & utf8-lossy"
+title: "[polars] encoding - utf8 & utf8-lossy"
 excerpt: ""
 categories: [DA]
-tags: [da]
+tags: [da, polars]
 toc : True
 toc_sticky: True
 math : True

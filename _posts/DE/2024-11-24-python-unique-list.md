@@ -1,5 +1,5 @@
 ---
-title: "[Python] list 중복 제거"
+title: "[python] list 중복 제거"
 categories: [DE]
 tags: [de, python]
 toc : True

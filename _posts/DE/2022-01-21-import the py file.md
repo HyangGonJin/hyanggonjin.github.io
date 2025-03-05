@@ -1,6 +1,6 @@
 ---
-title: "모듈 import"
-categories: [DE, Python]
+title: "[python] 모듈 import"
+categories: [DE]
 tags: [de, python]
 toc : True
 toc_sticky: true

@@ -1,6 +1,6 @@
 ---
-title: "Airflow - Slack 알림 받기"
-categories: [DE, Airflow]
+title: "[Airflow] Slack 알림 받기"
+categories: [DE]
 tags: [de, airflow]
 toc : True
 toc_sticky: true

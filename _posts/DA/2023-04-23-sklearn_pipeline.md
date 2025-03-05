@@ -1,6 +1,6 @@
 ---
-title: "sklearn pipeline - Pipeline() & make_pipeline()"
-categories: [DA, sklearn]
+title: "[sklearn] pipeline - Pipeline() & make_pipeline()"
+categories: [DA]
 tags: [da, sklearn]
 toc : True
 toc_sticky: True

@@ -1,6 +1,6 @@
 ---
 title: "[Git] Local branch 삭제"
-categories: [DE, Git]
+categories: [DE]
 tags: [de, git]
 toc : True
 toc_sticky: True

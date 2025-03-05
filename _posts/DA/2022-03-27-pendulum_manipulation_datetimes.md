@@ -1,7 +1,7 @@
 ---
-title: "pendulum - datetime 다루기"
-categories: [DA, Python]
-tags: [da, python]
+title: "[DA] pendulum - datetime 다루기"
+categories: [DA]
+tags: [da]
 toc : True
 toc_sticky: true
 last_modified_at: 2022-04-11

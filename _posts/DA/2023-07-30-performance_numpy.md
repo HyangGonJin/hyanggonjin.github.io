@@ -1,6 +1,6 @@
 ---
-title: "numpy 코드 속도 비교 w/ chatGPT"
-categories: [DA, numpy]
+title: "[numpy] numpy 코드 속도 비교 w/ chatGPT"
+categories: [DA]
 tags: [da, numpy]
 toc : True
 toc_sticky: True

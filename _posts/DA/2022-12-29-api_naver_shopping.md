@@ -1,7 +1,7 @@
 ---
-title: "Naver API - 네이버 쇼핑 상품 정보 가져오기"
-categories: [DA, API]
-tags: [da, api]
+title: "[DA] Naver API - 네이버 쇼핑 상품 정보 가져오기"
+categories: [DA]
+tags: [da]
 toc : True
 toc_sticky: true
 last_modified_at: 2022-12-29

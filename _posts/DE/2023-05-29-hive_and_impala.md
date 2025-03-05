@@ -1,6 +1,6 @@
 ---
-title: "Hive & Impala - connection & sqlalchemy"
-categories: [DE, DB]
+title: "[DB] Hive & Impala - connection & sqlalchemy"
+categories: [DE]
 tags: [de, db]
 toc : True
 toc_sticky: True

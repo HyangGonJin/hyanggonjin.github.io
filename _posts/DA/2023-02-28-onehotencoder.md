@@ -1,6 +1,6 @@
 ---
-title: "OneHotEncoder - infrequent categories 옵션"
-categories: [DA, sklearn]
+title: "[sklearn] OneHotEncoder - infrequent categories 옵션"
+categories: [DA]
 tags: [da, sklearn]
 toc : True
 toc_sticky: True

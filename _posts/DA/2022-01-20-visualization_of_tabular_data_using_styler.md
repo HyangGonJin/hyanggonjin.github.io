@@ -1,6 +1,6 @@
 ---
-title: "DataFrame Style 적용하기 (2)"
-categories: [DA, pandas]
+title: "[pandas] DataFrame Style 적용하기 (2)"
+categories: [DA]
 tags: [da, pandas]
 toc : True
 toc_sticky: true

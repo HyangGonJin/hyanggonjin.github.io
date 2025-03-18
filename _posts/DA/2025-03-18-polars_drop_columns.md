@@ -26,6 +26,7 @@ df = pl.DataFrame({
 ```
 
 ## drop
+drop을 사용해 제외 할 컬럼을 지정할 수 있습니다.
 
 ```py
 df.drop("B")
@@ -41,6 +42,7 @@ df.drop("B")
 ```
 
 ## pl.exclude
+또한, select와 exclude를 사용해 제외 할 컬럼을 지정할 수 있습니다.
 
 ```py
 df.select(pl.exclude(["A", "C"]))

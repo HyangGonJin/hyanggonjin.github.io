@@ -56,7 +56,6 @@ payload_bytes = response['Payload'].read() # byte
 payload_str = payload_bytes.decode("utf-8") # json string
 payload_dict = json.loads(payload_str) # string
 print(payload_dict)
-# {'statusCode': 200, 'body': '{"message": "hello world", "payload": "2025-05-25 10:19:28.079823"}'}
 ```
 
 참고로 `lambda_client.invoke()`를 호출 response에서 Payload는 스트림 객체 형태로 제공됩니다. 이 값을 확인하기 위해서는 `.read()`를 적용해야 합니다.
